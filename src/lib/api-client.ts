@@ -12,6 +12,7 @@ import { getAuthToken } from "./auth-store";
 import {
   proxyRender,
   type ProxyMethod,
+  type ProxyResult,
 } from "./render-proxy.functions";
 
 export interface ApiOptions {
@@ -34,9 +35,9 @@ export async function apiRequest<T = unknown>(
   opts?: ApiOptions,
 ): Promise<T> {
   const token = resolveToken(opts);
-  const result = await proxyRender({
+  const result = (await proxyRender({
     data: { method, path, body, token },
-  });
+  })) as ProxyResult;
   if (!result.ok) {
     const err = new Error(result.error || `Request failed (${result.status})`);
     (err as Error & { status?: number; data?: unknown }).status = result.status;

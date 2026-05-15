@@ -9,6 +9,14 @@ import { z } from "zod";
 
 export type ProxyMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [k: string]: JsonValue };
+
 const ProxyInput = z.object({
   method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH"]),
   /** Path beginning with `/` — base URL is added server-side */
@@ -18,16 +26,16 @@ const ProxyInput = z.object({
   token: z.string().nullish(),
 });
 
-export interface ProxyResult<T = unknown> {
+export interface ProxyResult {
   ok: boolean;
   status: number;
-  data: T | null;
+  data: JsonValue;
   error?: string;
 }
 
 export const proxyRender = createServerFn({ method: "POST" })
   .inputValidator((input) => ProxyInput.parse(input))
-  .handler(async ({ data }): Promise<ProxyResult> => {
+  .handler(async ({ data }) => {
     const baseUrl =
       process.env.RENDER_API_BASE_URL ?? "https://takatak.onrender.com";
     const url = `${baseUrl.replace(/\/$/, "")}${data.path}`;
@@ -49,10 +57,10 @@ export const proxyRender = createServerFn({ method: "POST" })
       });
 
       const text = await res.text();
-      let parsed: unknown = null;
+      let parsed: JsonValue = null;
       if (text.length > 0) {
         try {
-          parsed = JSON.parse(text);
+          parsed = JSON.parse(text) as JsonValue;
         } catch {
           parsed = text;
         }
@@ -60,20 +68,25 @@ export const proxyRender = createServerFn({ method: "POST" })
 
       if (!res.ok) {
         const errMsg =
-          (parsed as { error?: string; message?: string })?.error ??
-          (parsed as { error?: string; message?: string })?.message ??
+          (parsed && typeof parsed === "object" && !Array.isArray(parsed)
+            ? ((parsed as { error?: string; message?: string }).error ??
+              (parsed as { error?: string; message?: string }).message)
+            : undefined) ??
           res.statusText ??
           "Request failed";
-        return { ok: false, status: res.status, data: parsed, error: errMsg };
+        const out: ProxyResult = { ok: false, status: res.status, data: parsed, error: errMsg };
+        return out;
       }
-      return { ok: true, status: res.status, data: parsed };
+      const out: ProxyResult = { ok: true, status: res.status, data: parsed };
+      return out;
     } catch (err) {
       console.error("[proxyRender] network error:", err);
-      return {
+      const out: ProxyResult = {
         ok: false,
         status: 0,
         data: null,
         error: "Network error contacting TAKATAK backend.",
       };
+      return out;
     }
   });
