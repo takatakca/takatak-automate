@@ -14,6 +14,7 @@ import { Route as OtpRouteImport } from './routes/otp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HostingRouteImport } from './routes/hosting'
 import { Route as DomainRouteImport } from './routes/domain'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServicesWebsitesRouteImport } from './routes/services.websites'
@@ -49,6 +50,11 @@ const HostingRoute = HostingRouteImport.update({
 const DomainRoute = DomainRouteImport.update({
   id: '/domain',
   path: '/domain',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -110,6 +116,7 @@ const ServicesAiBusinessToolsRoute = ServicesAiBusinessToolsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/checkout'
+    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
@@ -185,6 +195,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/checkout'
+    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/checkout'
+    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
@@ -222,6 +234,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
+  DashboardRoute: typeof DashboardRoute
   DomainRoute: typeof DomainRoute
   HostingRoute: typeof HostingRoute
   LoginRoute: typeof LoginRoute
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/domain'
       fullPath: '/domain'
       preLoaderRoute: typeof DomainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -358,6 +378,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
+  DashboardRoute: DashboardRoute,
   DomainRoute: DomainRoute,
   HostingRoute: HostingRoute,
   LoginRoute: LoginRoute,
