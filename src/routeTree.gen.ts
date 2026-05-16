@@ -14,8 +14,18 @@ import { Route as OtpRouteImport } from './routes/otp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HostingRouteImport } from './routes/hosting'
 import { Route as DomainRouteImport } from './routes/domain'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicesWebsitesRouteImport } from './routes/services.websites'
+import { Route as ServicesVoipRouteImport } from './routes/services.voip'
+import { Route as ServicesSocialMediaRouteImport } from './routes/services.social-media'
+import { Route as ServicesMobileAppsRouteImport } from './routes/services.mobile-apps'
+import { Route as ServicesMarketplaceRouteImport } from './routes/services.marketplace'
+import { Route as ServicesMarketingRouteImport } from './routes/services.marketing'
+import { Route as ServicesLocalListingsRouteImport } from './routes/services.local-listings'
+import { Route as ServicesLeadGenerationRouteImport } from './routes/services.lead-generation'
+import { Route as ServicesAiBusinessToolsRouteImport } from './routes/services.ai-business-tools'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -42,6 +52,11 @@ const DomainRoute = DomainRouteImport.update({
   path: '/domain',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -52,66 +67,188 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesWebsitesRoute = ServicesWebsitesRouteImport.update({
+  id: '/services/websites',
+  path: '/services/websites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesVoipRoute = ServicesVoipRouteImport.update({
+  id: '/services/voip',
+  path: '/services/voip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesSocialMediaRoute = ServicesSocialMediaRouteImport.update({
+  id: '/services/social-media',
+  path: '/services/social-media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesMobileAppsRoute = ServicesMobileAppsRouteImport.update({
+  id: '/services/mobile-apps',
+  path: '/services/mobile-apps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesMarketplaceRoute = ServicesMarketplaceRouteImport.update({
+  id: '/services/marketplace',
+  path: '/services/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesMarketingRoute = ServicesMarketingRouteImport.update({
+  id: '/services/marketing',
+  path: '/services/marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesLocalListingsRoute = ServicesLocalListingsRouteImport.update({
+  id: '/services/local-listings',
+  path: '/services/local-listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesLeadGenerationRoute = ServicesLeadGenerationRouteImport.update({
+  id: '/services/lead-generation',
+  path: '/services/lead-generation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesAiBusinessToolsRoute = ServicesAiBusinessToolsRouteImport.update({
+  id: '/services/ai-business-tools',
+  path: '/services/ai-business-tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
   '/signup': typeof SignupRoute
+  '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
+  '/services/lead-generation': typeof ServicesLeadGenerationRoute
+  '/services/local-listings': typeof ServicesLocalListingsRoute
+  '/services/marketing': typeof ServicesMarketingRoute
+  '/services/marketplace': typeof ServicesMarketplaceRoute
+  '/services/mobile-apps': typeof ServicesMobileAppsRoute
+  '/services/social-media': typeof ServicesSocialMediaRoute
+  '/services/voip': typeof ServicesVoipRoute
+  '/services/websites': typeof ServicesWebsitesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
   '/signup': typeof SignupRoute
+  '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
+  '/services/lead-generation': typeof ServicesLeadGenerationRoute
+  '/services/local-listings': typeof ServicesLocalListingsRoute
+  '/services/marketing': typeof ServicesMarketingRoute
+  '/services/marketplace': typeof ServicesMarketplaceRoute
+  '/services/mobile-apps': typeof ServicesMobileAppsRoute
+  '/services/social-media': typeof ServicesSocialMediaRoute
+  '/services/voip': typeof ServicesVoipRoute
+  '/services/websites': typeof ServicesWebsitesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
   '/signup': typeof SignupRoute
+  '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
+  '/services/lead-generation': typeof ServicesLeadGenerationRoute
+  '/services/local-listings': typeof ServicesLocalListingsRoute
+  '/services/marketing': typeof ServicesMarketingRoute
+  '/services/marketplace': typeof ServicesMarketplaceRoute
+  '/services/mobile-apps': typeof ServicesMobileAppsRoute
+  '/services/social-media': typeof ServicesSocialMediaRoute
+  '/services/voip': typeof ServicesVoipRoute
+  '/services/websites': typeof ServicesWebsitesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/checkout'
+    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
     | '/otp'
     | '/signup'
+    | '/services/ai-business-tools'
+    | '/services/lead-generation'
+    | '/services/local-listings'
+    | '/services/marketing'
+    | '/services/marketplace'
+    | '/services/mobile-apps'
+    | '/services/social-media'
+    | '/services/voip'
+    | '/services/websites'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/checkout' | '/domain' | '/hosting' | '/login' | '/otp' | '/signup'
+  to:
+    | '/'
+    | '/checkout'
+    | '/dashboard'
+    | '/domain'
+    | '/hosting'
+    | '/login'
+    | '/otp'
+    | '/signup'
+    | '/services/ai-business-tools'
+    | '/services/lead-generation'
+    | '/services/local-listings'
+    | '/services/marketing'
+    | '/services/marketplace'
+    | '/services/mobile-apps'
+    | '/services/social-media'
+    | '/services/voip'
+    | '/services/websites'
   id:
     | '__root__'
     | '/'
     | '/checkout'
+    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
     | '/otp'
     | '/signup'
+    | '/services/ai-business-tools'
+    | '/services/lead-generation'
+    | '/services/local-listings'
+    | '/services/marketing'
+    | '/services/marketplace'
+    | '/services/mobile-apps'
+    | '/services/social-media'
+    | '/services/voip'
+    | '/services/websites'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
+  DashboardRoute: typeof DashboardRoute
   DomainRoute: typeof DomainRoute
   HostingRoute: typeof HostingRoute
   LoginRoute: typeof LoginRoute
   OtpRoute: typeof OtpRoute
   SignupRoute: typeof SignupRoute
+  ServicesAiBusinessToolsRoute: typeof ServicesAiBusinessToolsRoute
+  ServicesLeadGenerationRoute: typeof ServicesLeadGenerationRoute
+  ServicesLocalListingsRoute: typeof ServicesLocalListingsRoute
+  ServicesMarketingRoute: typeof ServicesMarketingRoute
+  ServicesMarketplaceRoute: typeof ServicesMarketplaceRoute
+  ServicesMobileAppsRoute: typeof ServicesMobileAppsRoute
+  ServicesSocialMediaRoute: typeof ServicesSocialMediaRoute
+  ServicesVoipRoute: typeof ServicesVoipRoute
+  ServicesWebsitesRoute: typeof ServicesWebsitesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -151,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DomainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -165,17 +309,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/websites': {
+      id: '/services/websites'
+      path: '/services/websites'
+      fullPath: '/services/websites'
+      preLoaderRoute: typeof ServicesWebsitesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/voip': {
+      id: '/services/voip'
+      path: '/services/voip'
+      fullPath: '/services/voip'
+      preLoaderRoute: typeof ServicesVoipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/social-media': {
+      id: '/services/social-media'
+      path: '/services/social-media'
+      fullPath: '/services/social-media'
+      preLoaderRoute: typeof ServicesSocialMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/mobile-apps': {
+      id: '/services/mobile-apps'
+      path: '/services/mobile-apps'
+      fullPath: '/services/mobile-apps'
+      preLoaderRoute: typeof ServicesMobileAppsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/marketplace': {
+      id: '/services/marketplace'
+      path: '/services/marketplace'
+      fullPath: '/services/marketplace'
+      preLoaderRoute: typeof ServicesMarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/marketing': {
+      id: '/services/marketing'
+      path: '/services/marketing'
+      fullPath: '/services/marketing'
+      preLoaderRoute: typeof ServicesMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/local-listings': {
+      id: '/services/local-listings'
+      path: '/services/local-listings'
+      fullPath: '/services/local-listings'
+      preLoaderRoute: typeof ServicesLocalListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/lead-generation': {
+      id: '/services/lead-generation'
+      path: '/services/lead-generation'
+      fullPath: '/services/lead-generation'
+      preLoaderRoute: typeof ServicesLeadGenerationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/ai-business-tools': {
+      id: '/services/ai-business-tools'
+      path: '/services/ai-business-tools'
+      fullPath: '/services/ai-business-tools'
+      preLoaderRoute: typeof ServicesAiBusinessToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
+  DashboardRoute: DashboardRoute,
   DomainRoute: DomainRoute,
   HostingRoute: HostingRoute,
   LoginRoute: LoginRoute,
   OtpRoute: OtpRoute,
   SignupRoute: SignupRoute,
+  ServicesAiBusinessToolsRoute: ServicesAiBusinessToolsRoute,
+  ServicesLeadGenerationRoute: ServicesLeadGenerationRoute,
+  ServicesLocalListingsRoute: ServicesLocalListingsRoute,
+  ServicesMarketingRoute: ServicesMarketingRoute,
+  ServicesMarketplaceRoute: ServicesMarketplaceRoute,
+  ServicesMobileAppsRoute: ServicesMobileAppsRoute,
+  ServicesSocialMediaRoute: ServicesSocialMediaRoute,
+  ServicesVoipRoute: ServicesVoipRoute,
+  ServicesWebsitesRoute: ServicesWebsitesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
