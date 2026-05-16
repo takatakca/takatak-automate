@@ -14,9 +14,9 @@ import { Route as OtpRouteImport } from './routes/otp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HostingRouteImport } from './routes/hosting'
 import { Route as DomainRouteImport } from './routes/domain'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ServicesWebsitesRouteImport } from './routes/services.websites'
 import { Route as ServicesVoipRouteImport } from './routes/services.voip'
 import { Route as ServicesSocialMediaRouteImport } from './routes/services.social-media'
@@ -52,11 +52,6 @@ const DomainRoute = DomainRouteImport.update({
   path: '/domain',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -65,6 +60,11 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesWebsitesRoute = ServicesWebsitesRouteImport.update({
@@ -116,7 +116,6 @@ const ServicesAiBusinessToolsRoute = ServicesAiBusinessToolsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
@@ -131,11 +130,11 @@ export interface FileRoutesByFullPath {
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
@@ -150,12 +149,12 @@ export interface FileRoutesByTo {
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
@@ -170,13 +169,13 @@ export interface FileRoutesById {
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/checkout'
-    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
@@ -191,11 +190,11 @@ export interface FileRouteTypes {
     | '/services/social-media'
     | '/services/voip'
     | '/services/websites'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/checkout'
-    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
@@ -210,11 +209,11 @@ export interface FileRouteTypes {
     | '/services/social-media'
     | '/services/voip'
     | '/services/websites'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/checkout'
-    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
@@ -229,12 +228,12 @@ export interface FileRouteTypes {
     | '/services/social-media'
     | '/services/voip'
     | '/services/websites'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
-  DashboardRoute: typeof DashboardRoute
   DomainRoute: typeof DomainRoute
   HostingRoute: typeof HostingRoute
   LoginRoute: typeof LoginRoute
@@ -249,6 +248,7 @@ export interface RootRouteChildren {
   ServicesSocialMediaRoute: typeof ServicesSocialMediaRoute
   ServicesVoipRoute: typeof ServicesVoipRoute
   ServicesWebsitesRoute: typeof ServicesWebsitesRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -288,13 +288,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DomainRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -307,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services/websites': {
@@ -378,7 +378,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
-  DashboardRoute: DashboardRoute,
   DomainRoute: DomainRoute,
   HostingRoute: HostingRoute,
   LoginRoute: LoginRoute,
@@ -393,7 +392,18 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesSocialMediaRoute: ServicesSocialMediaRoute,
   ServicesVoipRoute: ServicesVoipRoute,
   ServicesWebsitesRoute: ServicesWebsitesRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

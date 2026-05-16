@@ -6,7 +6,7 @@ import { ServiceStateBadge } from "@/components/automation/ServiceStateBadge";
 import { services } from "@/lib/services";
 import { useAuth } from "@/lib/auth-context";
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/dashboard/")({
   head: () => ({
     meta: [
       { title: "Dashboard — TAKATAK" },
