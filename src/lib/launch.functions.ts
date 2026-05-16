@@ -20,6 +20,8 @@ const FALLBACK_ENV: Record<string, string> = {
   local_listings: "LOCAL_LISTINGS_PORTAL_URL",
   online_marketing: "MARKETING_PORTAL_URL",
   freelancer_marketplace: "MARKETPLACE_PORTAL_URL",
+  qmaps: "QMAPS_PORTAL_URL",
+  flexs: "FLEXS_PORTAL_URL",
 };
 
 export const launchExternalService = createServerFn({ method: "POST" })
