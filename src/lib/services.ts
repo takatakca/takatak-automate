@@ -32,6 +32,8 @@ export interface ServiceDefinition {
   dashboardCtaLabel: string;
   /** Env var key for fallback portal URL (frontend) */
   portalEnvKey?: string;
+  /** Optional override for the serviceKey sent to /integrations/launch */
+  launchKey?: string;
 }
 
 export const services: ServiceDefinition[] = [
@@ -169,7 +171,8 @@ export const services: ServiceDefinition[] = [
     status: "beta",
     ctaLabel: "Claim listings",
     dashboardCtaLabel: "Open listings portal",
-    portalEnvKey: "VITE_LOCAL_LISTINGS_PORTAL_URL",
+    portalEnvKey: "VITE_QMAPS_PORTAL_URL",
+    launchKey: "qmaps",
   },
   {
     key: "lead_generation",
@@ -189,7 +192,8 @@ export const services: ServiceDefinition[] = [
     status: "beta",
     ctaLabel: "Set up lead gen",
     dashboardCtaLabel: "Open leads portal",
-    portalEnvKey: "VITE_LEADS_PORTAL_URL",
+    portalEnvKey: "VITE_FLEXS_PORTAL_URL",
+    launchKey: "flexs",
   },
   {
     key: "voip_phone",
