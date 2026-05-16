@@ -17,6 +17,7 @@ import { Route as DomainRouteImport } from './routes/domain'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ServicesWebsitesRouteImport } from './routes/services.websites'
 import { Route as ServicesVoipRouteImport } from './routes/services.voip'
 import { Route as ServicesSocialMediaRouteImport } from './routes/services.social-media'
@@ -26,6 +27,23 @@ import { Route as ServicesMarketingRouteImport } from './routes/services.marketi
 import { Route as ServicesLocalListingsRouteImport } from './routes/services.local-listings'
 import { Route as ServicesLeadGenerationRouteImport } from './routes/services.lead-generation'
 import { Route as ServicesAiBusinessToolsRouteImport } from './routes/services.ai-business-tools'
+import { Route as DashboardWebsitesRouteImport } from './routes/dashboard.websites'
+import { Route as DashboardVoipRouteImport } from './routes/dashboard.voip'
+import { Route as DashboardSupportRouteImport } from './routes/dashboard.support'
+import { Route as DashboardSocialMediaRouteImport } from './routes/dashboard.social-media'
+import { Route as DashboardServicesRouteImport } from './routes/dashboard.services'
+import { Route as DashboardOverviewRouteImport } from './routes/dashboard.overview'
+import { Route as DashboardOrdersRouteImport } from './routes/dashboard.orders'
+import { Route as DashboardMobileAppsRouteImport } from './routes/dashboard.mobile-apps'
+import { Route as DashboardMarketplaceRouteImport } from './routes/dashboard.marketplace'
+import { Route as DashboardMarketingRouteImport } from './routes/dashboard.marketing'
+import { Route as DashboardLocalListingsRouteImport } from './routes/dashboard.local-listings'
+import { Route as DashboardLeadsRouteImport } from './routes/dashboard.leads'
+import { Route as DashboardInvoicesRouteImport } from './routes/dashboard.invoices'
+import { Route as DashboardHostingRouteImport } from './routes/dashboard.hosting'
+import { Route as DashboardDomainsRouteImport } from './routes/dashboard.domains'
+import { Route as DashboardAiToolsRouteImport } from './routes/dashboard.ai-tools'
+import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -66,6 +84,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const ServicesWebsitesRoute = ServicesWebsitesRouteImport.update({
   id: '/services/websites',
@@ -112,16 +135,118 @@ const ServicesAiBusinessToolsRoute = ServicesAiBusinessToolsRouteImport.update({
   path: '/services/ai-business-tools',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardWebsitesRoute = DashboardWebsitesRouteImport.update({
+  id: '/websites',
+  path: '/websites',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardVoipRoute = DashboardVoipRouteImport.update({
+  id: '/voip',
+  path: '/voip',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSupportRoute = DashboardSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSocialMediaRoute = DashboardSocialMediaRouteImport.update({
+  id: '/social-media',
+  path: '/social-media',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardServicesRoute = DashboardServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardOverviewRoute = DashboardOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardOrdersRoute = DashboardOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardMobileAppsRoute = DashboardMobileAppsRouteImport.update({
+  id: '/mobile-apps',
+  path: '/mobile-apps',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardMarketplaceRoute = DashboardMarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardMarketingRoute = DashboardMarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardLocalListingsRoute = DashboardLocalListingsRouteImport.update({
+  id: '/local-listings',
+  path: '/local-listings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardLeadsRoute = DashboardLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardInvoicesRoute = DashboardInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardHostingRoute = DashboardHostingRouteImport.update({
+  id: '/hosting',
+  path: '/hosting',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardDomainsRoute = DashboardDomainsRouteImport.update({
+  id: '/domains',
+  path: '/domains',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAiToolsRoute = DashboardAiToolsRouteImport.update({
+  id: '/ai-tools',
+  path: '/ai-tools',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAccountRoute = DashboardAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
   '/signup': typeof SignupRoute
+  '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/ai-tools': typeof DashboardAiToolsRoute
+  '/dashboard/domains': typeof DashboardDomainsRoute
+  '/dashboard/hosting': typeof DashboardHostingRoute
+  '/dashboard/invoices': typeof DashboardInvoicesRoute
+  '/dashboard/leads': typeof DashboardLeadsRoute
+  '/dashboard/local-listings': typeof DashboardLocalListingsRoute
+  '/dashboard/marketing': typeof DashboardMarketingRoute
+  '/dashboard/marketplace': typeof DashboardMarketplaceRoute
+  '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/orders': typeof DashboardOrdersRoute
+  '/dashboard/overview': typeof DashboardOverviewRoute
+  '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard/social-media': typeof DashboardSocialMediaRoute
+  '/dashboard/support': typeof DashboardSupportRoute
+  '/dashboard/voip': typeof DashboardVoipRoute
+  '/dashboard/websites': typeof DashboardWebsitesRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -131,16 +256,33 @@ export interface FileRoutesByFullPath {
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/dashboard': typeof DashboardRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
   '/signup': typeof SignupRoute
+  '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/ai-tools': typeof DashboardAiToolsRoute
+  '/dashboard/domains': typeof DashboardDomainsRoute
+  '/dashboard/hosting': typeof DashboardHostingRoute
+  '/dashboard/invoices': typeof DashboardInvoicesRoute
+  '/dashboard/leads': typeof DashboardLeadsRoute
+  '/dashboard/local-listings': typeof DashboardLocalListingsRoute
+  '/dashboard/marketing': typeof DashboardMarketingRoute
+  '/dashboard/marketplace': typeof DashboardMarketplaceRoute
+  '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/orders': typeof DashboardOrdersRoute
+  '/dashboard/overview': typeof DashboardOverviewRoute
+  '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard/social-media': typeof DashboardSocialMediaRoute
+  '/dashboard/support': typeof DashboardSupportRoute
+  '/dashboard/voip': typeof DashboardVoipRoute
+  '/dashboard/websites': typeof DashboardWebsitesRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -150,17 +292,35 @@ export interface FileRoutesByTo {
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
   '/signup': typeof SignupRoute
+  '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/ai-tools': typeof DashboardAiToolsRoute
+  '/dashboard/domains': typeof DashboardDomainsRoute
+  '/dashboard/hosting': typeof DashboardHostingRoute
+  '/dashboard/invoices': typeof DashboardInvoicesRoute
+  '/dashboard/leads': typeof DashboardLeadsRoute
+  '/dashboard/local-listings': typeof DashboardLocalListingsRoute
+  '/dashboard/marketing': typeof DashboardMarketingRoute
+  '/dashboard/marketplace': typeof DashboardMarketplaceRoute
+  '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/orders': typeof DashboardOrdersRoute
+  '/dashboard/overview': typeof DashboardOverviewRoute
+  '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard/social-media': typeof DashboardSocialMediaRoute
+  '/dashboard/support': typeof DashboardSupportRoute
+  '/dashboard/voip': typeof DashboardVoipRoute
+  '/dashboard/websites': typeof DashboardWebsitesRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -170,6 +330,7 @@ export interface FileRoutesById {
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -182,6 +343,23 @@ export interface FileRouteTypes {
     | '/login'
     | '/otp'
     | '/signup'
+    | '/dashboard/account'
+    | '/dashboard/ai-tools'
+    | '/dashboard/domains'
+    | '/dashboard/hosting'
+    | '/dashboard/invoices'
+    | '/dashboard/leads'
+    | '/dashboard/local-listings'
+    | '/dashboard/marketing'
+    | '/dashboard/marketplace'
+    | '/dashboard/mobile-apps'
+    | '/dashboard/orders'
+    | '/dashboard/overview'
+    | '/dashboard/services'
+    | '/dashboard/social-media'
+    | '/dashboard/support'
+    | '/dashboard/voip'
+    | '/dashboard/websites'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -191,16 +369,33 @@ export interface FileRouteTypes {
     | '/services/social-media'
     | '/services/voip'
     | '/services/websites'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/checkout'
-    | '/dashboard'
     | '/domain'
     | '/hosting'
     | '/login'
     | '/otp'
     | '/signup'
+    | '/dashboard/account'
+    | '/dashboard/ai-tools'
+    | '/dashboard/domains'
+    | '/dashboard/hosting'
+    | '/dashboard/invoices'
+    | '/dashboard/leads'
+    | '/dashboard/local-listings'
+    | '/dashboard/marketing'
+    | '/dashboard/marketplace'
+    | '/dashboard/mobile-apps'
+    | '/dashboard/orders'
+    | '/dashboard/overview'
+    | '/dashboard/services'
+    | '/dashboard/social-media'
+    | '/dashboard/support'
+    | '/dashboard/voip'
+    | '/dashboard/websites'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -210,6 +405,7 @@ export interface FileRouteTypes {
     | '/services/social-media'
     | '/services/voip'
     | '/services/websites'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -220,6 +416,23 @@ export interface FileRouteTypes {
     | '/login'
     | '/otp'
     | '/signup'
+    | '/dashboard/account'
+    | '/dashboard/ai-tools'
+    | '/dashboard/domains'
+    | '/dashboard/hosting'
+    | '/dashboard/invoices'
+    | '/dashboard/leads'
+    | '/dashboard/local-listings'
+    | '/dashboard/marketing'
+    | '/dashboard/marketplace'
+    | '/dashboard/mobile-apps'
+    | '/dashboard/orders'
+    | '/dashboard/overview'
+    | '/dashboard/services'
+    | '/dashboard/social-media'
+    | '/dashboard/support'
+    | '/dashboard/voip'
+    | '/dashboard/websites'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -229,12 +442,13 @@ export interface FileRouteTypes {
     | '/services/social-media'
     | '/services/voip'
     | '/services/websites'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   DomainRoute: typeof DomainRoute
   HostingRoute: typeof HostingRoute
   LoginRoute: typeof LoginRoute
@@ -309,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/services/websites': {
       id: '/services/websites'
       path: '/services/websites'
@@ -372,13 +593,178 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesAiBusinessToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/websites': {
+      id: '/dashboard/websites'
+      path: '/websites'
+      fullPath: '/dashboard/websites'
+      preLoaderRoute: typeof DashboardWebsitesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/voip': {
+      id: '/dashboard/voip'
+      path: '/voip'
+      fullPath: '/dashboard/voip'
+      preLoaderRoute: typeof DashboardVoipRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/support': {
+      id: '/dashboard/support'
+      path: '/support'
+      fullPath: '/dashboard/support'
+      preLoaderRoute: typeof DashboardSupportRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/social-media': {
+      id: '/dashboard/social-media'
+      path: '/social-media'
+      fullPath: '/dashboard/social-media'
+      preLoaderRoute: typeof DashboardSocialMediaRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/services': {
+      id: '/dashboard/services'
+      path: '/services'
+      fullPath: '/dashboard/services'
+      preLoaderRoute: typeof DashboardServicesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/overview': {
+      id: '/dashboard/overview'
+      path: '/overview'
+      fullPath: '/dashboard/overview'
+      preLoaderRoute: typeof DashboardOverviewRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/orders': {
+      id: '/dashboard/orders'
+      path: '/orders'
+      fullPath: '/dashboard/orders'
+      preLoaderRoute: typeof DashboardOrdersRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/mobile-apps': {
+      id: '/dashboard/mobile-apps'
+      path: '/mobile-apps'
+      fullPath: '/dashboard/mobile-apps'
+      preLoaderRoute: typeof DashboardMobileAppsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/marketplace': {
+      id: '/dashboard/marketplace'
+      path: '/marketplace'
+      fullPath: '/dashboard/marketplace'
+      preLoaderRoute: typeof DashboardMarketplaceRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/marketing': {
+      id: '/dashboard/marketing'
+      path: '/marketing'
+      fullPath: '/dashboard/marketing'
+      preLoaderRoute: typeof DashboardMarketingRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/local-listings': {
+      id: '/dashboard/local-listings'
+      path: '/local-listings'
+      fullPath: '/dashboard/local-listings'
+      preLoaderRoute: typeof DashboardLocalListingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/leads': {
+      id: '/dashboard/leads'
+      path: '/leads'
+      fullPath: '/dashboard/leads'
+      preLoaderRoute: typeof DashboardLeadsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/invoices': {
+      id: '/dashboard/invoices'
+      path: '/invoices'
+      fullPath: '/dashboard/invoices'
+      preLoaderRoute: typeof DashboardInvoicesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/hosting': {
+      id: '/dashboard/hosting'
+      path: '/hosting'
+      fullPath: '/dashboard/hosting'
+      preLoaderRoute: typeof DashboardHostingRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/domains': {
+      id: '/dashboard/domains'
+      path: '/domains'
+      fullPath: '/dashboard/domains'
+      preLoaderRoute: typeof DashboardDomainsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/ai-tools': {
+      id: '/dashboard/ai-tools'
+      path: '/ai-tools'
+      fullPath: '/dashboard/ai-tools'
+      preLoaderRoute: typeof DashboardAiToolsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/account': {
+      id: '/dashboard/account'
+      path: '/account'
+      fullPath: '/dashboard/account'
+      preLoaderRoute: typeof DashboardAccountRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
+
+interface DashboardRouteChildren {
+  DashboardAccountRoute: typeof DashboardAccountRoute
+  DashboardAiToolsRoute: typeof DashboardAiToolsRoute
+  DashboardDomainsRoute: typeof DashboardDomainsRoute
+  DashboardHostingRoute: typeof DashboardHostingRoute
+  DashboardInvoicesRoute: typeof DashboardInvoicesRoute
+  DashboardLeadsRoute: typeof DashboardLeadsRoute
+  DashboardLocalListingsRoute: typeof DashboardLocalListingsRoute
+  DashboardMarketingRoute: typeof DashboardMarketingRoute
+  DashboardMarketplaceRoute: typeof DashboardMarketplaceRoute
+  DashboardMobileAppsRoute: typeof DashboardMobileAppsRoute
+  DashboardOrdersRoute: typeof DashboardOrdersRoute
+  DashboardOverviewRoute: typeof DashboardOverviewRoute
+  DashboardServicesRoute: typeof DashboardServicesRoute
+  DashboardSocialMediaRoute: typeof DashboardSocialMediaRoute
+  DashboardSupportRoute: typeof DashboardSupportRoute
+  DashboardVoipRoute: typeof DashboardVoipRoute
+  DashboardWebsitesRoute: typeof DashboardWebsitesRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAccountRoute: DashboardAccountRoute,
+  DashboardAiToolsRoute: DashboardAiToolsRoute,
+  DashboardDomainsRoute: DashboardDomainsRoute,
+  DashboardHostingRoute: DashboardHostingRoute,
+  DashboardInvoicesRoute: DashboardInvoicesRoute,
+  DashboardLeadsRoute: DashboardLeadsRoute,
+  DashboardLocalListingsRoute: DashboardLocalListingsRoute,
+  DashboardMarketingRoute: DashboardMarketingRoute,
+  DashboardMarketplaceRoute: DashboardMarketplaceRoute,
+  DashboardMobileAppsRoute: DashboardMobileAppsRoute,
+  DashboardOrdersRoute: DashboardOrdersRoute,
+  DashboardOverviewRoute: DashboardOverviewRoute,
+  DashboardServicesRoute: DashboardServicesRoute,
+  DashboardSocialMediaRoute: DashboardSocialMediaRoute,
+  DashboardSupportRoute: DashboardSupportRoute,
+  DashboardVoipRoute: DashboardVoipRoute,
+  DashboardWebsitesRoute: DashboardWebsitesRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   DomainRoute: DomainRoute,
   HostingRoute: HostingRoute,
   LoginRoute: LoginRoute,
@@ -397,3 +783,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
