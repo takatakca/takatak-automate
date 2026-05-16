@@ -35,7 +35,7 @@ export function ServicePageTemplate({ service }: { service: ServiceDefinition })
             )}
             {service.integrationType === "external_portal" && (
               <LaunchExternalServiceButton
-                serviceKey={service.key}
+                serviceKey={service.launchKey ?? service.key}
                 envKey={service.portalEnvKey}
                 label="Launch portal"
               />
