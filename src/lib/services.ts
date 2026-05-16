@@ -141,7 +141,7 @@ export const services: ServiceDefinition[] = [
       "Connect your social accounts, generate posts with AI, queue campaigns, and track results — from one TAKATAK portal.",
     category: "growth",
     publicRoute: "/services/social-media",
-    dashboardRoute: "/dashboard/social",
+    dashboardRoute: "/dashboard/social-media",
     checkoutType: "intake_first",
     integrationType: "external_portal",
     automationLevel: "partial",
