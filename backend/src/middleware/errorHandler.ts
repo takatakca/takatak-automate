@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { captureException } from "../lib/sentry.js";
-import type { RequestWithId } from "../lib/requestId.ts";
+import type { RequestWithId } from "../lib/requestId.js";
 
 export function notFoundHandler(_req: Request, res: Response) {
   res.status(404).json({ error: "not_found" });
