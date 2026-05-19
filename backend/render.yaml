@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: takatak-backend
+    runtime: node
+    plan: starter
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build && npx prisma migrate deploy
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: AUTH_JWT_SECRET
+        sync: false
+      - key: AUTH_JWKS_URL
+        sync: false
+      - key: UPMIND_WEBHOOK_SECRET
+        sync: false
+      - key: AUTOMATION_WEBHOOK_SECRET
+        sync: false
+      - key: PORTAL_SIGNING_SECRET
+        sync: false
+      - key: PORTAL_LAUNCH_TTL_SECONDS
+        value: "120"
+      - key: QMAPS_PORTAL_BASE_URL
+        sync: false
+      - key: FLEXS_PORTAL_BASE_URL
+        sync: false
+      - key: SOCIAL_PORTAL_BASE_URL
+        sync: false
+      - key: VOIP_PORTAL_BASE_URL
+        sync: false
+      - key: MARKETING_PORTAL_BASE_URL
+        sync: false
+      - key: MARKETPLACE_PORTAL_BASE_URL
+        sync: false
+      - key: LOVABLE_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "https://takatak.ca,https://app.takatak.ca,https://*.lovable.app"
+
+databases:
+  - name: takatak-db
+    plan: starter
+    region: oregon
+
+# After first deploy:
+# 1. Provision the Postgres DB (link it to the web service so DATABASE_URL is wired).
+# 2. Fill the secrets marked sync:false in the Render dashboard.
+# 3. Run the worker process locally or as a second Render "background worker"
+#    service with `startCommand: node dist/workers/aiIntakeWorker.js`.

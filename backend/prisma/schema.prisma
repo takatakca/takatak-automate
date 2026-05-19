@@ -159,3 +159,9 @@ model FreelancerProfile {
   rating    Float?
   createdAt DateTime @default(now())
 }
+
+model WebhookEvent {
+  id         String   @id              // external event id from Upmind/automation
+  source     String                    // "upmind" | "automation"
+  receivedAt DateTime @default(now())
+}

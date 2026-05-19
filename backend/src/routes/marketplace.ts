@@ -2,8 +2,13 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
+import { MARKETPLACE_CATEGORIES } from "../seed/marketplaceCategories.js";
 
 export const marketplaceRouter = Router();
+
+marketplaceRouter.get("/marketplace/categories", (_req, res) => {
+  res.json({ categories: MARKETPLACE_CATEGORIES });
+});
 
 marketplaceRouter.get("/marketplace/gigs", async (req, res) => {
   const category = typeof req.query.category === "string" ? req.query.category : undefined;

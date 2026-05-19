@@ -8,11 +8,18 @@ import { transition } from "../services/stateMachine.js";
 export const webhooksRouter = Router();
 
 /**
- * Webhook routes need RAW body for signature verification.
- * Mount with express.raw({ type: 'application/json' }) at router level.
+ * Upmind webhook payload (documented expectations):
+ * - `id`: unique Upmind event id (used for idempotency)
+ * - `type`: one of "order.paid" | "service.active" | "service.suspended" | "order.cancelled"
+ * - `orderId`: Upmind order id (optional, used to locate ServiceInstance)
+ * - `serviceId`: Upmind service id (optional, used to locate ServiceInstance)
+ * - `userId`: TAKATAK user id (only required if creating a new instance)
+ * - `serviceKey`: TAKATAK service key (only required if creating a new instance)
+ *
+ * Signature: HMAC-SHA256(UPMIND_WEBHOOK_SECRET, raw_body) in header `x-webhook-signature`.
  */
-
 const UpmindPayload = z.object({
+  id: z.string().min(1),
   type: z.enum(["order.paid", "service.active", "service.suspended", "order.cancelled"]),
   orderId: z.string().optional(),
   serviceId: z.string().optional(),
@@ -20,22 +27,35 @@ const UpmindPayload = z.object({
   serviceKey: z.string().optional(),
 });
 
+/** Returns true if this event id has already been processed. */
+async function alreadyProcessed(id: string, source: string): Promise<boolean> {
+  try {
+    await prisma.webhookEvent.create({ data: { id, source } });
+    return false;
+  } catch {
+    return true; // unique constraint -> duplicate
+  }
+}
+
 webhooksRouter.post(
   "/api/public/webhooks/upmind",
   raw({ type: "application/json" }),
   async (req, res) => {
-    const raw = req.body as Buffer;
+    const body = req.body as Buffer;
     const sig = req.header("x-webhook-signature");
     if (env.UPMIND_WEBHOOK_SECRET) {
-      if (!verifyHmac(env.UPMIND_WEBHOOK_SECRET, raw.toString("utf8"), sig ?? null)) {
+      if (!verifyHmac(env.UPMIND_WEBHOOK_SECRET, body.toString("utf8"), sig ?? null)) {
         return res.status(401).send("invalid_signature");
       }
     }
-    const parsed = UpmindPayload.safeParse(JSON.parse(raw.toString("utf8")));
+    const parsed = UpmindPayload.safeParse(JSON.parse(body.toString("utf8")));
     if (!parsed.success) return res.status(400).send("invalid_payload");
     const p = parsed.data;
 
-    // Find or create the matching service instance.
+    if (await alreadyProcessed(p.id, "upmind")) {
+      return res.json({ ok: true, duplicate: true });
+    }
+
     let instance =
       (p.orderId &&
         (await prisma.serviceInstance.findFirst({ where: { upmindOrderId: p.orderId } }))) ||
@@ -69,6 +89,7 @@ webhooksRouter.post(
 );
 
 const AutomationPayload = z.object({
+  id: z.string().min(1),
   serviceInstanceId: z.string(),
   state: z.enum([
     "draft","checkout_started","payment_pending","paid","provisioning_queued",
@@ -86,16 +107,20 @@ webhooksRouter.post(
   "/api/public/webhooks/automation",
   raw({ type: "application/json" }),
   async (req, res) => {
-    const raw = req.body as Buffer;
+    const body = req.body as Buffer;
     const sig = req.header("x-webhook-signature");
     if (env.AUTOMATION_WEBHOOK_SECRET) {
-      if (!verifyHmac(env.AUTOMATION_WEBHOOK_SECRET, raw.toString("utf8"), sig ?? null)) {
+      if (!verifyHmac(env.AUTOMATION_WEBHOOK_SECRET, body.toString("utf8"), sig ?? null)) {
         return res.status(401).send("invalid_signature");
       }
     }
-    const parsed = AutomationPayload.safeParse(JSON.parse(raw.toString("utf8")));
+    const parsed = AutomationPayload.safeParse(JSON.parse(body.toString("utf8")));
     if (!parsed.success) return res.status(400).send("invalid_payload");
     const p = parsed.data;
+
+    if (await alreadyProcessed(p.id, "automation")) {
+      return res.json({ ok: true, duplicate: true });
+    }
 
     await transition({
       serviceInstanceId: p.serviceInstanceId,
