@@ -44,6 +44,7 @@ import { Route as DashboardHostingRouteImport } from './routes/dashboard.hosting
 import { Route as DashboardDomainsRouteImport } from './routes/dashboard.domains'
 import { Route as DashboardAiToolsRouteImport } from './routes/dashboard.ai-tools'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
+import { Route as DashboardAdminExceptionsRouteImport } from './routes/dashboard.admin.exceptions'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -220,6 +221,12 @@ const DashboardAccountRoute = DashboardAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAdminExceptionsRoute =
+  DashboardAdminExceptionsRouteImport.update({
+    id: '/admin/exceptions',
+    path: '/admin/exceptions',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -257,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -293,6 +301,7 @@ export interface FileRoutesByTo {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -331,6 +340,7 @@ export interface FileRoutesById {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -370,6 +380,7 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard/'
+    | '/dashboard/admin/exceptions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -406,6 +417,7 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard'
+    | '/dashboard/admin/exceptions'
   id:
     | '__root__'
     | '/'
@@ -443,6 +455,7 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard/'
+    | '/dashboard/admin/exceptions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -712,6 +725,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/admin/exceptions': {
+      id: '/dashboard/admin/exceptions'
+      path: '/admin/exceptions'
+      fullPath: '/dashboard/admin/exceptions'
+      preLoaderRoute: typeof DashboardAdminExceptionsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
@@ -734,6 +754,7 @@ interface DashboardRouteChildren {
   DashboardVoipRoute: typeof DashboardVoipRoute
   DashboardWebsitesRoute: typeof DashboardWebsitesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardAdminExceptionsRoute: typeof DashboardAdminExceptionsRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
@@ -755,6 +776,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardVoipRoute: DashboardVoipRoute,
   DashboardWebsitesRoute: DashboardWebsitesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardAdminExceptionsRoute: DashboardAdminExceptionsRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(

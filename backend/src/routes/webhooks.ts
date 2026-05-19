@@ -53,7 +53,7 @@ webhooksRouter.post(
     const p = parsed.data;
 
     if (await alreadyProcessed(p.id, "upmind")) {
-      return res.json({ ok: true, duplicate: true });
+      return res.json({ received: true, duplicate: true, processed: false });
     }
 
     let instance =
@@ -72,7 +72,7 @@ webhooksRouter.post(
         },
       });
     }
-    if (!instance) return res.status(202).send("no_match");
+    if (!instance) return res.status(202).json({ received: true, duplicate: false, processed: false, reason: "no_match" });
 
     if (p.type === "order.paid") {
       await transition({ serviceInstanceId: instance.id, next: "paid", label: "Payment confirmed" });
@@ -84,7 +84,7 @@ webhooksRouter.post(
     } else if (p.type === "order.cancelled") {
       await transition({ serviceInstanceId: instance.id, next: "cancelled", label: "Cancelled" });
     }
-    res.json({ ok: true });
+    res.json({ received: true, duplicate: false, processed: true });
   },
 );
 
@@ -119,7 +119,7 @@ webhooksRouter.post(
     const p = parsed.data;
 
     if (await alreadyProcessed(p.id, "automation")) {
-      return res.json({ ok: true, duplicate: true });
+      return res.json({ received: true, duplicate: true, processed: false });
     }
 
     await transition({
@@ -134,6 +134,6 @@ webhooksRouter.post(
         data: { status: p.jobStatus ?? "succeeded", lastError: p.jobError ?? null },
       }).catch(() => undefined);
     }
-    res.json({ ok: true });
+    res.json({ received: true, duplicate: false, processed: true });
   },
 );

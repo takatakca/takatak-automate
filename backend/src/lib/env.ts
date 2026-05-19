@@ -18,6 +18,12 @@ const schema = z.object({
   PORT: z.coerce.number().int().positive().default(10000),
   NODE_ENV: z.enum(["development", "production", "test"]).default("production"),
   CORS_ORIGINS: z.string().default(""),
+  SENTRY_DSN: z.string().url().optional(),
+  RATE_LIMIT_DISABLED: z.coerce.boolean().default(false),
+  WORKER_POLL_MS: z.coerce.number().int().positive().default(5000),
+  WORKER_BATCH: z.coerce.number().int().positive().default(5),
+  WORKER_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
+  WORKER_STUCK_MS: z.coerce.number().int().positive().default(10 * 60 * 1000),
 });
 
 export const env = schema.parse(process.env);
