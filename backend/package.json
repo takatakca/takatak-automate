@@ -15,9 +15,12 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@sentry/node": "^10.53.1",
     "cors": "^2.8.5",
     "express": "^4.21.1",
+    "express-rate-limit": "^8.5.2",
     "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.1.11",
     "pino": "^9.5.0",
     "pino-http": "^10.3.0",
     "zod": "^3.23.8"
