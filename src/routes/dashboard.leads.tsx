@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardShell, EmptyState } from "@/components/layout/DashboardShell";
+import { DashboardShell } from "@/components/layout/DashboardShell";
+import { UserServicesPanel } from "@/components/dashboard/UserServicesPanel";
 
 export const Route = createFileRoute("/dashboard/leads")({
   head: () => ({
     meta: [
-      { title: "Lead generation (FLEXS) — TAKATAK" },
-      { name: "description", content: "Qualified leads delivered to your TAKATAK dashboard." },
+      { title: "Leads — TAKATAK" },
+      { name: "description", content: "Qualified leads sourced by TAKATAK AI." },
     ],
   }),
   component: Page,
@@ -14,10 +15,10 @@ export const Route = createFileRoute("/dashboard/leads")({
 function Page() {
   return (
     <DashboardShell>
-      <h1 className="text-3xl font-bold">Lead generation (FLEXS)</h1>
-      <p className="text-muted-foreground mt-1">Qualified leads delivered to your TAKATAK dashboard.</p>
+      <h1 className="text-3xl font-bold">Leads</h1>
+      <p className="text-muted-foreground mt-1">Qualified leads sourced by TAKATAK AI.</p>
       <div className="mt-8">
-        <EmptyState title="Nothing here yet" description="Once your services are active, real data from the TAKATAK backend will appear here." />
+        <UserServicesPanel serviceKeys={["lead_generation"]} emptyCta={{ to: "/checkout", label: "Add a service" }} />
       </div>
     </DashboardShell>
   );

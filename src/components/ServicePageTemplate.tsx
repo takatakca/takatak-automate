@@ -3,6 +3,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { AutomationTimeline } from "@/components/automation/AutomationTimeline";
 import { LaunchExternalServiceButton } from "@/components/LaunchExternalServiceButton";
+import { StartServiceButton } from "@/components/StartServiceButton";
 import type { ServiceDefinition } from "@/lib/services";
 
 export function ServicePageTemplate({ service }: { service: ServiceDefinition }) {
@@ -16,22 +17,20 @@ export function ServicePageTemplate({ service }: { service: ServiceDefinition })
           <h1 className="mt-5 text-4xl md:text-5xl font-bold">{service.title}</h1>
           <p className="mt-4 text-muted-foreground text-lg">{service.longDescription}</p>
           <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
-            {service.requiresIntake ? (
+            {service.integrationType === "upmind" ? (
               <Link
-                to="/dashboard"
+                to={service.publicRoute}
                 className="px-6 py-3 rounded-lg font-semibold text-primary-foreground inline-flex items-center gap-2"
                 style={{ backgroundImage: "var(--gradient-hero)" }}
               >
                 {service.ctaLabel} <ArrowRight size={16} />
               </Link>
             ) : (
-              <Link
-                to="/checkout"
-                className="px-6 py-3 rounded-lg font-semibold text-primary-foreground inline-flex items-center gap-2"
-                style={{ backgroundImage: "var(--gradient-hero)" }}
-              >
-                {service.ctaLabel} <ArrowRight size={16} />
-              </Link>
+              <StartServiceButton
+                serviceKey={service.key}
+                label={service.ctaLabel}
+                fallbackTo={service.dashboardRoute}
+              />
             )}
             {service.integrationType === "external_portal" && (
               <LaunchExternalServiceButton
