@@ -42,6 +42,35 @@ services:
         sync: false
       - key: CORS_ORIGINS
         value: "https://takatak.ca,https://app.takatak.ca,https://*.lovable.app"
+      - key: SENTRY_DSN
+        sync: false
+
+  - type: worker
+    name: takatak-ai-intake-worker
+    runtime: node
+    plan: starter
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: node dist/workers/aiIntakeWorker.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: LOVABLE_API_KEY
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: WORKER_POLL_MS
+        value: "5000"
+      - key: WORKER_BATCH
+        value: "5"
+      - key: WORKER_MAX_ATTEMPTS
+        value: "5"
+      - key: WORKER_STUCK_MS
+        value: "600000"
 
 databases:
   - name: takatak-db
