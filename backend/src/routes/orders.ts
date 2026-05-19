@@ -21,7 +21,7 @@ ordersRouter.post("/orders", requireAuth, async (req: AuthedRequest, res) => {
         data: {
           userId: req.userId!,
           serviceKey: item.serviceKey,
-          meta: { qty: item.qty, options: item.options ?? {} },
+          meta: { qty: item.qty, options: item.options ?? {} } as object,
         },
       }),
     ),

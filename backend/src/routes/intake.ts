@@ -31,7 +31,7 @@ intakeRouter.post("/ai/intake/start", requireAuth, async (req: AuthedRequest, re
       userId: req.userId!,
       serviceKey,
       serviceInstanceId: serviceInstanceId ?? null,
-      answers,
+      answers: answers as object,
     },
   });
 

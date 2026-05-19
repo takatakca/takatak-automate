@@ -27,7 +27,7 @@ webhooksRouter.post(
     const raw = req.body as Buffer;
     const sig = req.header("x-webhook-signature");
     if (env.UPMIND_WEBHOOK_SECRET) {
-      if (!verifyHmac(env.UPMIND_WEBHOOK_SECRET, raw.toString("utf8"), sig)) {
+      if (!verifyHmac(env.UPMIND_WEBHOOK_SECRET, raw.toString("utf8"), sig ?? null)) {
         return res.status(401).send("invalid_signature");
       }
     }
@@ -89,7 +89,7 @@ webhooksRouter.post(
     const raw = req.body as Buffer;
     const sig = req.header("x-webhook-signature");
     if (env.AUTOMATION_WEBHOOK_SECRET) {
-      if (!verifyHmac(env.AUTOMATION_WEBHOOK_SECRET, raw.toString("utf8"), sig)) {
+      if (!verifyHmac(env.AUTOMATION_WEBHOOK_SECRET, raw.toString("utf8"), sig ?? null)) {
         return res.status(401).send("invalid_signature");
       }
     }

@@ -42,7 +42,7 @@ servicesRouter.post("/services/start", requireAuth, async (req: AuthedRequest, r
   const { serviceKey, options } = parsed.data;
 
   const instance = await prisma.serviceInstance.create({
-    data: { userId: req.userId!, serviceKey, meta: options ?? {} },
+    data: { userId: req.userId!, serviceKey, meta: (options ?? {}) as object },
   });
   await prisma.automationTimelineEvent.create({
     data: { serviceInstanceId: instance.id, state: "draft", label: "Service requested" },
