@@ -50,3 +50,31 @@ adminRouter.post("/admin/services/:id/fail", async (req, res) => {
   const updated = await transition({ serviceInstanceId: req.params.id, next: "failed", label: "Marked failed", message, actor: "takatak" });
   res.json({ instance: updated });
 });
+
+adminRouter.get("/admin/exceptions", async (_req, res) => {
+  const [pendingServices, failedJobs, intakeReview] = await Promise.all([
+    prisma.serviceInstance.findMany({
+      where: { state: { in: ["failed", "waiting_for_takatak"] } },
+      orderBy: { updatedAt: "asc" },
+      take: 200,
+    }),
+    prisma.automationJob.findMany({
+      where: { status: "failed" },
+      orderBy: { updatedAt: "desc" },
+      take: 200,
+    }),
+    prisma.aIIntake.findMany({
+      where: {
+        service: { is: { state: "waiting_for_takatak" } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    }),
+  ]);
+  res.json({
+    pendingServices,
+    failedJobs,
+    intakeReview,
+    provisioningFailures: pendingServices.filter((s) => s.state === "failed"),
+  });
+});
