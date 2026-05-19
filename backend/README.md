@@ -88,12 +88,60 @@ curl -s -X POST -H "Authorization: Bearer $JWT" -H 'Content-Type: application/js
 ## Remaining production setup
 
 - Replace HS256 JWT verification with JWKS if your auth provider uses RS256.
-- Add a job worker (BullMQ / pg-boss) to consume `AutomationJob` rows and
-  call back via `/api/public/webhooks/automation`.
-- Wire AI intake processing to the Lovable AI Gateway (`LOVABLE_API_KEY`
-  is already in env) inside the `ai_intake_processing` worker.
+- For high throughput, swap the in-process worker for BullMQ / pg-boss.
 - Seed `MarketplaceGig` rows once freelancer onboarding is live.
-- Add Sentry/observability and rate-limiting (e.g. `express-rate-limit`).
+
+---
+
+## Production hardening (this phase)
+
+- **Rate limiting** via `express-rate-limit`:
+  - Auth-sensitive: 10/min
+  - `/services/start`: 10/min
+  - `/ai/intake/start`: 6/min
+  - `/integrations/launch`: 30/min
+  - Webhooks: 600/min (HMAC + idempotency carry the real load)
+  - General API: 120/min
+  - Disable with `RATE_LIMIT_DISABLED=true` (local/test only).
+  - Errors return JSON: `{ "error": "rate_limited", "message": "..." }`.
+- **Request IDs** on every response (`x-request-id`); echoed in error logs.
+- **Structured logging** via `pino-http` with redaction of `authorization`,
+  `cookie`, and `x-webhook-signature` headers. Bodies are never logged.
+- **Centralised error handler** returns `{ error, requestId }`; logs error
+  message + path only — never payloads or secrets.
+- **Sentry (optional)** — set `SENTRY_DSN` to enable. App and worker run
+  fine without it.
+- **Health / readiness:**
+  - `GET /health` — liveness (no DB).
+  - `GET /ready` — verifies DB connectivity via `SELECT 1`; returns 503 if down.
+  - Worker logs `starting` / `picked` / `completed` / `routed_to_human` /
+    `failed` / `recovered_stuck_jobs` as structured JSON.
+- **Indexes** added on `ServiceInstance(userId, serviceKey, state)`,
+  `AutomationJob(status, kind, kind+status, updatedAt)`,
+  `AutomationTimelineEvent(serviceInstanceId, at)`,
+  `AIIntake(serviceInstanceId)`, `Order(serviceInstanceId)`,
+  `WebhookEvent(receivedAt, source+receivedAt)`.
+- **Worker reliability:**
+  - `WORKER_MAX_ATTEMPTS` (default 5) caps retries; jobs past the cap are
+    marked `failed` and surface in `/admin/exceptions`.
+  - Exponential backoff (5s → 15s → 45s → … capped at 15m) between attempts.
+  - Stuck `running` jobs older than `WORKER_STUCK_MS` (default 10m) are
+    re-queued automatically.
+  - SIGTERM/SIGINT → graceful shutdown after the in-flight job.
+- **Webhook reliability:**
+  - HMAC-SHA256 + constant-time compare.
+  - Idempotency via `WebhookEvent` PK; duplicates return
+    `{ "received": true, "duplicate": true, "processed": false }`.
+  - Successful processing returns
+    `{ "received": true, "duplicate": false, "processed": true }`.
+  - **TTL cleanup:** run nightly via cron or `pg_cron` to prevent unbounded
+    growth (events older than 30 days are safe to delete):
+    ```sql
+    DELETE FROM "WebhookEvent" WHERE "receivedAt" < NOW() - INTERVAL '30 days';
+    ```
+- **Admin endpoints** require an `admin` role claim (`roles[]`, `role`, or
+  `isAdmin`). Frontend ships a hidden `/dashboard/admin/exceptions` route
+  gated behind a localStorage flag until role claims are wired through auth.
 
 ---
 
@@ -124,6 +172,10 @@ The repo includes `backend/render.yaml`. Two paths:
 - **Production / Render:** `npx prisma migrate deploy` (runs in build command).
 - **Local dev:** `npx prisma migrate dev --name <change>` to create + apply.
 - **Seed external integrations + log marketplace categories:** `npm run prisma:seed`.
+- After any schema change in this repo, generate a migration locally with
+  `npx prisma migrate dev --name <change>` and commit the
+  `prisma/migrations/` folder. Render's build step runs `prisma migrate deploy`
+  to apply them; never run `db push` against production.
 
 Marketplace categories live in code (`src/seed/marketplaceCategories.ts`) and
 are served by `GET /marketplace/categories`. No fake freelancers or gigs are
@@ -222,3 +274,42 @@ No AI keys are ever exposed to the frontend.
 5. Point Lovable's `RENDER_API_BASE_URL` at the deployed Render URL.
 6. Issue a test JWT, hit `/health`, `/user/services`, and one webhook event
    to confirm the full pipeline.
+
+---
+
+## Smoke tests (post-deploy)
+
+```sh
+BASE=https://<your-render-host>
+JWT=<test token>
+
+curl -fsS $BASE/health
+curl -fsS $BASE/ready
+
+curl -fsS -H "Authorization: Bearer $JWT" $BASE/user/services
+
+curl -fsS -X POST -H "Authorization: Bearer $JWT" -H 'Content-Type: application/json' \
+  -d '{"serviceKey":"local_listings"}' $BASE/services/start
+
+curl -fsS -X POST -H "Authorization: Bearer $JWT" -H 'Content-Type: application/json' \
+  -d '{"serviceKey":"qmaps"}' $BASE/integrations/launch
+# Expect 200 with launchUrl when QMAPS_PORTAL_BASE_URL is set,
+# 404 portal_not_configured otherwise.
+```
+
+Webhook smoke:
+
+```sh
+BODY='{"id":"evt_test_1","type":"order.paid","orderId":"ord_1","userId":"usr_1","serviceKey":"hosting"}'
+SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$UPMIND_WEBHOOK_SECRET" -hex | awk '{print $2}')
+curl -fsS -X POST -H "Content-Type: application/json" -H "x-webhook-signature: $SIG" \
+  -d "$BODY" $BASE/api/public/webhooks/upmind
+# Replay the same request → response should be { received:true, duplicate:true, processed:false }
+```
+
+## Rollback
+
+- Render keeps prior deploys; use **Manual deploy → Previous successful deploy**
+  to roll back the web service and the worker independently.
+- For schema rollbacks, restore from a Render Postgres backup; never run
+  `prisma migrate reset` against production.
