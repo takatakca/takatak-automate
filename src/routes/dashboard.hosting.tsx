@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardShell, EmptyState } from "@/components/layout/DashboardShell";
+import { DashboardShell } from "@/components/layout/DashboardShell";
+import { UserServicesPanel } from "@/components/dashboard/UserServicesPanel";
 
 export const Route = createFileRoute("/dashboard/hosting")({
   head: () => ({
     meta: [
       { title: "Hosting — TAKATAK" },
-      { name: "description", content: "Your hosting plans, sites, and resource usage (Upmind)." },
+      { name: "description", content: "Web hosting accounts and status." },
     ],
   }),
   component: Page,
@@ -15,9 +16,9 @@ function Page() {
   return (
     <DashboardShell>
       <h1 className="text-3xl font-bold">Hosting</h1>
-      <p className="text-muted-foreground mt-1">Your hosting plans, sites, and resource usage (Upmind).</p>
+      <p className="text-muted-foreground mt-1">Web hosting accounts and status.</p>
       <div className="mt-8">
-        <EmptyState title="Nothing here yet" description="Once your services are active, real data from the TAKATAK backend will appear here." />
+        <UserServicesPanel serviceKeys={["hosting"]} emptyCta={{ to: "/checkout", label: "Add a service" }} />
       </div>
     </DashboardShell>
   );

@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardShell, EmptyState } from "@/components/layout/DashboardShell";
+import { DashboardShell } from "@/components/layout/DashboardShell";
+import { UserServicesPanel } from "@/components/dashboard/UserServicesPanel";
 
 export const Route = createFileRoute("/dashboard/social-media")({
   head: () => ({
     meta: [
       { title: "Social media — TAKATAK" },
-      { name: "description", content: "Scheduled posts, connected accounts, and analytics." },
+      { name: "description", content: "Connected accounts and scheduled content." },
     ],
   }),
   component: Page,
@@ -15,9 +16,9 @@ function Page() {
   return (
     <DashboardShell>
       <h1 className="text-3xl font-bold">Social media</h1>
-      <p className="text-muted-foreground mt-1">Scheduled posts, connected accounts, and analytics.</p>
+      <p className="text-muted-foreground mt-1">Connected accounts and scheduled content.</p>
       <div className="mt-8">
-        <EmptyState title="Nothing here yet" description="Once your services are active, real data from the TAKATAK backend will appear here." />
+        <UserServicesPanel serviceKeys={["social_media"]} emptyCta={{ to: "/checkout", label: "Add a service" }} />
       </div>
     </DashboardShell>
   );
