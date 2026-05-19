@@ -52,6 +52,8 @@ model ServiceInstance {
 
   @@index([userId])
   @@index([userId, serviceKey])
+  @@index([serviceKey])
+  @@index([state])
 }
 
 model AutomationTimelineEvent {
@@ -81,6 +83,9 @@ model AutomationJob {
 
   @@index([status])
   @@index([serviceInstanceId])
+  @@index([kind])
+  @@index([kind, status])
+  @@index([updatedAt])
 }
 
 model AIIntake {
@@ -94,6 +99,7 @@ model AIIntake {
   service           ServiceInstance? @relation(fields: [serviceInstanceId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([serviceInstanceId])
 }
 
 model ExternalIntegration {
@@ -120,6 +126,7 @@ model Order {
 
   @@index([userId])
   @@index([upmindOrderId])
+  @@index([serviceInstanceId])
 }
 
 model MarketplaceGig {
@@ -164,4 +171,7 @@ model WebhookEvent {
   id         String   @id              // external event id from Upmind/automation
   source     String                    // "upmind" | "automation"
   receivedAt DateTime @default(now())
+
+  @@index([receivedAt])
+  @@index([source, receivedAt])
 }
