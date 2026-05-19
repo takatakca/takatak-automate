@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
 import { DashboardShell } from "@/components/layout/DashboardShell";
-import { ServiceStateBadge } from "@/components/automation/ServiceStateBadge";
-import { services } from "@/lib/services";
+import { UserServicesPanel } from "@/components/dashboard/UserServicesPanel";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/dashboard/")({
@@ -34,22 +32,12 @@ function DashboardOverview() {
           Add a service
         </Link>
       </div>
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {services.map((s) => (
-          <div key={s.key} className="rounded-2xl border border-border bg-card p-5">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="font-semibold">{s.title}</h3>
-              <ServiceStateBadge state="draft" />
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">{s.shortDescription}</p>
-            <Link
-              to={s.dashboardRoute}
-              className="mt-4 inline-flex items-center gap-1 text-sm text-primary"
-            >
-              {s.dashboardCtaLabel} <ArrowRight size={14} />
-            </Link>
-          </div>
-        ))}
+      <div className="mt-8">
+        <UserServicesPanel
+          emptyTitle="No services yet"
+          emptyDescription="Pick a TAKATAK service to get started — provisioning, AI intake, and live status all appear here."
+          emptyCta={{ to: "/checkout", label: "Browse services" }}
+        />
       </div>
     </DashboardShell>
   );
