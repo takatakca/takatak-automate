@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ServiceState {
+  draft
+  checkout_started
+  payment_pending
+  paid
+  provisioning_queued
+  provisioning_running
+  intake_required
+  ai_processing
+  waiting_for_client
+  waiting_for_takatak
+  active
+  failed
+  cancelled
+  completed
+}
+
+enum JobStatus {
+  queued
+  running
+  succeeded
+  failed
+  cancelled
+}
+
+model ServiceInstance {
+  id                String       @id @default(cuid())
+  userId            String
+  serviceKey        String
+  state             ServiceState @default(draft)
+  upmindOrderId     String?
+  upmindServiceId   String?
+  externalPortalUrl String?
+  intakeId          String?
+  meta              Json         @default("{}")
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  timeline AutomationTimelineEvent[]
+  jobs     AutomationJob[]
+  orders   Order[]
+  intakes  AIIntake[]
+
+  @@index([userId])
+  @@index([userId, serviceKey])
+}
+
+model AutomationTimelineEvent {
+  id                String          @id @default(cuid())
+  serviceInstanceId String
+  state             ServiceState
+  label             String?
+  message           String?
+  actor             String          @default("system") // system | client | takatak
+  at                DateTime        @default(now())
+  service           ServiceInstance @relation(fields: [serviceInstanceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceInstanceId, at])
+}
+
+model AutomationJob {
+  id                String           @id @default(cuid())
+  serviceInstanceId String?
+  kind              String
+  status            JobStatus        @default(queued)
+  attempts          Int              @default(0)
+  payload           Json             @default("{}")
+  lastError         String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  service           ServiceInstance? @relation(fields: [serviceInstanceId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([serviceInstanceId])
+}
+
+model AIIntake {
+  id                String           @id @default(cuid())
+  userId            String
+  serviceKey        String
+  serviceInstanceId String?
+  answers           Json             @default("{}")
+  brief             String?
+  createdAt         DateTime         @default(now())
+  service           ServiceInstance? @relation(fields: [serviceInstanceId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model ExternalIntegration {
+  id          String   @id @default(cuid())
+  serviceKey  String   @unique
+  baseUrl     String
+  config      Json     @default("{}")
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id                String           @id @default(cuid())
+  userId            String
+  serviceInstanceId String?
+  serviceKey        String
+  upmindOrderId     String?
+  status            String           @default("created") // created|paid|failed|cancelled
+  amountCents       Int?
+  currency          String           @default("CAD")
+  meta              Json             @default("{}")
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  service           ServiceInstance? @relation(fields: [serviceInstanceId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([upmindOrderId])
+}
+
+model MarketplaceGig {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  description String
+  priceCents  Int
+  currency    String   @default("CAD")
+  freelancerId String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([category])
+}
+
+model MarketplaceProject {
+  id           String   @id @default(cuid())
+  userId       String
+  title        String
+  brief        String
+  budgetCents  Int?
+  category     String
+  status       String   @default("open")
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([category])
+}
+
+model FreelancerProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  displayName String
+  bio       String?
+  skills    String[] @default([])
+  rating    Float?
+  createdAt DateTime @default(now())
+}
