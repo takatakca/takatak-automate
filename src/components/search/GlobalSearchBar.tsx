@@ -26,10 +26,7 @@ export function GlobalSearchBar() {
 
   const submit = () => {
     setOpen(false);
-    void navigate({
-      to: "/search",
-      search: { q: q || undefined, category: category || undefined },
-    });
+    void navigate({ to: "/", search: { q, category } as never });
   };
 
   return (
@@ -55,14 +52,6 @@ export function GlobalSearchBar() {
             <option key={c.slug} value={c.slug}>{c.name}</option>
           ))}
         </select>
-        <button
-          type="button"
-          onClick={submit}
-          className="rounded-full px-3 py-1 text-xs font-semibold text-primary-foreground"
-          style={{ backgroundImage: "var(--gradient-hero)" }}
-        >
-          Go
-        </button>
       </div>
       {open && results.length > 0 && (
         <div className="absolute z-50 left-0 right-0 mt-1 rounded-xl border border-border bg-popover shadow-lg overflow-hidden max-h-96 overflow-y-auto">
