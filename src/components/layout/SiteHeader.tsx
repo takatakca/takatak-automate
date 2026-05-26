@@ -3,17 +3,21 @@ import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { brand } from "@/lib/brand";
 import { useAuth } from "@/lib/auth-context";
+import { GlobalSearchBar } from "@/components/search/GlobalSearchBar";
 
 const nav = [
+  { to: "/deals", label: "Today's Deals" },
   { to: "/domain", label: "Domains" },
   { to: "/hosting", label: "Hosting" },
   { to: "/services/websites", label: "Websites" },
-  { to: "/services/marketing", label: "Marketing" },
-  { to: "/services/social-media", label: "Social Media" },
-  { to: "/services/local-listings", label: "Local Listings" },
-  { to: "/services/lead-generation", label: "Leads" },
+  { to: "/services/mobile-apps", label: "Mobile Apps" },
+  { to: "/services/local-listings", label: "QMAPS" },
+  { to: "/services/lead-generation", label: "FLEXS" },
   { to: "/services/voip", label: "VoIP" },
-  { to: "/services/marketplace", label: "Marketplace" },
+  { to: "/services/marketing", label: "Marketing" },
+  { to: "/services/social-media", label: "Social" },
+  { to: "/services/ai-business-tools", label: "AI Tools" },
+  { to: "/marketplace", label: "Marketplace" },
 ] as const;
 
 export function SiteHeader() {
@@ -31,7 +35,10 @@ export function SiteHeader() {
             {brand.brandName}
           </span>
         </Link>
-        <ul className="hidden lg:flex items-center gap-1 text-sm">
+        <div className="hidden md:block flex-1 max-w-md">
+          <GlobalSearchBar />
+        </div>
+        <ul className="hidden xl:flex items-center gap-0.5 text-xs">
           {nav.map((n) => (
             <li key={n.to}>
               <Link
