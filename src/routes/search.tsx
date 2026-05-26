@@ -18,6 +18,7 @@ function Page() {
   const intent = q ? classifyIntent(q) : "unknown";
   return (
     <SiteShell>
+      <div className="market-light min-h-screen">
       <div className="max-w-5xl mx-auto px-4 py-10 space-y-8">
         <header>
           <h1 className="text-3xl font-bold">{q ? `Results for "${q}"` : "Search TAKATAK"}</h1>
@@ -59,6 +60,7 @@ function Page() {
         </section>
 
         <ServiceAdvisor defaultQuery={q} />
+      </div>
       </div>
     </SiteShell>
   );

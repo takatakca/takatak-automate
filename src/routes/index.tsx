@@ -150,8 +150,8 @@ function Index() {
         </div>
       </section>
 
-      {/* TAKATAK Marketplace section */}
-      <section className="border-t border-border bg-secondary/20">
+      {/* TAKATAK Marketplace section — light surface band */}
+      <section className="market-light border-t border-border">
         <div className="max-w-7xl mx-auto px-4 py-20">
           <div className="flex items-end justify-between flex-wrap gap-4 mb-10">
             <div>
@@ -159,7 +159,7 @@ function Index() {
               <h2 className="mt-2 text-3xl md:text-4xl font-bold">Hire vetted talent. Delivered through TAKATAK.</h2>
               <p className="mt-2 text-muted-foreground max-w-2xl">Escrowed payments, AI-matched freelancers, one point of accountability.</p>
             </div>
-            <Link to="/marketplace" className="text-sm text-primary inline-flex items-center gap-1">
+            <Link to="/marketplace" className="text-sm font-medium text-primary inline-flex items-center gap-1">
               Explore marketplace <ArrowRight size={14} />
             </Link>
           </div>
@@ -183,7 +183,7 @@ function Index() {
                 key={c.slug}
                 to="/marketplace/category/$slug"
                 params={{ slug: c.slug }}
-                className="rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:bg-card/80 transition-colors text-sm font-medium"
+                className="rounded-xl border border-border bg-card p-4 hover:border-primary/50 hover:shadow-[var(--shadow-card)] transition-all text-sm font-medium text-foreground"
               >
                 {c.name}
                 <div className="mt-1 text-xs text-muted-foreground">Browse →</div>
@@ -191,7 +191,7 @@ function Index() {
             ))}
           </div>
           <div className="mt-8 text-center">
-            <Link to="/marketplace/post-project" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-primary-foreground" style={{ backgroundImage: "var(--gradient-hero)" }}>
+            <Link to="/marketplace/post-project" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-primary-foreground bg-primary">
               Post a custom project <ArrowRight size={14} />
             </Link>
           </div>

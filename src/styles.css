@@ -162,3 +162,36 @@
     letter-spacing: -0.02em;
   }
 }
+
+/*
+ * Marketplace light surface — scoped clean white marketplace palette.
+ * Apply via `class="market-light"` on a wrapper. Tokens cascade so all
+ * shadcn/tailwind semantic utilities (bg-card, text-muted-foreground,
+ * border-border, text-primary, etc.) automatically switch to the light theme
+ * for marketplace pages without affecting the dark global UI.
+ */
+.market-light {
+  --background: oklch(0.99 0.003 250);
+  --foreground: oklch(0.18 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 260);
+  --primary: oklch(0.55 0.18 155);
+  --primary-foreground: oklch(0.99 0.003 250);
+  --secondary: oklch(0.97 0.005 250);
+  --secondary-foreground: oklch(0.22 0.02 260);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.6 0.17 155);
+  --accent-foreground: oklch(0.99 0.003 250);
+  --border: oklch(0.92 0.005 250);
+  --input: oklch(0.94 0.005 250);
+  --ring: oklch(0.55 0.18 155);
+  --gradient-hero: linear-gradient(135deg, oklch(0.55 0.18 155) 0%, oklch(0.6 0.17 195) 100%);
+  --gradient-bg: linear-gradient(180deg, oklch(0.99 0.003 250) 0%, oklch(0.97 0.005 250) 100%);
+  --shadow-card: 0 1px 2px oklch(0.18 0.02 260 / 0.04), 0 8px 24px -12px oklch(0.18 0.02 260 / 0.08);
+  background-color: var(--background);
+  color: var(--foreground);
+  background-image: none;
+}
