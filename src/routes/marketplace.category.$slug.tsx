@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getCategory } from "@/lib/marketplaceCategories";
-import { ServiceAdvisor } from "@/components/marketplace/ServiceAdvisor";
+import { PopularServicesGrid } from "@/components/marketplace/PopularServicesGrid";
+import { ShieldCheck, Clock, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/marketplace/category/$slug")({
   loader: ({ params }) => {
@@ -32,22 +33,37 @@ export const Route = createFileRoute("/marketplace/category/$slug")({
 function Page() {
   const { category } = Route.useLoaderData();
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 space-y-10">
-      <header>
+    <div className="max-w-7xl mx-auto px-4 py-10 space-y-10">
+      <header className="border-b border-border pb-6">
         <Link to="/marketplace" className="text-xs text-muted-foreground hover:text-foreground">← Marketplace</Link>
-        <h1 className="mt-2 text-3xl font-bold">{category.name}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Vetted TAKATAK freelancers · escrowed payments · one point of accountability.</p>
-      </header>
-      <div className="rounded-2xl border border-dashed border-border bg-card/40 p-10 text-center">
-        <h3 className="font-semibold">Packages coming soon</h3>
-        <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
-          We're onboarding freelancers for this category. Post a project and TAKATAK will assign the best match.
+        <h1 className="mt-2 text-3xl md:text-4xl font-bold text-foreground">{category.name}</h1>
+        <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+          Vetted TAKATAK freelancers delivering {category.name.toLowerCase()} with clear scope, fixed prices and escrow protection.
         </p>
-        <Link to="/marketplace/post-project" className="mt-4 inline-block px-4 py-2 rounded-md text-sm font-medium text-primary-foreground" style={{ backgroundImage: "var(--gradient-hero)" }}>
-          Post a {category.name} project
+        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5"><ShieldCheck size={13} className="text-primary" /> Escrow protected</span>
+          <span className="inline-flex items-center gap-1.5"><Clock size={13} className="text-primary" /> Avg. delivery 3–7 days</span>
+          <span className="inline-flex items-center gap-1.5"><BadgeCheck size={13} className="text-primary" /> Verified by Groupe TAKATAK</span>
+        </div>
+      </header>
+
+      <section>
+        <h2 className="text-xl font-bold text-foreground mb-4">Featured services</h2>
+        <PopularServicesGrid />
+      </section>
+
+      <section className="rounded-2xl border border-border bg-card p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 className="font-semibold text-foreground">Can't find exactly what you need?</h3>
+          <p className="mt-1 text-sm text-muted-foreground">Post a {category.name} brief and we'll match you with a vetted freelancer in 24h.</p>
+        </div>
+        <Link
+          to="/marketplace/post-project"
+          className="px-5 py-2.5 rounded-md text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90 shrink-0"
+        >
+          Post a project
         </Link>
-      </div>
-      <ServiceAdvisor defaultQuery={category.name} />
+      </section>
     </div>
   );
 }
