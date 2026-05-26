@@ -21,7 +21,7 @@ export function MarketplaceCategoryStrip() {
   return (
     <nav aria-label="Categories" className="border-y border-border bg-background">
       <div className="max-w-7xl mx-auto px-4">
-        <ul className="flex gap-1 overflow-x-auto scrollbar-none py-2 -mx-1 px-1">
+        <ul className="flex gap-1 overflow-x-auto py-2 -mx-1 px-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
           {STRIP.map((s) => {
             const Icon = s.icon;
             return (
