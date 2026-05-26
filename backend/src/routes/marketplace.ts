@@ -10,6 +10,23 @@ marketplaceRouter.get("/marketplace/categories", (_req, res) => {
   res.json({ categories: MARKETPLACE_CATEGORIES });
 });
 
+// ---- Packages (v2) ----
+marketplaceRouter.get("/marketplace/packages", async (req, res) => {
+  const category = typeof req.query.category === "string" ? req.query.category : undefined;
+  const packages = await prisma.marketplacePackage.findMany({
+    where: { active: true, ...(category ? { category } : {}) },
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  });
+  res.json({ packages });
+});
+
+marketplaceRouter.get("/marketplace/packages/:id", async (req, res) => {
+  const pkg = await prisma.marketplacePackage.findUnique({ where: { id: req.params.id } });
+  if (!pkg) return res.status(404).json({ error: "not_found" });
+  res.json({ package: pkg });
+});
+
 marketplaceRouter.get("/marketplace/gigs", async (req, res) => {
   const category = typeof req.query.category === "string" ? req.query.category : undefined;
   const gigs = await prisma.marketplaceGig.findMany({
