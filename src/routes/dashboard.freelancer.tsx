@@ -1,12 +1,12 @@
 import { createFileRoute, Outlet, Link, useLocation } from "@tanstack/react-router";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 
-const tabs = [
+const tabs: { to: string; label: string; exact?: boolean }[] = [
   { to: "/dashboard/freelancer", label: "Overview", exact: true },
   { to: "/dashboard/freelancer/contracts", label: "Contracts" },
   { to: "/dashboard/freelancer/deliveries", label: "Deliveries" },
   { to: "/dashboard/freelancer/payouts", label: "Payouts" },
-] as const;
+];
 
 export const Route = createFileRoute("/dashboard/freelancer")({
   component: Layout,
@@ -24,7 +24,7 @@ function Layout() {
         {tabs.map((t) => {
           const active = t.exact ? loc.pathname === t.to : loc.pathname.startsWith(t.to);
           return (
-            <Link key={t.to} to={t.to} className={`px-3 py-2 text-sm border-b-2 -mb-px ${active ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+            <Link key={t.to} to={t.to as never} className={`px-3 py-2 text-sm border-b-2 -mb-px ${active ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
               {t.label}
             </Link>
           );
