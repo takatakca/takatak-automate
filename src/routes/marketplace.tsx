@@ -4,7 +4,9 @@ import { SiteShell } from "@/components/layout/SiteShell";
 export const Route = createFileRoute("/marketplace")({
   component: () => (
     <SiteShell>
-      <Outlet />
+      <div className="market-light min-h-screen">
+        <Outlet />
+      </div>
     </SiteShell>
   ),
 });
