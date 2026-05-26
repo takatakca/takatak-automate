@@ -1,17 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { z } from "zod";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { ServiceAdvisor } from "@/components/marketplace/ServiceAdvisor";
 import { localSearch, classifyIntent } from "@/lib/searchCatalog";
 
-const schema = z.object({
-  q: fallback(z.string(), "").default(""),
-  category: fallback(z.string(), "").default(""),
-});
-
 export const Route = createFileRoute("/search")({
-  validateSearch: zodValidator(schema),
+  validateSearch: (s: Record<string, unknown>) => ({
+    q: typeof s.q === "string" ? s.q : "",
+    category: typeof s.category === "string" ? s.category : "",
+  }),
   head: () => ({ meta: [{ title: "Search — TAKATAK" }] }),
   component: Page,
 });
