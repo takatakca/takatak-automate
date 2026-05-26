@@ -17,6 +17,9 @@ import { ordersRouter } from "./routes/orders.js";
 import { webhooksRouter } from "./routes/webhooks.js";
 import { adminRouter } from "./routes/admin.js";
 import { marketplaceRouter } from "./routes/marketplace.js";
+import { searchRouter } from "./routes/search.js";
+import { projectsRouter } from "./routes/projects.js";
+import { freelancersRouter } from "./routes/freelancers.js";
 
 initSentry();
 
@@ -77,6 +80,9 @@ app.use(integrationsRouter);
 app.use(ordersRouter);
 app.use(adminRouter);
 app.use(marketplaceRouter);
+app.use(searchRouter);
+app.use(projectsRouter);
+app.use(freelancersRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
