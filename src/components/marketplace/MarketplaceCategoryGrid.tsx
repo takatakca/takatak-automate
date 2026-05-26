@@ -3,7 +3,7 @@ import { MARKETPLACE_CATEGORIES } from "@/lib/marketplaceCategories";
 import {
   Palette, Globe2, Smartphone, Layers, FileText, ListChecks,
   ClipboardList, Headphones, Share2, Megaphone, Search, Workflow,
-  Bot, PenLine, Utensils, Image, Store,
+  Bot, PenLine, Utensils, Image as ImageIcon, Store,
 } from "lucide-react";
 
 const ICONS: Record<string, typeof Palette> = {
@@ -22,7 +22,7 @@ const ICONS: Record<string, typeof Palette> = {
   ai_tool_setup: Bot,
   content_writing: PenLine,
   menu_design: Utensils,
-  flyer_design: Image,
+  flyer_design: ImageIcon,
   ecommerce_setup: Store,
 };
 
