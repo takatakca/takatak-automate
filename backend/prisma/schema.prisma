@@ -175,3 +175,208 @@ model WebhookEvent {
   @@index([receivedAt])
   @@index([source, receivedAt])
 }
+
+// =====================================================================
+// Marketplace v2 — projects, freelancers, contracts, escrow
+// =====================================================================
+
+enum PaymentReleaseState {
+  unpaid
+  paid_to_takatak
+  assigned
+  accepted_by_freelancer
+  in_progress
+  submitted
+  revision_requested
+  approved
+  grace_period
+  released
+  disputed
+  cancelled
+  refunded
+}
+
+model MarketplaceCategory {
+  slug      String   @id
+  name      String
+  createdAt DateTime @default(now())
+}
+
+model MarketplacePackage {
+  id           String   @id @default(cuid())
+  title        String
+  category     String
+  description  String
+  priceCents   Int
+  currency     String   @default("CAD")
+  freelancerId String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([category])
+  @@index([freelancerId])
+}
+
+model ClientProject {
+  id            String              @id @default(cuid())
+  userId        String
+  title         String
+  brief         String
+  category      String
+  budgetCents   Int?
+  status        String              @default("submitted")
+  paymentState  PaymentReleaseState @default(unpaid)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  files       ProjectFile[]
+  messages    ProjectMessage[]
+  milestones  ProjectMilestone[]
+  deliveries  ProjectDelivery[]
+  contracts   FreelancerContract[]
+  audits      ProjectAuditLog[]
+
+  @@index([userId])
+  @@index([category])
+  @@index([status])
+  @@index([paymentState])
+}
+
+model ProjectFile {
+  id        String   @id @default(cuid())
+  projectId String
+  name      String
+  url       String
+  size      Int?
+  uploadedBy String
+  uploadedAt DateTime @default(now())
+  project   ClientProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model ProjectMessage {
+  id        String   @id @default(cuid())
+  projectId String
+  fromUser  String
+  body      String
+  at        DateTime @default(now())
+  project   ClientProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, at])
+}
+
+model ProjectMilestone {
+  id         String  @id @default(cuid())
+  projectId  String
+  title      String
+  status     String  @default("pending") // pending|in_progress|completed
+  amountCents Int?
+  position   Int     @default(0)
+  project    ClientProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model ProjectDelivery {
+  id         String   @id @default(cuid())
+  projectId  String
+  note       String?
+  submittedAt DateTime @default(now())
+  project    ClientProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model FreelancerApplication {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  displayName String
+  bio         String?
+  skills      String[] @default([])
+  status      String   @default("pending") // pending|approved|rejected
+  createdAt   DateTime @default(now())
+}
+
+model FreelancerContract {
+  id            String              @id @default(cuid())
+  projectId     String
+  freelancerId  String
+  status        String              @default("assigned") // assigned|accepted|declined|in_progress|submitted|completed
+  paymentState  PaymentReleaseState @default(paid_to_takatak)
+  amountCents   Int
+  currency      String              @default("CAD")
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  project       ClientProject       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignments   ContractAssignment[]
+  holds         PayoutHold[]
+  releases      PayoutRelease[]
+  disputes      DisputeCase[]
+
+  @@index([freelancerId])
+  @@index([projectId])
+  @@index([status])
+}
+
+model ContractAssignment {
+  id          String   @id @default(cuid())
+  contractId  String
+  assignedBy  String   // admin user id
+  assignedAt  DateTime @default(now())
+  note        String?
+  contract    FreelancerContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+}
+
+model PayoutHold {
+  id           String   @id @default(cuid())
+  contractId   String
+  amountCents  Int
+  currency     String   @default("CAD")
+  holdUntil    DateTime
+  createdAt    DateTime @default(now())
+  contract     FreelancerContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+}
+
+model PayoutRelease {
+  id           String   @id @default(cuid())
+  contractId   String
+  amountCents  Int
+  currency     String   @default("CAD")
+  releasedAt   DateTime @default(now())
+  reference    String?
+  contract     FreelancerContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+}
+
+model DisputeCase {
+  id          String   @id @default(cuid())
+  contractId  String
+  openedBy    String
+  reason      String
+  status      String   @default("open") // open|reviewing|resolved|rejected
+  resolution  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  contract    FreelancerContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+  @@index([status])
+}
+
+model ProjectAuditLog {
+  id         String   @id @default(cuid())
+  projectId  String
+  actor      String
+  action     String
+  data       Json     @default("{}")
+  at         DateTime @default(now())
+  project    ClientProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, at])
+}

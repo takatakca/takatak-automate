@@ -10,13 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as OtpRouteImport } from './routes/otp'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HostingRouteImport } from './routes/hosting'
 import { Route as DomainRouteImport } from './routes/domain'
+import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ServicesWebsitesRouteImport } from './routes/services.websites'
 import { Route as ServicesVoipRouteImport } from './routes/services.voip'
@@ -27,6 +31,8 @@ import { Route as ServicesMarketingRouteImport } from './routes/services.marketi
 import { Route as ServicesLocalListingsRouteImport } from './routes/services.local-listings'
 import { Route as ServicesLeadGenerationRouteImport } from './routes/services.lead-generation'
 import { Route as ServicesAiBusinessToolsRouteImport } from './routes/services.ai-business-tools'
+import { Route as MarketplaceSearchRouteImport } from './routes/marketplace.search'
+import { Route as MarketplacePostProjectRouteImport } from './routes/marketplace.post-project'
 import { Route as DashboardWebsitesRouteImport } from './routes/dashboard.websites'
 import { Route as DashboardVoipRouteImport } from './routes/dashboard.voip'
 import { Route as DashboardSupportRouteImport } from './routes/dashboard.support'
@@ -41,19 +47,43 @@ import { Route as DashboardLocalListingsRouteImport } from './routes/dashboard.l
 import { Route as DashboardLeadsRouteImport } from './routes/dashboard.leads'
 import { Route as DashboardInvoicesRouteImport } from './routes/dashboard.invoices'
 import { Route as DashboardHostingRouteImport } from './routes/dashboard.hosting'
+import { Route as DashboardFreelancerRouteImport } from './routes/dashboard.freelancer'
 import { Route as DashboardDomainsRouteImport } from './routes/dashboard.domains'
 import { Route as DashboardAiToolsRouteImport } from './routes/dashboard.ai-tools'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
+import { Route as DashboardMarketplaceIndexRouteImport } from './routes/dashboard.marketplace.index'
+import { Route as DashboardFreelancerIndexRouteImport } from './routes/dashboard.freelancer.index'
+import { Route as MarketplaceGigsIdRouteImport } from './routes/marketplace.gigs.$id'
+import { Route as MarketplaceCategorySlugRouteImport } from './routes/marketplace.category.$slug'
+import { Route as DashboardProjectsProjectIdRouteImport } from './routes/dashboard.projects.$projectId'
+import { Route as DashboardMarketplaceProjectsRouteImport } from './routes/dashboard.marketplace.projects'
+import { Route as DashboardMarketplaceMessagesRouteImport } from './routes/dashboard.marketplace.messages'
+import { Route as DashboardMarketplaceDeliveriesRouteImport } from './routes/dashboard.marketplace.deliveries'
+import { Route as DashboardFreelancerPayoutsRouteImport } from './routes/dashboard.freelancer.payouts'
+import { Route as DashboardFreelancerDeliveriesRouteImport } from './routes/dashboard.freelancer.deliveries'
+import { Route as DashboardFreelancerContractsRouteImport } from './routes/dashboard.freelancer.contracts'
 import { Route as DashboardAdminExceptionsRouteImport } from './routes/dashboard.admin.exceptions'
+import { Route as DashboardFreelancerContractsIndexRouteImport } from './routes/dashboard.freelancer.contracts.index'
+import { Route as DashboardFreelancerContractsContractIdRouteImport } from './routes/dashboard.freelancer.contracts.$contractId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OtpRoute = OtpRouteImport.update({
   id: '/otp',
   path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -71,6 +101,11 @@ const DomainRoute = DomainRouteImport.update({
   path: '/domain',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -85,6 +120,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MarketplaceRoute,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
@@ -135,6 +175,16 @@ const ServicesAiBusinessToolsRoute = ServicesAiBusinessToolsRouteImport.update({
   id: '/services/ai-business-tools',
   path: '/services/ai-business-tools',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceSearchRoute = MarketplaceSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const MarketplacePostProjectRoute = MarketplacePostProjectRouteImport.update({
+  id: '/post-project',
+  path: '/post-project',
+  getParentRoute: () => MarketplaceRoute,
 } as any)
 const DashboardWebsitesRoute = DashboardWebsitesRouteImport.update({
   id: '/websites',
@@ -206,6 +256,11 @@ const DashboardHostingRoute = DashboardHostingRouteImport.update({
   path: '/hosting',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardFreelancerRoute = DashboardFreelancerRouteImport.update({
+  id: '/freelancer',
+  path: '/freelancer',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardDomainsRoute = DashboardDomainsRouteImport.update({
   id: '/domains',
   path: '/domains',
@@ -221,31 +276,111 @@ const DashboardAccountRoute = DashboardAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardMarketplaceIndexRoute =
+  DashboardMarketplaceIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardMarketplaceRoute,
+  } as any)
+const DashboardFreelancerIndexRoute =
+  DashboardFreelancerIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardFreelancerRoute,
+  } as any)
+const MarketplaceGigsIdRoute = MarketplaceGigsIdRouteImport.update({
+  id: '/gigs/$id',
+  path: '/gigs/$id',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const MarketplaceCategorySlugRoute = MarketplaceCategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const DashboardProjectsProjectIdRoute =
+  DashboardProjectsProjectIdRouteImport.update({
+    id: '/projects/$projectId',
+    path: '/projects/$projectId',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardMarketplaceProjectsRoute =
+  DashboardMarketplaceProjectsRouteImport.update({
+    id: '/projects',
+    path: '/projects',
+    getParentRoute: () => DashboardMarketplaceRoute,
+  } as any)
+const DashboardMarketplaceMessagesRoute =
+  DashboardMarketplaceMessagesRouteImport.update({
+    id: '/messages',
+    path: '/messages',
+    getParentRoute: () => DashboardMarketplaceRoute,
+  } as any)
+const DashboardMarketplaceDeliveriesRoute =
+  DashboardMarketplaceDeliveriesRouteImport.update({
+    id: '/deliveries',
+    path: '/deliveries',
+    getParentRoute: () => DashboardMarketplaceRoute,
+  } as any)
+const DashboardFreelancerPayoutsRoute =
+  DashboardFreelancerPayoutsRouteImport.update({
+    id: '/payouts',
+    path: '/payouts',
+    getParentRoute: () => DashboardFreelancerRoute,
+  } as any)
+const DashboardFreelancerDeliveriesRoute =
+  DashboardFreelancerDeliveriesRouteImport.update({
+    id: '/deliveries',
+    path: '/deliveries',
+    getParentRoute: () => DashboardFreelancerRoute,
+  } as any)
+const DashboardFreelancerContractsRoute =
+  DashboardFreelancerContractsRouteImport.update({
+    id: '/contracts',
+    path: '/contracts',
+    getParentRoute: () => DashboardFreelancerRoute,
+  } as any)
 const DashboardAdminExceptionsRoute =
   DashboardAdminExceptionsRouteImport.update({
     id: '/admin/exceptions',
     path: '/admin/exceptions',
     getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardFreelancerContractsIndexRoute =
+  DashboardFreelancerContractsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardFreelancerContractsRoute,
+  } as any)
+const DashboardFreelancerContractsContractIdRoute =
+  DashboardFreelancerContractsContractIdRouteImport.update({
+    id: '/$contractId',
+    path: '/$contractId',
+    getParentRoute: () => DashboardFreelancerContractsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/deals': typeof DealsRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
+  '/marketplace': typeof MarketplaceRouteWithChildren
   '/otp': typeof OtpRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
   '/dashboard/domains': typeof DashboardDomainsRoute
+  '/dashboard/freelancer': typeof DashboardFreelancerRouteWithChildren
   '/dashboard/hosting': typeof DashboardHostingRoute
   '/dashboard/invoices': typeof DashboardInvoicesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/local-listings': typeof DashboardLocalListingsRoute
   '/dashboard/marketing': typeof DashboardMarketingRoute
-  '/dashboard/marketplace': typeof DashboardMarketplaceRoute
+  '/dashboard/marketplace': typeof DashboardMarketplaceRouteWithChildren
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
@@ -254,6 +389,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/support': typeof DashboardSupportRoute
   '/dashboard/voip': typeof DashboardVoipRoute
   '/dashboard/websites': typeof DashboardWebsitesRoute
+  '/marketplace/post-project': typeof MarketplacePostProjectRoute
+  '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -264,15 +401,31 @@ export interface FileRoutesByFullPath {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
+  '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
+  '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
+  '/dashboard/marketplace/deliveries': typeof DashboardMarketplaceDeliveriesRoute
+  '/dashboard/marketplace/messages': typeof DashboardMarketplaceMessagesRoute
+  '/dashboard/marketplace/projects': typeof DashboardMarketplaceProjectsRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/marketplace/category/$slug': typeof MarketplaceCategorySlugRoute
+  '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
+  '/dashboard/freelancer/': typeof DashboardFreelancerIndexRoute
+  '/dashboard/marketplace/': typeof DashboardMarketplaceIndexRoute
+  '/dashboard/freelancer/contracts/$contractId': typeof DashboardFreelancerContractsContractIdRoute
+  '/dashboard/freelancer/contracts/': typeof DashboardFreelancerContractsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/deals': typeof DealsRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
@@ -282,7 +435,6 @@ export interface FileRoutesByTo {
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/local-listings': typeof DashboardLocalListingsRoute
   '/dashboard/marketing': typeof DashboardMarketingRoute
-  '/dashboard/marketplace': typeof DashboardMarketplaceRoute
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
@@ -291,6 +443,8 @@ export interface FileRoutesByTo {
   '/dashboard/support': typeof DashboardSupportRoute
   '/dashboard/voip': typeof DashboardVoipRoute
   '/dashboard/websites': typeof DashboardWebsitesRoute
+  '/marketplace/post-project': typeof MarketplacePostProjectRoute
+  '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -301,27 +455,44 @@ export interface FileRoutesByTo {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/marketplace': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
+  '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
+  '/dashboard/marketplace/deliveries': typeof DashboardMarketplaceDeliveriesRoute
+  '/dashboard/marketplace/messages': typeof DashboardMarketplaceMessagesRoute
+  '/dashboard/marketplace/projects': typeof DashboardMarketplaceProjectsRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/marketplace/category/$slug': typeof MarketplaceCategorySlugRoute
+  '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
+  '/dashboard/freelancer': typeof DashboardFreelancerIndexRoute
+  '/dashboard/marketplace': typeof DashboardMarketplaceIndexRoute
+  '/dashboard/freelancer/contracts/$contractId': typeof DashboardFreelancerContractsContractIdRoute
+  '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/deals': typeof DealsRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
+  '/marketplace': typeof MarketplaceRouteWithChildren
   '/otp': typeof OtpRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
   '/dashboard/domains': typeof DashboardDomainsRoute
+  '/dashboard/freelancer': typeof DashboardFreelancerRouteWithChildren
   '/dashboard/hosting': typeof DashboardHostingRoute
   '/dashboard/invoices': typeof DashboardInvoicesRoute
   '/dashboard/leads': typeof DashboardLeadsRoute
   '/dashboard/local-listings': typeof DashboardLocalListingsRoute
   '/dashboard/marketing': typeof DashboardMarketingRoute
-  '/dashboard/marketplace': typeof DashboardMarketplaceRoute
+  '/dashboard/marketplace': typeof DashboardMarketplaceRouteWithChildren
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
@@ -330,6 +501,8 @@ export interface FileRoutesById {
   '/dashboard/support': typeof DashboardSupportRoute
   '/dashboard/voip': typeof DashboardVoipRoute
   '/dashboard/websites': typeof DashboardWebsitesRoute
+  '/marketplace/post-project': typeof MarketplacePostProjectRoute
+  '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -340,7 +513,21 @@ export interface FileRoutesById {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
+  '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
+  '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
+  '/dashboard/marketplace/deliveries': typeof DashboardMarketplaceDeliveriesRoute
+  '/dashboard/marketplace/messages': typeof DashboardMarketplaceMessagesRoute
+  '/dashboard/marketplace/projects': typeof DashboardMarketplaceProjectsRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/marketplace/category/$slug': typeof MarketplaceCategorySlugRoute
+  '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
+  '/dashboard/freelancer/': typeof DashboardFreelancerIndexRoute
+  '/dashboard/marketplace/': typeof DashboardMarketplaceIndexRoute
+  '/dashboard/freelancer/contracts/$contractId': typeof DashboardFreelancerContractsContractIdRoute
+  '/dashboard/freelancer/contracts/': typeof DashboardFreelancerContractsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -348,14 +535,18 @@ export interface FileRouteTypes {
     | '/'
     | '/checkout'
     | '/dashboard'
+    | '/deals'
     | '/domain'
     | '/hosting'
     | '/login'
+    | '/marketplace'
     | '/otp'
+    | '/search'
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
     | '/dashboard/domains'
+    | '/dashboard/freelancer'
     | '/dashboard/hosting'
     | '/dashboard/invoices'
     | '/dashboard/leads'
@@ -370,6 +561,8 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/voip'
     | '/dashboard/websites'
+    | '/marketplace/post-project'
+    | '/marketplace/search'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -380,15 +573,31 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard/'
+    | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/freelancer/contracts'
+    | '/dashboard/freelancer/deliveries'
+    | '/dashboard/freelancer/payouts'
+    | '/dashboard/marketplace/deliveries'
+    | '/dashboard/marketplace/messages'
+    | '/dashboard/marketplace/projects'
+    | '/dashboard/projects/$projectId'
+    | '/marketplace/category/$slug'
+    | '/marketplace/gigs/$id'
+    | '/dashboard/freelancer/'
+    | '/dashboard/marketplace/'
+    | '/dashboard/freelancer/contracts/$contractId'
+    | '/dashboard/freelancer/contracts/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/checkout'
+    | '/deals'
     | '/domain'
     | '/hosting'
     | '/login'
     | '/otp'
+    | '/search'
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
@@ -398,7 +607,6 @@ export interface FileRouteTypes {
     | '/dashboard/leads'
     | '/dashboard/local-listings'
     | '/dashboard/marketing'
-    | '/dashboard/marketplace'
     | '/dashboard/mobile-apps'
     | '/dashboard/orders'
     | '/dashboard/overview'
@@ -407,6 +615,8 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/voip'
     | '/dashboard/websites'
+    | '/marketplace/post-project'
+    | '/marketplace/search'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -417,20 +627,37 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard'
+    | '/marketplace'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/freelancer/deliveries'
+    | '/dashboard/freelancer/payouts'
+    | '/dashboard/marketplace/deliveries'
+    | '/dashboard/marketplace/messages'
+    | '/dashboard/marketplace/projects'
+    | '/dashboard/projects/$projectId'
+    | '/marketplace/category/$slug'
+    | '/marketplace/gigs/$id'
+    | '/dashboard/freelancer'
+    | '/dashboard/marketplace'
+    | '/dashboard/freelancer/contracts/$contractId'
+    | '/dashboard/freelancer/contracts'
   id:
     | '__root__'
     | '/'
     | '/checkout'
     | '/dashboard'
+    | '/deals'
     | '/domain'
     | '/hosting'
     | '/login'
+    | '/marketplace'
     | '/otp'
+    | '/search'
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
     | '/dashboard/domains'
+    | '/dashboard/freelancer'
     | '/dashboard/hosting'
     | '/dashboard/invoices'
     | '/dashboard/leads'
@@ -445,6 +672,8 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/voip'
     | '/dashboard/websites'
+    | '/marketplace/post-project'
+    | '/marketplace/search'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -455,17 +684,34 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard/'
+    | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/freelancer/contracts'
+    | '/dashboard/freelancer/deliveries'
+    | '/dashboard/freelancer/payouts'
+    | '/dashboard/marketplace/deliveries'
+    | '/dashboard/marketplace/messages'
+    | '/dashboard/marketplace/projects'
+    | '/dashboard/projects/$projectId'
+    | '/marketplace/category/$slug'
+    | '/marketplace/gigs/$id'
+    | '/dashboard/freelancer/'
+    | '/dashboard/marketplace/'
+    | '/dashboard/freelancer/contracts/$contractId'
+    | '/dashboard/freelancer/contracts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  DealsRoute: typeof DealsRoute
   DomainRoute: typeof DomainRoute
   HostingRoute: typeof HostingRoute
   LoginRoute: typeof LoginRoute
+  MarketplaceRoute: typeof MarketplaceRouteWithChildren
   OtpRoute: typeof OtpRoute
+  SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
   ServicesAiBusinessToolsRoute: typeof ServicesAiBusinessToolsRoute
   ServicesLeadGenerationRoute: typeof ServicesLeadGenerationRoute
@@ -487,11 +733,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/otp': {
       id: '/otp'
       path: '/otp'
       fullPath: '/otp'
       preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -515,6 +775,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DomainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -535,6 +802,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/': {
+      id: '/marketplace/'
+      path: '/'
+      fullPath: '/marketplace/'
+      preLoaderRoute: typeof MarketplaceIndexRouteImport
+      parentRoute: typeof MarketplaceRoute
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -605,6 +879,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/services/ai-business-tools'
       preLoaderRoute: typeof ServicesAiBusinessToolsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/search': {
+      id: '/marketplace/search'
+      path: '/search'
+      fullPath: '/marketplace/search'
+      preLoaderRoute: typeof MarketplaceSearchRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/post-project': {
+      id: '/marketplace/post-project'
+      path: '/post-project'
+      fullPath: '/marketplace/post-project'
+      preLoaderRoute: typeof MarketplacePostProjectRouteImport
+      parentRoute: typeof MarketplaceRoute
     }
     '/dashboard/websites': {
       id: '/dashboard/websites'
@@ -704,6 +992,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardHostingRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/freelancer': {
+      id: '/dashboard/freelancer'
+      path: '/freelancer'
+      fullPath: '/dashboard/freelancer'
+      preLoaderRoute: typeof DashboardFreelancerRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/domains': {
       id: '/dashboard/domains'
       path: '/domains'
@@ -725,6 +1020,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/marketplace/': {
+      id: '/dashboard/marketplace/'
+      path: '/'
+      fullPath: '/dashboard/marketplace/'
+      preLoaderRoute: typeof DashboardMarketplaceIndexRouteImport
+      parentRoute: typeof DashboardMarketplaceRoute
+    }
+    '/dashboard/freelancer/': {
+      id: '/dashboard/freelancer/'
+      path: '/'
+      fullPath: '/dashboard/freelancer/'
+      preLoaderRoute: typeof DashboardFreelancerIndexRouteImport
+      parentRoute: typeof DashboardFreelancerRoute
+    }
+    '/marketplace/gigs/$id': {
+      id: '/marketplace/gigs/$id'
+      path: '/gigs/$id'
+      fullPath: '/marketplace/gigs/$id'
+      preLoaderRoute: typeof MarketplaceGigsIdRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/category/$slug': {
+      id: '/marketplace/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/marketplace/category/$slug'
+      preLoaderRoute: typeof MarketplaceCategorySlugRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/dashboard/projects/$projectId': {
+      id: '/dashboard/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/dashboard/projects/$projectId'
+      preLoaderRoute: typeof DashboardProjectsProjectIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/marketplace/projects': {
+      id: '/dashboard/marketplace/projects'
+      path: '/projects'
+      fullPath: '/dashboard/marketplace/projects'
+      preLoaderRoute: typeof DashboardMarketplaceProjectsRouteImport
+      parentRoute: typeof DashboardMarketplaceRoute
+    }
+    '/dashboard/marketplace/messages': {
+      id: '/dashboard/marketplace/messages'
+      path: '/messages'
+      fullPath: '/dashboard/marketplace/messages'
+      preLoaderRoute: typeof DashboardMarketplaceMessagesRouteImport
+      parentRoute: typeof DashboardMarketplaceRoute
+    }
+    '/dashboard/marketplace/deliveries': {
+      id: '/dashboard/marketplace/deliveries'
+      path: '/deliveries'
+      fullPath: '/dashboard/marketplace/deliveries'
+      preLoaderRoute: typeof DashboardMarketplaceDeliveriesRouteImport
+      parentRoute: typeof DashboardMarketplaceRoute
+    }
+    '/dashboard/freelancer/payouts': {
+      id: '/dashboard/freelancer/payouts'
+      path: '/payouts'
+      fullPath: '/dashboard/freelancer/payouts'
+      preLoaderRoute: typeof DashboardFreelancerPayoutsRouteImport
+      parentRoute: typeof DashboardFreelancerRoute
+    }
+    '/dashboard/freelancer/deliveries': {
+      id: '/dashboard/freelancer/deliveries'
+      path: '/deliveries'
+      fullPath: '/dashboard/freelancer/deliveries'
+      preLoaderRoute: typeof DashboardFreelancerDeliveriesRouteImport
+      parentRoute: typeof DashboardFreelancerRoute
+    }
+    '/dashboard/freelancer/contracts': {
+      id: '/dashboard/freelancer/contracts'
+      path: '/contracts'
+      fullPath: '/dashboard/freelancer/contracts'
+      preLoaderRoute: typeof DashboardFreelancerContractsRouteImport
+      parentRoute: typeof DashboardFreelancerRoute
+    }
     '/dashboard/admin/exceptions': {
       id: '/dashboard/admin/exceptions'
       path: '/admin/exceptions'
@@ -732,19 +1104,87 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminExceptionsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/freelancer/contracts/': {
+      id: '/dashboard/freelancer/contracts/'
+      path: '/'
+      fullPath: '/dashboard/freelancer/contracts/'
+      preLoaderRoute: typeof DashboardFreelancerContractsIndexRouteImport
+      parentRoute: typeof DashboardFreelancerContractsRoute
+    }
+    '/dashboard/freelancer/contracts/$contractId': {
+      id: '/dashboard/freelancer/contracts/$contractId'
+      path: '/$contractId'
+      fullPath: '/dashboard/freelancer/contracts/$contractId'
+      preLoaderRoute: typeof DashboardFreelancerContractsContractIdRouteImport
+      parentRoute: typeof DashboardFreelancerContractsRoute
+    }
   }
 }
+
+interface DashboardFreelancerContractsRouteChildren {
+  DashboardFreelancerContractsContractIdRoute: typeof DashboardFreelancerContractsContractIdRoute
+  DashboardFreelancerContractsIndexRoute: typeof DashboardFreelancerContractsIndexRoute
+}
+
+const DashboardFreelancerContractsRouteChildren: DashboardFreelancerContractsRouteChildren =
+  {
+    DashboardFreelancerContractsContractIdRoute:
+      DashboardFreelancerContractsContractIdRoute,
+    DashboardFreelancerContractsIndexRoute:
+      DashboardFreelancerContractsIndexRoute,
+  }
+
+const DashboardFreelancerContractsRouteWithChildren =
+  DashboardFreelancerContractsRoute._addFileChildren(
+    DashboardFreelancerContractsRouteChildren,
+  )
+
+interface DashboardFreelancerRouteChildren {
+  DashboardFreelancerContractsRoute: typeof DashboardFreelancerContractsRouteWithChildren
+  DashboardFreelancerDeliveriesRoute: typeof DashboardFreelancerDeliveriesRoute
+  DashboardFreelancerPayoutsRoute: typeof DashboardFreelancerPayoutsRoute
+  DashboardFreelancerIndexRoute: typeof DashboardFreelancerIndexRoute
+}
+
+const DashboardFreelancerRouteChildren: DashboardFreelancerRouteChildren = {
+  DashboardFreelancerContractsRoute:
+    DashboardFreelancerContractsRouteWithChildren,
+  DashboardFreelancerDeliveriesRoute: DashboardFreelancerDeliveriesRoute,
+  DashboardFreelancerPayoutsRoute: DashboardFreelancerPayoutsRoute,
+  DashboardFreelancerIndexRoute: DashboardFreelancerIndexRoute,
+}
+
+const DashboardFreelancerRouteWithChildren =
+  DashboardFreelancerRoute._addFileChildren(DashboardFreelancerRouteChildren)
+
+interface DashboardMarketplaceRouteChildren {
+  DashboardMarketplaceDeliveriesRoute: typeof DashboardMarketplaceDeliveriesRoute
+  DashboardMarketplaceMessagesRoute: typeof DashboardMarketplaceMessagesRoute
+  DashboardMarketplaceProjectsRoute: typeof DashboardMarketplaceProjectsRoute
+  DashboardMarketplaceIndexRoute: typeof DashboardMarketplaceIndexRoute
+}
+
+const DashboardMarketplaceRouteChildren: DashboardMarketplaceRouteChildren = {
+  DashboardMarketplaceDeliveriesRoute: DashboardMarketplaceDeliveriesRoute,
+  DashboardMarketplaceMessagesRoute: DashboardMarketplaceMessagesRoute,
+  DashboardMarketplaceProjectsRoute: DashboardMarketplaceProjectsRoute,
+  DashboardMarketplaceIndexRoute: DashboardMarketplaceIndexRoute,
+}
+
+const DashboardMarketplaceRouteWithChildren =
+  DashboardMarketplaceRoute._addFileChildren(DashboardMarketplaceRouteChildren)
 
 interface DashboardRouteChildren {
   DashboardAccountRoute: typeof DashboardAccountRoute
   DashboardAiToolsRoute: typeof DashboardAiToolsRoute
   DashboardDomainsRoute: typeof DashboardDomainsRoute
+  DashboardFreelancerRoute: typeof DashboardFreelancerRouteWithChildren
   DashboardHostingRoute: typeof DashboardHostingRoute
   DashboardInvoicesRoute: typeof DashboardInvoicesRoute
   DashboardLeadsRoute: typeof DashboardLeadsRoute
   DashboardLocalListingsRoute: typeof DashboardLocalListingsRoute
   DashboardMarketingRoute: typeof DashboardMarketingRoute
-  DashboardMarketplaceRoute: typeof DashboardMarketplaceRoute
+  DashboardMarketplaceRoute: typeof DashboardMarketplaceRouteWithChildren
   DashboardMobileAppsRoute: typeof DashboardMobileAppsRoute
   DashboardOrdersRoute: typeof DashboardOrdersRoute
   DashboardOverviewRoute: typeof DashboardOverviewRoute
@@ -755,18 +1195,20 @@ interface DashboardRouteChildren {
   DashboardWebsitesRoute: typeof DashboardWebsitesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardAdminExceptionsRoute: typeof DashboardAdminExceptionsRoute
+  DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAccountRoute: DashboardAccountRoute,
   DashboardAiToolsRoute: DashboardAiToolsRoute,
   DashboardDomainsRoute: DashboardDomainsRoute,
+  DashboardFreelancerRoute: DashboardFreelancerRouteWithChildren,
   DashboardHostingRoute: DashboardHostingRoute,
   DashboardInvoicesRoute: DashboardInvoicesRoute,
   DashboardLeadsRoute: DashboardLeadsRoute,
   DashboardLocalListingsRoute: DashboardLocalListingsRoute,
   DashboardMarketingRoute: DashboardMarketingRoute,
-  DashboardMarketplaceRoute: DashboardMarketplaceRoute,
+  DashboardMarketplaceRoute: DashboardMarketplaceRouteWithChildren,
   DashboardMobileAppsRoute: DashboardMobileAppsRoute,
   DashboardOrdersRoute: DashboardOrdersRoute,
   DashboardOverviewRoute: DashboardOverviewRoute,
@@ -777,20 +1219,44 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardWebsitesRoute: DashboardWebsitesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAdminExceptionsRoute: DashboardAdminExceptionsRoute,
+  DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface MarketplaceRouteChildren {
+  MarketplacePostProjectRoute: typeof MarketplacePostProjectRoute
+  MarketplaceSearchRoute: typeof MarketplaceSearchRoute
+  MarketplaceIndexRoute: typeof MarketplaceIndexRoute
+  MarketplaceCategorySlugRoute: typeof MarketplaceCategorySlugRoute
+  MarketplaceGigsIdRoute: typeof MarketplaceGigsIdRoute
+}
+
+const MarketplaceRouteChildren: MarketplaceRouteChildren = {
+  MarketplacePostProjectRoute: MarketplacePostProjectRoute,
+  MarketplaceSearchRoute: MarketplaceSearchRoute,
+  MarketplaceIndexRoute: MarketplaceIndexRoute,
+  MarketplaceCategorySlugRoute: MarketplaceCategorySlugRoute,
+  MarketplaceGigsIdRoute: MarketplaceGigsIdRoute,
+}
+
+const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
+  MarketplaceRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  DealsRoute: DealsRoute,
   DomainRoute: DomainRoute,
   HostingRoute: HostingRoute,
   LoginRoute: LoginRoute,
+  MarketplaceRoute: MarketplaceRouteWithChildren,
   OtpRoute: OtpRoute,
+  SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
   ServicesAiBusinessToolsRoute: ServicesAiBusinessToolsRoute,
   ServicesLeadGenerationRoute: ServicesLeadGenerationRoute,
@@ -805,3 +1271,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

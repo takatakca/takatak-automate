@@ -26,7 +26,7 @@ export function GlobalSearchBar() {
 
   const submit = () => {
     setOpen(false);
-    void navigate({ to: "/", search: { q, category } as never });
+    void navigate({ to: "/search", search: { q, category } as never });
   };
 
   return (

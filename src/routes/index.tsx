@@ -150,6 +150,54 @@ function Index() {
         </div>
       </section>
 
+      {/* TAKATAK Marketplace section */}
+      <section className="border-t border-border bg-secondary/20">
+        <div className="max-w-7xl mx-auto px-4 py-20">
+          <div className="flex items-end justify-between flex-wrap gap-4 mb-10">
+            <div>
+              <span className="text-xs uppercase tracking-wide text-accent">TAKATAK Service Marketplace</span>
+              <h2 className="mt-2 text-3xl md:text-4xl font-bold">Hire vetted talent. Delivered through TAKATAK.</h2>
+              <p className="mt-2 text-muted-foreground max-w-2xl">Escrowed payments, AI-matched freelancers, one point of accountability.</p>
+            </div>
+            <Link to="/marketplace" className="text-sm text-primary inline-flex items-center gap-1">
+              Explore marketplace <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {[
+              { slug: "logo_design", name: "Logo Design" },
+              { slug: "website_design", name: "Website Development" },
+              { slug: "mobile_app_design", name: "Mobile App Design" },
+              { slug: "branding", name: "Branding" },
+              { slug: "data_entry", name: "Data Entry" },
+              { slug: "virtual_assistance", name: "Virtual Assistance" },
+              { slug: "social_media_content", name: "Social Media Content" },
+              { slug: "seo_local_visibility", name: "SEO" },
+              { slug: "automation_setup", name: "Automation Setup" },
+              { slug: "ai_tool_setup", name: "AI Tool Setup" },
+              { slug: "menu_design", name: "Menu Design" },
+              { slug: "flyer_design", name: "Flyer Design" },
+              { slug: "ecommerce_setup", name: "Ecommerce Setup" },
+            ].map((c) => (
+              <Link
+                key={c.slug}
+                to="/marketplace/category/$slug"
+                params={{ slug: c.slug }}
+                className="rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:bg-card/80 transition-colors text-sm font-medium"
+              >
+                {c.name}
+                <div className="mt-1 text-xs text-muted-foreground">Browse →</div>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link to="/marketplace/post-project" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-primary-foreground" style={{ backgroundImage: "var(--gradient-hero)" }}>
+              Post a custom project <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Trust strip */}
       <section className="border-t border-border">
         <div className="max-w-7xl mx-auto px-4 py-16 text-center">
