@@ -3,40 +3,51 @@ import { brand } from "@/lib/brand";
 
 const cols = [
   {
-    title: "Services",
+    title: "Categories",
+    links: [
+      { to: "/marketplace/category/$slug", params: { slug: "logo_design" }, label: "Graphics & Design" },
+      { to: "/marketplace/category/$slug", params: { slug: "website_design" }, label: "Programming & Tech" },
+      { to: "/marketplace/category/$slug", params: { slug: "online_advertising" }, label: "Digital Marketing" },
+      { to: "/marketplace/category/$slug", params: { slug: "content_writing" }, label: "Writing & Translation" },
+      { to: "/marketplace/category/$slug", params: { slug: "ai_tool_setup" }, label: "AI Services" },
+      { to: "/marketplace/category/$slug", params: { slug: "data_entry" }, label: "Data" },
+    ],
+  },
+  {
+    title: "For Clients",
+    links: [
+      { to: "/marketplace", label: "How TAKATAK works" },
+      { to: "/marketplace/post-project", label: "Post a project" },
+      { to: "/dashboard/marketplace", label: "Manage projects" },
+      { to: "/dashboard/support", label: "Support" },
+    ],
+  },
+  {
+    title: "For Groupe TAKATAK Freelancers",
+    links: [
+      { to: "/dashboard/freelancer", label: "Become a freelancer" },
+      { to: "/dashboard/freelancer/contracts", label: "Contracts" },
+      { to: "/dashboard/freelancer/deliveries", label: "Deliveries" },
+      { to: "/dashboard/freelancer/payouts", label: "Payouts" },
+    ],
+  },
+  {
+    title: "Business Solutions",
     links: [
       { to: "/domain", label: "Domains" },
       { to: "/hosting", label: "Hosting" },
-      { to: "/services/websites", label: "Websites" },
-      { to: "/services/mobile-apps", label: "Mobile Apps" },
+      { to: "/services/local-listings", label: "QMAPS" },
+      { to: "/services/lead-generation", label: "FLEXS" },
       { to: "/services/ai-business-tools", label: "AI Tools" },
     ],
   },
   {
-    title: "Automation",
+    title: "Company",
     links: [
-      { to: "/services/marketing", label: "Marketing" },
-      { to: "/services/social-media", label: "Social Media" },
-      { to: "/services/local-listings", label: "Local Listings" },
-      { to: "/services/lead-generation", label: "Lead Generation" },
-      { to: "/services/voip", label: "VoIP" },
-    ],
-  },
-  {
-    title: "Marketplace",
-    links: [
-      { to: "/services/marketplace", label: "Browse services" },
-      { to: "/dashboard/marketplace", label: "Post a project" },
-      { to: "/dashboard/marketplace", label: "Become a freelancer" },
-    ],
-  },
-  {
-    title: "Account",
-    links: [
-      { to: "/dashboard", label: "Dashboard" },
-      { to: "/dashboard/invoices", label: "Billing" },
-      { to: "/dashboard/support", label: "Support" },
+      { to: "/", label: "About TAKATAK" },
+      { to: "/deals", label: "Today's Deals" },
       { to: "/login", label: "Sign in" },
+      { to: "/signup", label: "Get started" },
     ],
   },
 ] as const;
@@ -45,8 +56,8 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-border mt-24">
       <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
-          <div className="col-span-2">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-10">
+          <div className="col-span-2 md:col-span-1">
             <h3 className="text-2xl font-bold">
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 {brand.brandName}
@@ -63,13 +74,18 @@ export function SiteFooter() {
             <div key={col.title}>
               <h4 className="text-sm font-semibold mb-4">{col.title}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                {col.links.map((l) => (
-                  <li key={`${col.title}-${l.label}`}>
-                    <Link to={l.to} className="hover:text-foreground transition-colors">
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
+                {col.links.map((l) => {
+                  const linkProps = "params" in l && l.params
+                    ? { to: l.to, params: l.params as never }
+                    : { to: l.to };
+                  return (
+                    <li key={`${col.title}-${l.label}`}>
+                      <Link {...linkProps} className="hover:text-foreground transition-colors">
+                        {l.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
