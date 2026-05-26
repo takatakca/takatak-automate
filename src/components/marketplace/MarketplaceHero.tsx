@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Search, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { Search, ShieldCheck, Star, Clock } from "lucide-react";
+import { ServiceThumbnail } from "./ServiceThumbnail";
 
 const QUICK_PICKS = [
   "Logo design",
-  "WordPress site",
-  "Social posts",
+  "Website",
+  "Social media",
   "Shopify store",
   "Local SEO",
+  "Menu design",
+];
+
+const HERO_PREVIEW = [
+  { thumb: "website" as const, title: "Business website build", price: "$180", rating: "4.9", delivery: "5 days" },
+  { thumb: "logo" as const, title: "Brand logo design", price: "$25", rating: "5.0", delivery: "2 days" },
+  { thumb: "social" as const, title: "Social content pack", price: "$40", rating: "4.8", delivery: "4 days" },
+  { thumb: "ai" as const, title: "AI assistant setup", price: "$150", rating: "4.9", delivery: "5 days" },
 ];
 
 export function MarketplaceHero() {
@@ -18,76 +27,72 @@ export function MarketplaceHero() {
     void navigate({ to: "/marketplace/search", search: { q: term } as never });
   };
   return (
-    <section className="relative overflow-hidden bg-background">
-      <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+    <section className="bg-background border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 py-12 md:py-16 grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-center">
         <div>
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs border border-border bg-secondary text-muted-foreground">
-            <Sparkles size={12} className="text-primary" /> TAKATAK Service Marketplace
-          </span>
-          <h1 className="mt-5 text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-foreground">
-            Our freelancers.
+          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold tracking-tight leading-[1.05] text-foreground">
+            Find the right freelancer
             <br />
-            <span className="italic" style={{ color: "var(--primary)" }}>Your success.</span>
+            for any service.
           </h1>
           <p className="mt-5 text-muted-foreground max-w-xl text-base md:text-lg">
-            Hire vetted talent for design, web, content, marketing, automation and AI — delivered through TAKATAK with escrowed payments.
+            Websites, branding, content, marketing, automation and more — delivered through TAKATAK with escrow protection on every project.
           </p>
-          <div className="mt-8 max-w-xl">
-            <div className="flex items-center gap-2 rounded-full border border-border bg-card pl-5 pr-2 py-2 shadow-sm focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary transition-all">
-              <Search size={18} className="text-muted-foreground shrink-0" />
+          <div className="mt-7 max-w-xl">
+            <div className="flex items-stretch rounded-lg border border-foreground/80 bg-card overflow-hidden focus-within:border-foreground transition-colors">
+              <div className="flex items-center pl-4 text-muted-foreground">
+                <Search size={18} />
+              </div>
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") go(); }}
-                placeholder='Search for any service'
-                className="flex-1 bg-transparent outline-none text-base py-2 min-w-0 text-foreground placeholder:text-muted-foreground"
+                placeholder='Search for "logo design"'
+                className="flex-1 bg-transparent outline-none px-3 py-3.5 text-[15px] min-w-0 text-foreground placeholder:text-muted-foreground"
               />
               <button
                 onClick={() => go()}
-                className="px-5 py-2.5 rounded-full text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90 transition-opacity shrink-0"
+                className="px-6 text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90 transition-opacity"
               >
                 Search
               </button>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2 items-center text-xs text-muted-foreground">
-              <span className="opacity-70">Popular:</span>
+            <div className="mt-4 flex flex-wrap gap-2 items-center text-xs">
+              <span className="text-muted-foreground">Popular:</span>
               {QUICK_PICKS.map((p) => (
                 <button
                   key={p}
                   onClick={() => { setQ(p); go(p); }}
-                  className="px-3 py-1 rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+                  className="px-2.5 py-1 rounded-full border border-border bg-card text-foreground hover:border-foreground/40 transition-colors"
                 >
                   {p}
                 </button>
               ))}
             </div>
           </div>
-          <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-primary" /> Escrowed payments</span>
-            <span className="inline-flex items-center gap-1.5"><Users size={14} className="text-primary" /> Vetted freelancers</span>
-            <span className="inline-flex items-center gap-1.5"><Sparkles size={14} className="text-primary" /> AI-matched</span>
+          <div className="mt-7 flex items-center gap-2 text-xs text-muted-foreground">
+            <ShieldCheck size={14} className="text-primary" />
+            Escrow protection — funds only released when you approve the work.
           </div>
         </div>
         <div className="hidden lg:block">
-          <div className="relative rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { t: "Logo Design", p: "from $25" },
-                { t: "Website Dev", p: "from $180" },
-                { t: "Social Content", p: "from $40" },
-                { t: "AI Setup", p: "from $120" },
-              ].map((c) => (
-                <div key={c.t} className="rounded-2xl border border-border bg-background p-4">
-                  <div className="h-20 rounded-lg" style={{ background: "var(--gradient-hero)", opacity: 0.85 }} />
-                  <div className="mt-3 text-sm font-semibold text-foreground">{c.t}</div>
-                  <div className="text-xs text-muted-foreground">{c.p}</div>
+          <div className="grid grid-cols-2 gap-4">
+            {HERO_PREVIEW.map((c) => (
+              <div key={c.title} className="rounded-xl border border-border bg-card overflow-hidden shadow-[var(--shadow-card)]">
+                <ServiceThumbnail kind={c.thumb} />
+                <div className="p-3">
+                  <div className="text-[13px] font-semibold text-foreground line-clamp-1">{c.title}</div>
+                  <div className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
+                    <Star size={11} className="fill-foreground text-foreground" />
+                    <span className="font-semibold text-foreground">{c.rating}</span>
+                    <span className="mx-1">·</span>
+                    <Clock size={10} />
+                    <span>{c.delivery}</span>
+                  </div>
+                  <div className="mt-2 text-[13px] font-bold text-foreground">From {c.price}</div>
                 </div>
-              ))}
-            </div>
-            <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3">
-              <span>★ 4.9 average rating</span>
-              <span>2,000+ deliveries</span>
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
