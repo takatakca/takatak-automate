@@ -10,13 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as OtpRouteImport } from './routes/otp'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HostingRouteImport } from './routes/hosting'
 import { Route as DomainRouteImport } from './routes/domain'
+import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ServicesWebsitesRouteImport } from './routes/services.websites'
 import { Route as ServicesVoipRouteImport } from './routes/services.voip'
@@ -27,6 +31,8 @@ import { Route as ServicesMarketingRouteImport } from './routes/services.marketi
 import { Route as ServicesLocalListingsRouteImport } from './routes/services.local-listings'
 import { Route as ServicesLeadGenerationRouteImport } from './routes/services.lead-generation'
 import { Route as ServicesAiBusinessToolsRouteImport } from './routes/services.ai-business-tools'
+import { Route as MarketplaceSearchRouteImport } from './routes/marketplace.search'
+import { Route as MarketplacePostProjectRouteImport } from './routes/marketplace.post-project'
 import { Route as DashboardWebsitesRouteImport } from './routes/dashboard.websites'
 import { Route as DashboardVoipRouteImport } from './routes/dashboard.voip'
 import { Route as DashboardSupportRouteImport } from './routes/dashboard.support'
@@ -44,6 +50,8 @@ import { Route as DashboardHostingRouteImport } from './routes/dashboard.hosting
 import { Route as DashboardDomainsRouteImport } from './routes/dashboard.domains'
 import { Route as DashboardAiToolsRouteImport } from './routes/dashboard.ai-tools'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
+import { Route as MarketplaceGigsIdRouteImport } from './routes/marketplace.gigs.$id'
+import { Route as MarketplaceCategorySlugRouteImport } from './routes/marketplace.category.$slug'
 import { Route as DashboardAdminExceptionsRouteImport } from './routes/dashboard.admin.exceptions'
 
 const SignupRoute = SignupRouteImport.update({
@@ -51,9 +59,19 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OtpRoute = OtpRouteImport.update({
   id: '/otp',
   path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -71,6 +89,11 @@ const DomainRoute = DomainRouteImport.update({
   path: '/domain',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -85,6 +108,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MarketplaceRoute,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
@@ -135,6 +163,16 @@ const ServicesAiBusinessToolsRoute = ServicesAiBusinessToolsRouteImport.update({
   id: '/services/ai-business-tools',
   path: '/services/ai-business-tools',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceSearchRoute = MarketplaceSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const MarketplacePostProjectRoute = MarketplacePostProjectRouteImport.update({
+  id: '/post-project',
+  path: '/post-project',
+  getParentRoute: () => MarketplaceRoute,
 } as any)
 const DashboardWebsitesRoute = DashboardWebsitesRouteImport.update({
   id: '/websites',
@@ -221,6 +259,16 @@ const DashboardAccountRoute = DashboardAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => DashboardRoute,
 } as any)
+const MarketplaceGigsIdRoute = MarketplaceGigsIdRouteImport.update({
+  id: '/gigs/$id',
+  path: '/gigs/$id',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const MarketplaceCategorySlugRoute = MarketplaceCategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
 const DashboardAdminExceptionsRoute =
   DashboardAdminExceptionsRouteImport.update({
     id: '/admin/exceptions',
@@ -232,10 +280,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/deals': typeof DealsRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
+  '/marketplace': typeof MarketplaceRouteWithChildren
   '/otp': typeof OtpRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
@@ -254,6 +305,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/support': typeof DashboardSupportRoute
   '/dashboard/voip': typeof DashboardVoipRoute
   '/dashboard/websites': typeof DashboardWebsitesRoute
+  '/marketplace/post-project': typeof MarketplacePostProjectRoute
+  '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -264,15 +317,20 @@ export interface FileRoutesByFullPath {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/marketplace/category/$slug': typeof MarketplaceCategorySlugRoute
+  '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/deals': typeof DealsRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
@@ -291,6 +349,8 @@ export interface FileRoutesByTo {
   '/dashboard/support': typeof DashboardSupportRoute
   '/dashboard/voip': typeof DashboardVoipRoute
   '/dashboard/websites': typeof DashboardWebsitesRoute
+  '/marketplace/post-project': typeof MarketplacePostProjectRoute
+  '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -301,17 +361,23 @@ export interface FileRoutesByTo {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/marketplace': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/marketplace/category/$slug': typeof MarketplaceCategorySlugRoute
+  '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/deals': typeof DealsRoute
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
+  '/marketplace': typeof MarketplaceRouteWithChildren
   '/otp': typeof OtpRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
@@ -330,6 +396,8 @@ export interface FileRoutesById {
   '/dashboard/support': typeof DashboardSupportRoute
   '/dashboard/voip': typeof DashboardVoipRoute
   '/dashboard/websites': typeof DashboardWebsitesRoute
+  '/marketplace/post-project': typeof MarketplacePostProjectRoute
+  '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
@@ -340,7 +408,10 @@ export interface FileRoutesById {
   '/services/voip': typeof ServicesVoipRoute
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/marketplace/category/$slug': typeof MarketplaceCategorySlugRoute
+  '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -348,10 +419,13 @@ export interface FileRouteTypes {
     | '/'
     | '/checkout'
     | '/dashboard'
+    | '/deals'
     | '/domain'
     | '/hosting'
     | '/login'
+    | '/marketplace'
     | '/otp'
+    | '/search'
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
@@ -370,6 +444,8 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/voip'
     | '/dashboard/websites'
+    | '/marketplace/post-project'
+    | '/marketplace/search'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -380,15 +456,20 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard/'
+    | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/marketplace/category/$slug'
+    | '/marketplace/gigs/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/checkout'
+    | '/deals'
     | '/domain'
     | '/hosting'
     | '/login'
     | '/otp'
+    | '/search'
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
@@ -407,6 +488,8 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/voip'
     | '/dashboard/websites'
+    | '/marketplace/post-project'
+    | '/marketplace/search'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -417,16 +500,22 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard'
+    | '/marketplace'
     | '/dashboard/admin/exceptions'
+    | '/marketplace/category/$slug'
+    | '/marketplace/gigs/$id'
   id:
     | '__root__'
     | '/'
     | '/checkout'
     | '/dashboard'
+    | '/deals'
     | '/domain'
     | '/hosting'
     | '/login'
+    | '/marketplace'
     | '/otp'
+    | '/search'
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
@@ -445,6 +534,8 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/voip'
     | '/dashboard/websites'
+    | '/marketplace/post-project'
+    | '/marketplace/search'
     | '/services/ai-business-tools'
     | '/services/lead-generation'
     | '/services/local-listings'
@@ -455,17 +546,23 @@ export interface FileRouteTypes {
     | '/services/voip'
     | '/services/websites'
     | '/dashboard/'
+    | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/marketplace/category/$slug'
+    | '/marketplace/gigs/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  DealsRoute: typeof DealsRoute
   DomainRoute: typeof DomainRoute
   HostingRoute: typeof HostingRoute
   LoginRoute: typeof LoginRoute
+  MarketplaceRoute: typeof MarketplaceRouteWithChildren
   OtpRoute: typeof OtpRoute
+  SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
   ServicesAiBusinessToolsRoute: typeof ServicesAiBusinessToolsRoute
   ServicesLeadGenerationRoute: typeof ServicesLeadGenerationRoute
@@ -487,11 +584,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/otp': {
       id: '/otp'
       path: '/otp'
       fullPath: '/otp'
       preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -515,6 +626,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DomainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -535,6 +653,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/': {
+      id: '/marketplace/'
+      path: '/'
+      fullPath: '/marketplace/'
+      preLoaderRoute: typeof MarketplaceIndexRouteImport
+      parentRoute: typeof MarketplaceRoute
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -605,6 +730,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/services/ai-business-tools'
       preLoaderRoute: typeof ServicesAiBusinessToolsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/search': {
+      id: '/marketplace/search'
+      path: '/search'
+      fullPath: '/marketplace/search'
+      preLoaderRoute: typeof MarketplaceSearchRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/post-project': {
+      id: '/marketplace/post-project'
+      path: '/post-project'
+      fullPath: '/marketplace/post-project'
+      preLoaderRoute: typeof MarketplacePostProjectRouteImport
+      parentRoute: typeof MarketplaceRoute
     }
     '/dashboard/websites': {
       id: '/dashboard/websites'
@@ -725,6 +864,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/marketplace/gigs/$id': {
+      id: '/marketplace/gigs/$id'
+      path: '/gigs/$id'
+      fullPath: '/marketplace/gigs/$id'
+      preLoaderRoute: typeof MarketplaceGigsIdRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/category/$slug': {
+      id: '/marketplace/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/marketplace/category/$slug'
+      preLoaderRoute: typeof MarketplaceCategorySlugRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
     '/dashboard/admin/exceptions': {
       id: '/dashboard/admin/exceptions'
       path: '/admin/exceptions'
@@ -783,14 +936,37 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface MarketplaceRouteChildren {
+  MarketplacePostProjectRoute: typeof MarketplacePostProjectRoute
+  MarketplaceSearchRoute: typeof MarketplaceSearchRoute
+  MarketplaceIndexRoute: typeof MarketplaceIndexRoute
+  MarketplaceCategorySlugRoute: typeof MarketplaceCategorySlugRoute
+  MarketplaceGigsIdRoute: typeof MarketplaceGigsIdRoute
+}
+
+const MarketplaceRouteChildren: MarketplaceRouteChildren = {
+  MarketplacePostProjectRoute: MarketplacePostProjectRoute,
+  MarketplaceSearchRoute: MarketplaceSearchRoute,
+  MarketplaceIndexRoute: MarketplaceIndexRoute,
+  MarketplaceCategorySlugRoute: MarketplaceCategorySlugRoute,
+  MarketplaceGigsIdRoute: MarketplaceGigsIdRoute,
+}
+
+const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
+  MarketplaceRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  DealsRoute: DealsRoute,
   DomainRoute: DomainRoute,
   HostingRoute: HostingRoute,
   LoginRoute: LoginRoute,
+  MarketplaceRoute: MarketplaceRouteWithChildren,
   OtpRoute: OtpRoute,
+  SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
   ServicesAiBusinessToolsRoute: ServicesAiBusinessToolsRoute,
   ServicesLeadGenerationRoute: ServicesLeadGenerationRoute,
