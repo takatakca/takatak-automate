@@ -36,11 +36,18 @@ export function MarketplaceCategoryGrid() {
             key={c.slug}
             to="/marketplace/category/$slug"
             params={{ slug: c.slug }}
-            className="group rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:bg-secondary/30 transition-colors"
+            className="group relative rounded-xl border border-border bg-card p-4 overflow-hidden hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200"
           >
-            <Icon size={20} className="text-primary group-hover:scale-110 transition-transform" />
-            <div className="mt-3 font-medium text-sm">{c.name}</div>
-            <div className="mt-1 text-xs text-muted-foreground">Browse packages →</div>
+            <div
+              aria-hidden
+              className="absolute -top-12 -right-12 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity"
+              style={{ background: "var(--gradient-hero)" }}
+            />
+            <div className="relative inline-flex items-center justify-center w-10 h-10 rounded-lg border border-border bg-secondary/40 group-hover:border-primary/40">
+              <Icon size={18} className="text-primary transition-transform group-hover:scale-110" />
+            </div>
+            <div className="relative mt-3 font-medium text-sm">{c.name}</div>
+            <div className="relative mt-1 text-xs text-muted-foreground group-hover:text-foreground/80 transition-colors">Browse packages →</div>
           </Link>
         );
       })}
