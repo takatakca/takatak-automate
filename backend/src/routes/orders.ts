@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
+import { transition } from "../services/stateMachine.js";
 
 export const ordersRouter = Router();
 
@@ -27,4 +28,163 @@ ordersRouter.post("/orders", requireAuth, async (req: AuthedRequest, res) => {
     ),
   );
   res.json({ orderIds: orders.map((o) => o.id) });
+});
+
+// ---- Order detail/status (user-scoped) ----
+ordersRouter.get("/orders", requireAuth, async (req: AuthedRequest, res) => {
+  const orders = await prisma.order.findMany({
+    where: { userId: req.userId! },
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  });
+  res.json({ orders });
+});
+
+ordersRouter.get("/orders/:id", requireAuth, async (req: AuthedRequest, res) => {
+  const order = await prisma.order.findFirst({ where: { id: req.params.id, userId: req.userId! } });
+  if (!order) return res.status(404).json({ error: "not_found" });
+  res.json({ order });
+});
+
+ordersRouter.get("/orders/:id/status", requireAuth, async (req: AuthedRequest, res) => {
+  const order = await prisma.order.findFirst({
+    where: { id: req.params.id, userId: req.userId! },
+    select: { id: true, status: true, serviceInstanceId: true, amountCents: true, currency: true, updatedAt: true },
+  });
+  if (!order) return res.status(404).json({ error: "not_found" });
+  res.json({ status: order.status, order });
+});
+
+// ---- Package checkout ----
+// Creates an unpaid Order + draft ServiceInstance and returns a checkoutUrl
+// when a payment processor is configured. Until then checkoutUrl is null —
+// the frontend MUST NOT treat the order as paid.
+const PackageCheckout = z.object({
+  packageId: z.string().min(1).max(128),
+  title: z.string().min(1).max(200),
+  category: z.string().min(1).max(64),
+  tier: z.object({
+    name: z.string().min(1).max(32),
+    priceCents: z.number().int().nonnegative(),
+    deliveryDays: z.number().int().positive().optional(),
+  }),
+  addons: z.array(z.object({
+    label: z.string().min(1).max(120),
+    priceCents: z.number().int().nonnegative(),
+  })).max(20).default([]),
+  quantity: z.number().int().positive().max(20).default(1),
+  currency: z.string().min(3).max(8).default("CAD"),
+});
+
+ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req: AuthedRequest, res) => {
+  const parsed = PackageCheckout.safeParse({ ...req.body, packageId: req.params.id });
+  if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
+  const d = parsed.data;
+  const addonsTotal = d.addons.reduce((s, a) => s + a.priceCents, 0);
+  const subtotal = (d.tier.priceCents + addonsTotal) * d.quantity;
+  const total = subtotal; // taxes computed by payment processor when configured
+
+  const serviceKey = `marketplace:${d.category}`;
+  const instance = await prisma.serviceInstance.create({
+    data: {
+      userId: req.userId!,
+      serviceKey,
+      state: "draft",
+      meta: { kind: "marketplace_package", packageId: d.packageId, title: d.title } as object,
+    },
+  });
+  await transition({
+    serviceInstanceId: instance.id,
+    next: "checkout_started",
+    label: "Checkout started",
+    message: `Package ${d.title} (${d.tier.name})`,
+    actor: "client",
+  });
+  const order = await prisma.order.create({
+    data: {
+      userId: req.userId!,
+      serviceKey,
+      serviceInstanceId: instance.id,
+      status: "unpaid",
+      amountCents: total,
+      currency: d.currency,
+      meta: {
+        kind: "marketplace_package",
+        packageId: d.packageId,
+        title: d.title,
+        category: d.category,
+        tier: d.tier,
+        addons: d.addons,
+        quantity: d.quantity,
+        subtotalCents: subtotal,
+        taxesCents: 0,
+        totalCents: total,
+      } as object,
+    },
+  });
+
+  // Payment processor integration point — return null until wired server-side.
+  const checkoutUrl: string | null = null;
+  res.json({
+    orderId: order.id,
+    serviceInstanceId: instance.id,
+    paymentStatus: order.status,
+    currency: order.currency,
+    totalCents: total,
+    checkoutUrl,
+  });
+});
+
+// ---- Project checkout ----
+ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req: AuthedRequest, res) => {
+  const project = await prisma.clientProject.findFirst({
+    where: { id: req.params.id, userId: req.userId! },
+  });
+  if (!project) return res.status(404).json({ error: "not_found" });
+  const total = project.budgetCents ?? 0;
+  const serviceKey = `marketplace:${project.category}`;
+  const instance = await prisma.serviceInstance.create({
+    data: {
+      userId: req.userId!,
+      serviceKey,
+      state: "draft",
+      meta: { kind: "marketplace_project", projectId: project.id, title: project.title } as object,
+    },
+  });
+  await transition({
+    serviceInstanceId: instance.id,
+    next: total > 0 ? "checkout_started" : "waiting_for_takatak",
+    label: total > 0 ? "Checkout started" : "Quote requested",
+    message: project.title,
+    actor: "client",
+  });
+  const order = await prisma.order.create({
+    data: {
+      userId: req.userId!,
+      serviceKey,
+      serviceInstanceId: instance.id,
+      status: total > 0 ? "unpaid" : "quote_requested",
+      amountCents: total,
+      currency: "CAD",
+      meta: {
+        kind: "marketplace_project",
+        projectId: project.id,
+        title: project.title,
+        category: project.category,
+        totalCents: total,
+      } as object,
+    },
+  });
+  await prisma.projectAuditLog.create({
+    data: { projectId: project.id, actor: req.userId!, action: "order.created", data: { orderId: order.id } },
+  });
+  const checkoutUrl: string | null = null;
+  res.json({
+    orderId: order.id,
+    serviceInstanceId: instance.id,
+    paymentStatus: order.status,
+    currency: order.currency,
+    totalCents: total,
+    checkoutUrl,
+  });
 });
