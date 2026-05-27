@@ -46,7 +46,6 @@ export function PackageResultCard({ pkg }: { pkg: MarketplacePackageDetail }) {
           <div className="flex items-center gap-2">
             <Link
               to="/marketplace/post-project"
-              search={{ category: pkg.category, packageId: pkg.id } as never}
               className="px-3 py-1.5 rounded-md text-xs font-semibold border border-border hover:bg-secondary"
             >
               Request quote
