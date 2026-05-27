@@ -110,6 +110,11 @@ function Page() {
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8">
         <form onSubmit={submit} className="space-y-6">
+          {prefillNote && (
+            <div className="rounded-lg border border-primary/20 bg-primary/5 text-xs text-primary px-3 py-2">
+              {prefillNote}
+            </div>
+          )}
           <section className="rounded-xl border border-border bg-card p-6 space-y-5">
             <h2 className="font-semibold">1. Project basics</h2>
             <div>
