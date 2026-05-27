@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShieldCheck, Check, Save } from "lucide-react";
 import { MARKETPLACE_CATEGORIES } from "@/lib/marketplaceCategories";
 import { FileUploadPanel } from "@/components/marketplace/FileUploadPanel";
 import { createProject } from "@/lib/marketplace";
+import { readQuotePrefill, clearQuotePrefill, startProjectCheckout } from "@/lib/orders";
 
 export const Route = createFileRoute("/marketplace/post-project")({
   head: () => ({ meta: [{ title: "Post a project — TAKATAK Marketplace" }] }),
@@ -27,6 +28,23 @@ function Page() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [draftSaved, setDraftSaved] = useState(false);
+  const [prefillNote, setPrefillNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    const p = readQuotePrefill();
+    if (!p) return;
+    setTitle((t) => t || `Quote: ${p.title} (${p.tierName})`);
+    setCategory(p.category);
+    const addonsTxt = p.addons.length
+      ? `\nAdd-ons: ${p.addons.map((a) => a.label).join(", ")}`
+      : "";
+    setBrief((b) =>
+      b ||
+      `Reference package: ${p.title}\nTier: ${p.tierName} ($${(p.tierPriceCents / 100).toFixed(0)})${addonsTxt}\nEstimated total: $${(p.totalCents / 100).toFixed(0)}\n\nWhat I need:\n`,
+    );
+    setBudget((b) => b || String(Math.round(p.totalCents / 100)));
+    setPrefillNote(`Prefilled from "${p.title}" — adjust anything before submitting.`);
+  }, []);
 
   const saveDraft = () => {
     try {
@@ -51,6 +69,16 @@ function Page() {
         `${brief}\n\n---\nBusiness: ${businessName || "—"}\nTimeline: ${timeline.replace(/_/g, " ")}\nRequired skills: ${skills || "—"}\nVisibility: ${visibility.replace(/_/g, " ")}`;
       const r = await createProject({ title, brief: combinedBrief, category, budgetCents });
       try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
+      // Start an order/service instance for this project. Don't block navigation
+      // if checkout setup fails — the project itself is already saved.
+      try {
+        const co = await startProjectCheckout(r.project.id);
+        if (co.checkoutUrl) {
+          window.location.href = co.checkoutUrl;
+          return;
+        }
+      } catch { /* fallback: user lands on workspace */ }
+      clearQuotePrefill();
       void navigate({ to: "/dashboard/projects/$projectId", params: { projectId: r.project.id } });
     } catch (err) {
       // Fallback: save locally so the user doesn't lose their work
@@ -82,6 +110,11 @@ function Page() {
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8">
         <form onSubmit={submit} className="space-y-6">
+          {prefillNote && (
+            <div className="rounded-lg border border-primary/20 bg-primary/5 text-xs text-primary px-3 py-2">
+              {prefillNote}
+            </div>
+          )}
           <section className="rounded-xl border border-border bg-card p-6 space-y-5">
             <h2 className="font-semibold">1. Project basics</h2>
             <div>

@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Star, Clock, ShieldCheck, MessageSquare, Check, RefreshCw } from "lucide-react";
 import { ServiceThumbnail } from "@/components/marketplace/ServiceThumbnail";
 import { getPackage } from "@/lib/marketplacePackages";
+import { startPackageCheckout, saveQuotePrefill } from "@/lib/orders";
 
 export const Route = createFileRoute("/marketplace/gigs/$id")({
   head: () => ({ meta: [{ title: "Service — TAKATAK Marketplace" }] }),
@@ -16,8 +17,11 @@ function dollars(cents: number) {
 function Page() {
   const { id } = Route.useParams();
   const pkg = getPackage(id);
+  const navigate = useNavigate();
   const [tierIdx, setTierIdx] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [fallback, setFallback] = useState<string | null>(null);
 
   if (!pkg) {
     return (
@@ -39,6 +43,52 @@ function Page() {
 
   const toggleAddon = (i: number) =>
     setSelectedAddons((prev) => (prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i]));
+
+  const buildAddons = () => selectedAddons.map((i) => ({ label: pkg.addons[i].label, priceCents: pkg.addons[i].priceCents }));
+
+  const continueCheckout = async () => {
+    setFallback(null);
+    setSubmitting(true);
+    try {
+      const res = await startPackageCheckout({
+        packageId: pkg.id,
+        title: pkg.title,
+        category: pkg.category,
+        tier: { name: tier.name, priceCents: tier.priceCents, deliveryDays: tier.deliveryDays },
+        addons: buildAddons(),
+        quantity: 1,
+        currency: "CAD",
+      });
+      if (res.checkoutUrl) {
+        window.location.href = res.checkoutUrl;
+        return;
+      }
+      setFallback(
+        "Checkout isn't configured yet. Your package selection was saved — TAKATAK will reach out to finalize payment.",
+      );
+    } catch {
+      // Save the selection locally so the user keeps their context.
+      saveQuotePrefill({
+        packageId: pkg.id, title: pkg.title, category: pkg.category,
+        tierName: tier.name, tierPriceCents: tier.priceCents,
+        addons: buildAddons(), totalCents: total,
+      });
+      setFallback(
+        "Checkout isn't available right now. Your package selection was saved — continue as a custom project to keep going.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const requestQuote = () => {
+    saveQuotePrefill({
+      packageId: pkg.id, title: pkg.title, category: pkg.category,
+      tierName: tier.name, tierPriceCents: tier.priceCents,
+      addons: buildAddons(), totalCents: total,
+    });
+    void navigate({ to: "/marketplace/post-project" });
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -158,18 +208,24 @@ function Page() {
               <span>{tier.revisions} revisions</span>
               {selectedAddons.length > 0 && <><span>·</span><span>+{selectedAddons.length} add-on{selectedAddons.length === 1 ? "" : "s"}</span></>}
             </div>
-            <Link
-              to="/marketplace/post-project"
-              className="mt-4 block text-center px-4 py-2.5 rounded-md text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90"
+            <button
+              onClick={continueCheckout}
+              disabled={submitting}
+              className="mt-4 w-full text-center px-4 py-2.5 rounded-md text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90 disabled:opacity-60"
             >
-              Continue ({dollars(total)})
-            </Link>
-            <Link
-              to="/marketplace/post-project"
-              className="mt-2 block text-center px-4 py-2.5 rounded-md text-sm font-semibold text-foreground border border-border hover:bg-secondary"
+              {submitting ? "Starting checkout…" : `Continue (${dollars(total)})`}
+            </button>
+            <button
+              onClick={requestQuote}
+              className="mt-2 w-full text-center px-4 py-2.5 rounded-md text-sm font-semibold text-foreground border border-border hover:bg-secondary"
             >
               Request a custom quote
-            </Link>
+            </button>
+            {fallback && (
+              <p className="mt-3 text-xs text-warning bg-warning/10 border border-warning/30 rounded-md px-3 py-2">
+                {fallback}
+              </p>
+            )}
             <p className="mt-3 text-xs text-muted-foreground inline-flex items-start gap-1.5">
               <ShieldCheck size={12} className="text-primary mt-0.5" />
               Payment is held by TAKATAK and only released after you approve the delivery.
