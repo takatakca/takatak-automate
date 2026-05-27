@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { localSearch } from "@/lib/searchCatalog";
+import { PackageResultCard } from "@/components/marketplace/PackageResultCard";
+import { searchPackages } from "@/lib/marketplacePackages";
+import { MARKETPLACE_CATEGORIES } from "@/lib/marketplaceCategories";
 
 export const Route = createFileRoute("/marketplace/search")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -12,32 +14,38 @@ export const Route = createFileRoute("/marketplace/search")({
 
 function Page() {
   const { q, category } = Route.useSearch();
-  const results = localSearch(q, category || undefined).filter(
-    (r) => r.kind === "marketplace_category" || r.kind === "freelance" || r.kind === "action",
-  );
+  const packages = searchPackages(q, category || undefined);
+  const cat = MARKETPLACE_CATEGORIES.find((c) => c.slug === category);
+
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold">{q ? `Marketplace results for "${q}"` : "Search the marketplace"}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Browse categories or post a custom project for vetted TAKATAK talent.</p>
-      {results.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-dashed border-border bg-card/40 p-10 text-center">
-          <h3 className="font-semibold">No matching packages yet</h3>
-          <p className="mt-2 text-sm text-muted-foreground">Post your project and TAKATAK will assign a vetted freelancer.</p>
-          <Link to="/marketplace/post-project" className="mt-4 inline-block px-4 py-2 rounded-md text-sm font-medium text-primary-foreground" style={{ backgroundImage: "var(--gradient-hero)" }}>
+    <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="flex flex-col gap-2">
+        <Link to="/marketplace" className="text-xs text-muted-foreground hover:text-foreground">← Back to marketplace</Link>
+        <h1 className="text-3xl font-bold">
+          {q ? `Marketplace results for "${q}"` : cat ? cat.name : "Browse marketplace packages"}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Every TAKATAK package is delivered by a vetted freelancer. Payment is held in escrow and released only after you approve the work.
+        </p>
+      </div>
+
+      {packages.length === 0 ? (
+        <div className="mt-10 rounded-xl border border-dashed border-border bg-card p-10 text-center">
+          <h3 className="font-semibold">No matching package yet</h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Post your project and TAKATAK will assign a vetted freelancer within 24 hours.
+          </p>
+          <Link
+            to="/marketplace/post-project"
+            className="mt-4 inline-block px-4 py-2 rounded-md text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90"
+          >
             Post a project
           </Link>
         </div>
       ) : (
-        <ul className="mt-6 divide-y divide-border rounded-xl border border-border bg-card">
-          {results.map((r) => (
-            <li key={r.id}>
-              <Link to={r.to} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-secondary/40">
-                <span className="truncate">{r.title}</span>
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{r.kind.replace("_", " ")}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {packages.map((p) => <PackageResultCard key={p.id} pkg={p} />)}
+        </div>
       )}
     </div>
   );
