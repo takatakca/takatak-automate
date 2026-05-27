@@ -153,7 +153,7 @@ ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req:
   });
   await transition({
     serviceInstanceId: instance.id,
-    next: total > 0 ? "checkout_started" : "waiting_for_takatak",
+    next: "checkout_started",
     label: total > 0 ? "Checkout started" : "Quote requested",
     message: project.title,
     actor: "client",
