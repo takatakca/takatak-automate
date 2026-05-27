@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { ProjectWorkspace } from "@/components/marketplace/ProjectWorkspace";
 import { ShieldCheck, LifeBuoy } from "lucide-react";
-import type { ClientProject } from "@/lib/marketplace";
+import { useQuery } from "@tanstack/react-query";
+import { getProject, type ClientProject } from "@/lib/marketplace";
 
 export const Route = createFileRoute("/dashboard/projects/$projectId")({
   head: () => ({ meta: [{ title: "Project workspace — TAKATAK" }] }),
@@ -11,17 +12,29 @@ export const Route = createFileRoute("/dashboard/projects/$projectId")({
 
 function Page() {
   const { projectId } = Route.useParams();
-  const demo: ClientProject = {
+  const q = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: () => getProject(projectId),
+    retry: false,
+  });
+
+  const fallback: ClientProject = {
     id: projectId,
     userId: "",
     title: `Project ${projectId}`,
     brief:
-      "TAKATAK will replace this placeholder with your real brief once the backend is connected. The workspace below shows you exactly what to expect: messages, files, milestones, deliveries and payment release status — all mediated by TAKATAK.",
+      "We couldn't load this project right now. Anything you submitted is safe — TAKATAK keeps a copy and will surface it here once the backend is reachable.",
     category: "website_design",
     status: "submitted",
-    paymentState: "paid_to_takatak",
+    paymentState: "unpaid",
     createdAt: new Date().toISOString(),
   };
+
+  const project = q.data?.project ?? fallback;
+  const messages = q.data?.messages ?? [];
+  const files = q.data?.files ?? [];
+  const milestones = q.data?.milestones ?? [];
+  const deliveries = q.data?.deliveries ?? [];
 
   return (
     <DashboardShell>
@@ -49,17 +62,19 @@ function Page() {
 
       <div className="mt-6">
         <ProjectWorkspace
-          project={demo}
-          messages={[]}
-          files={[]}
-          milestones={[]}
-          deliveries={[]}
+          project={project}
+          messages={messages}
+          files={files}
+          milestones={milestones}
+          deliveries={deliveries}
         />
       </div>
 
-      <div className="mt-10 rounded-xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        Live project data will appear here once the backend is connected. Nothing you see is shared with the freelancer until TAKATAK reviews it.
-      </div>
+      {q.isError && (
+        <div className="mt-10 rounded-xl border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
+          Live project data isn't loading right now. Your submission is safe — TAKATAK will pick it up as soon as the backend is reachable.
+        </div>
+      )}
     </DashboardShell>
   );
 }
