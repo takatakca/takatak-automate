@@ -31,8 +31,13 @@ export function MarketplaceHero() {
     void navigate({ to: "/marketplace/search", search: { q: term } as never });
   };
   return (
-    <section className="bg-background border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 py-12 md:py-16 grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-center">
+    <section className="brand-dark border-b border-border relative overflow-hidden">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, var(--brand-accent-cyan), var(--brand-accent-violet), transparent)" }}
+      />
+      <div className="max-w-7xl mx-auto px-4 py-12 md:py-16 grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-center relative">
         <div>
           <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold tracking-tight leading-[1.05] text-foreground">
             Find the right freelancer
@@ -43,8 +48,8 @@ export function MarketplaceHero() {
             Websites, branding, content, marketing, automation and more — delivered through TAKATAK with escrow protection on every project.
           </p>
           <div className="mt-7 max-w-xl">
-            <div className="flex items-stretch rounded-lg border border-foreground/80 bg-card overflow-hidden focus-within:border-foreground transition-colors">
-              <div className="flex items-center pl-4 text-muted-foreground">
+            <div className="flex items-stretch rounded-lg border border-white/15 bg-white overflow-hidden focus-within:border-primary transition-colors shadow-[0_12px_40px_-20px_rgba(0,0,0,0.5)]">
+              <div className="flex items-center pl-4 text-neutral-500">
                 <Search size={18} />
               </div>
               <input
@@ -52,7 +57,7 @@ export function MarketplaceHero() {
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") go(); }}
                 placeholder='Search for "logo design"'
-                className="flex-1 bg-transparent outline-none px-3 py-3.5 text-[15px] min-w-0 text-foreground placeholder:text-muted-foreground"
+                className="flex-1 bg-transparent outline-none px-3 py-3.5 text-[15px] min-w-0 text-neutral-900 placeholder:text-neutral-500"
               />
               <button
                 onClick={() => go()}
@@ -67,7 +72,7 @@ export function MarketplaceHero() {
                 <button
                   key={p}
                   onClick={() => { setQ(p); go(p); }}
-                  className="px-2.5 py-1 rounded-full border border-border bg-card text-foreground hover:border-foreground/40 transition-colors"
+                  className="px-2.5 py-1 rounded-full border border-white/15 bg-white/5 text-foreground/90 hover:border-white/30 hover:bg-white/10 transition-colors"
                 >
                   {p}
                 </button>
@@ -82,29 +87,28 @@ export function MarketplaceHero() {
         <div className="hidden lg:block">
           <div className="relative h-[520px] w-full">
             {/* soft backdrop */}
-            <div className="absolute inset-6 rounded-3xl bg-secondary/60 border border-border" />
-            <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_30%_20%,rgba(var(--primary-rgb,16,185,129),0.06),transparent_60%)]" />
+            <div className="absolute inset-6 rounded-3xl bg-white/[0.04] border border-white/10" />
             {HERO_COLLAGE.map((c) => (
               <div
                 key={c.title}
-                className={`absolute ${c.pos} rounded-xl border border-border bg-card overflow-hidden shadow-[0_24px_48px_-24px_rgba(0,0,0,0.35)] hover:rotate-0 transition-transform duration-300`}
+                className={`absolute ${c.pos} rounded-xl border border-black/5 bg-white overflow-hidden shadow-[0_28px_56px_-24px_rgba(0,0,0,0.6)] hover:rotate-0 transition-transform duration-300`}
               >
                 <ServiceThumbnail kind={c.thumb} />
                 <div className="p-3">
-                  <div className="text-[13px] font-semibold text-foreground line-clamp-1">{c.title}</div>
-                  <div className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
-                    <Star size={11} className="fill-foreground text-foreground" />
-                    <span className="font-semibold text-foreground">{c.rating}</span>
+                  <div className="text-[13px] font-semibold text-neutral-900 line-clamp-1">{c.title}</div>
+                  <div className="mt-1.5 flex items-center gap-1 text-[11px] text-neutral-500">
+                    <Star size={11} className="fill-neutral-900 text-neutral-900" />
+                    <span className="font-semibold text-neutral-900">{c.rating}</span>
                     <span className="mx-1">·</span>
                     <Clock size={10} />
                     <span>{c.delivery}</span>
                   </div>
-                  <div className="mt-1.5 text-[13px] font-bold text-foreground">From {c.price}</div>
+                  <div className="mt-1.5 text-[13px] font-bold text-neutral-900">From {c.price}</div>
                 </div>
               </div>
             ))}
             {/* floating trust badge */}
-            <div className="absolute top-[42%] left-[44%] z-40 -translate-x-1/2 -translate-y-1/2 px-3 py-2 rounded-full bg-foreground text-background text-[11px] font-semibold shadow-lg inline-flex items-center gap-1.5">
+            <div className="absolute top-[42%] left-[44%] z-40 -translate-x-1/2 -translate-y-1/2 px-3 py-2 rounded-full bg-white text-neutral-900 text-[11px] font-semibold shadow-lg inline-flex items-center gap-1.5">
               <ShieldCheck size={13} className="text-primary" />
               TAKATAK escrow
             </div>
@@ -116,7 +120,7 @@ export function MarketplaceHero() {
             {HERO_COLLAGE.slice(0, 3).map((c, i) => (
               <div
                 key={c.title}
-                className="absolute rounded-xl border border-border bg-card overflow-hidden shadow-[0_18px_36px_-20px_rgba(0,0,0,0.35)]"
+                className="absolute rounded-xl border border-black/5 bg-white overflow-hidden shadow-[0_22px_44px_-18px_rgba(0,0,0,0.55)]"
                 style={{
                   width: "62%",
                   left: `${i * 16}%`,
@@ -127,8 +131,8 @@ export function MarketplaceHero() {
               >
                 <ServiceThumbnail kind={c.thumb} />
                 <div className="p-2.5">
-                  <div className="text-[12px] font-semibold text-foreground line-clamp-1">{c.title}</div>
-                  <div className="mt-1 text-[11px] font-bold text-foreground">From {c.price}</div>
+                  <div className="text-[12px] font-semibold text-neutral-900 line-clamp-1">{c.title}</div>
+                  <div className="mt-1 text-[11px] font-bold text-neutral-900">From {c.price}</div>
                 </div>
               </div>
             ))}
