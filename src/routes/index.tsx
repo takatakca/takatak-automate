@@ -163,15 +163,15 @@ function Index() {
       </div>
 
       {/* Final CTA */}
-      <section className="border-t border-border bg-secondary/40">
-        <div className="max-w-7xl mx-auto px-4 py-14 text-center">
+      <section className="brand-dark border-t border-border">
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
           <h3 className="text-2xl md:text-3xl font-bold text-foreground">Ready to start your next project?</h3>
           <p className="mt-2 text-muted-foreground max-w-xl mx-auto text-sm">{brand.tagline}</p>
           <div className="mt-6 flex items-center justify-center gap-2 flex-wrap">
             <Link to="/marketplace/post-project" className="px-5 py-2.5 rounded-md text-sm font-semibold text-primary-foreground bg-primary inline-flex items-center gap-2">
               Post a custom project <ArrowRight size={14} />
             </Link>
-            <Link to="/dashboard" className="px-5 py-2.5 rounded-md text-sm font-medium border border-border bg-card hover:bg-secondary">
+            <Link to="/dashboard" className="px-5 py-2.5 rounded-md text-sm font-medium border border-white/15 text-foreground hover:bg-white/5">
               Open dashboard
             </Link>
           </div>
