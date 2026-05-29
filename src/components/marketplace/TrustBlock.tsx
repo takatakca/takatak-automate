@@ -9,13 +9,18 @@ const ITEMS = [
 
 export function TrustBlock() {
   return (
-    <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <section className="brand-dark rounded-2xl border border-white/10 p-6 md:p-8 relative overflow-hidden">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, var(--brand-accent-cyan), var(--brand-accent-violet), transparent)" }}
+      />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative">
         {ITEMS.map((i) => {
           const Icon = i.icon;
           return (
             <div key={i.t}>
-              <div className="w-10 h-10 rounded-lg bg-secondary text-primary flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-white/10 text-primary flex items-center justify-center border border-white/10">
                 <Icon size={18} />
               </div>
               <div className="mt-3 font-semibold text-foreground">{i.t}</div>
