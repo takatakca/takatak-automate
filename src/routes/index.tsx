@@ -10,6 +10,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { services } from "@/lib/services";
 import { brand } from "@/lib/brand";
 import { PopularServicesGrid } from "@/components/marketplace/PopularServicesGrid";
+import { FeaturedServicesStrip } from "@/components/marketplace/FeaturedServicesStrip";
 import { HowItWorks } from "@/components/marketplace/HowItWorks";
 import { TrustBlock } from "@/components/marketplace/TrustBlock";
 
@@ -108,6 +109,10 @@ function Index() {
           </Link>
         </div>
         <PopularServicesGrid />
+      </section>
+
+      <section className="max-w-7xl mx-auto px-4 pb-16">
+        <FeaturedServicesStrip />
       </section>
 
       <div className="max-w-7xl mx-auto px-4 pb-16">

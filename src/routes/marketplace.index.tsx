@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarketplaceHero } from "@/components/marketplace/MarketplaceHero";
 import { MarketplaceCategoryGrid } from "@/components/marketplace/MarketplaceCategoryGrid";
 import { PopularServicesGrid } from "@/components/marketplace/PopularServicesGrid";
+import { FeaturedServicesStrip } from "@/components/marketplace/FeaturedServicesStrip";
 import { HowItWorks } from "@/components/marketplace/HowItWorks";
 import { WorkflowsBlock } from "@/components/marketplace/WorkflowsBlock";
 import { TrustBlock } from "@/components/marketplace/TrustBlock";
@@ -34,6 +35,8 @@ function Page() {
           </div>
           <PopularServicesGrid />
         </section>
+
+        <FeaturedServicesStrip />
 
         <HowItWorks />
 

@@ -109,9 +109,51 @@ function Page() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-border overflow-hidden">
+          <div className="rounded-xl border border-border overflow-hidden shadow-[var(--shadow-card)]">
             <ServiceThumbnail kind={pkg.thumb} />
           </div>
+          {/* gallery strip — additional preview tiles */}
+          <div className="grid grid-cols-4 gap-2">
+            {([pkg.thumb, "branding", "seo", "social"] as const).slice(0, 4).map((k, i) => (
+              <div
+                key={i}
+                className={`rounded-lg border overflow-hidden bg-card ${i === 0 ? "border-primary ring-1 ring-primary/30" : "border-border opacity-90 hover:opacity-100 transition-opacity"}`}
+              >
+                <ServiceThumbnail kind={k as never} />
+              </div>
+            ))}
+          </div>
+
+          {/* What you get */}
+          <section className="rounded-xl border border-border bg-card p-6">
+            <h2 className="font-semibold text-foreground">What you get</h2>
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                "Vetted TAKATAK freelancer match",
+                "Managed kickoff & brief review",
+                "Milestone-based delivery",
+                "Source files & full ownership",
+                "Escrow-protected payment",
+                "Free revisions during the active project",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-2 text-sm text-foreground">
+                  <Check size={14} className="text-primary mt-1 shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* TAKATAK protection box */}
+          <section className="rounded-xl border border-primary/30 bg-primary/5 p-5 flex items-start gap-3">
+            <ShieldCheck size={20} className="text-primary mt-0.5 shrink-0" />
+            <div className="text-sm">
+              <div className="font-semibold text-foreground">TAKATAK protection</div>
+              <p className="mt-1 text-muted-foreground leading-relaxed">
+                Your payment is held in escrow. TAKATAK reviews the delivery and only releases funds when you approve the work. If anything goes wrong, our team mediates and arranges a replacement freelancer at no extra cost.
+              </p>
+            </div>
+          </section>
 
           <section className="rounded-xl border border-border bg-card p-6">
             <h2 className="font-semibold text-foreground">About this package</h2>
