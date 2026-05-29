@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Star, Clock } from "lucide-react";
+import { Star, Clock, ShieldCheck } from "lucide-react";
 import { ServiceThumbnail } from "./ServiceThumbnail";
 
 type Service = {
@@ -40,12 +40,12 @@ export function PopularServicesGrid() {
           key={s.slug}
           to="/marketplace/category/$slug"
           params={{ slug: s.slug }}
-          className="group flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:shadow-[var(--shadow-card)] hover:-translate-y-0.5 transition-all"
+          className="group flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-[var(--shadow-card)] transition-all"
         >
           <div className="relative">
             <ServiceThumbnail kind={s.thumb} />
             {s.tag && (
-              <span className="absolute top-3 left-3 px-2 py-1 rounded-md bg-background/95 backdrop-blur text-[10px] font-semibold uppercase tracking-wide text-foreground border border-border">
+              <span className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-background text-[10px] font-semibold uppercase tracking-wide text-foreground border border-border shadow-sm">
                 {s.tag}
               </span>
             )}
@@ -55,7 +55,11 @@ export function PopularServicesGrid() {
             <h3 className="mt-1 text-[15px] font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
               {s.title}
             </h3>
-            <p className="mt-2 text-xs text-muted-foreground line-clamp-2">{s.blurb}</p>
+            <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">{s.blurb}</p>
+            <div className="mt-2 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+              <ShieldCheck size={11} className="text-primary" />
+              Managed by TAKATAK
+            </div>
             <div className="mt-3 flex items-center gap-1 text-xs">
               <Star size={13} className="fill-foreground text-foreground" />
               <span className="font-semibold text-foreground">{s.rating}</span>

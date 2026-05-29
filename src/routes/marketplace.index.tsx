@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarketplaceHero } from "@/components/marketplace/MarketplaceHero";
-import { MarketplaceCategoryStrip } from "@/components/marketplace/MarketplaceCategoryStrip";
 import { MarketplaceCategoryGrid } from "@/components/marketplace/MarketplaceCategoryGrid";
 import { PopularServicesGrid } from "@/components/marketplace/PopularServicesGrid";
 import { HowItWorks } from "@/components/marketplace/HowItWorks";
@@ -21,7 +20,6 @@ export const Route = createFileRoute("/marketplace/")({
 function Page() {
   return (
     <>
-      <MarketplaceCategoryStrip />
       <MarketplaceHero />
       <div className="max-w-7xl mx-auto px-4 py-12 md:py-16 space-y-16">
         <section>
