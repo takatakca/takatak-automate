@@ -183,3 +183,26 @@
   background-color: var(--background);
   color: var(--foreground);
 }
+
+/*
+ * TAKATAK premium dark band — apply via class="brand-dark" on a section
+ * wrapper to invert semantic tokens locally. Cards INSIDE keep their own
+ * `bg-card` look unless they also opt in. Use sparingly: hero band, CTA
+ * sections, protection panels, footer top strip, dashboard preview cards.
+ */
+.brand-dark {
+  --background: var(--brand-dark);
+  --foreground: var(--brand-dark-foreground);
+  --card: var(--brand-dark-2);
+  --card-foreground: var(--brand-dark-foreground);
+  --popover: var(--brand-dark-2);
+  --popover-foreground: var(--brand-dark-foreground);
+  --secondary: oklch(0.26 0.035 260);
+  --secondary-foreground: var(--brand-dark-foreground);
+  --muted: oklch(0.26 0.035 260);
+  --muted-foreground: var(--brand-dark-muted);
+  --border: var(--brand-dark-border);
+  --input: var(--brand-dark-border);
+  background-color: var(--brand-dark);
+  color: var(--brand-dark-foreground);
+}
