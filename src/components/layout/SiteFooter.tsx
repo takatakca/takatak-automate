@@ -54,7 +54,12 @@ const cols = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border mt-24">
+    <footer className="brand-dark border-t border-border mt-24 relative">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, var(--brand-accent-cyan), var(--brand-accent-violet), transparent)" }}
+      />
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-10">
           <div className="col-span-2 md:col-span-1">

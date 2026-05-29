@@ -93,6 +93,14 @@
   --shadow-card: 0 1px 2px oklch(0.18 0.01 260 / 0.04), 0 8px 24px -14px oklch(0.18 0.01 260 / 0.10);
   --font-display: 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+  /* TAKATAK premium brand tokens — used for dark accent bands only */
+  --brand-dark: oklch(0.18 0.03 260);
+  --brand-dark-2: oklch(0.22 0.035 260);
+  --brand-dark-foreground: oklch(0.985 0.003 250);
+  --brand-dark-muted: oklch(0.72 0.02 260);
+  --brand-dark-border: oklch(1 0 0 / 0.10);
+  --brand-accent-cyan: oklch(0.78 0.13 200);
+  --brand-accent-violet: oklch(0.72 0.15 290);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -174,4 +182,27 @@
      Kept as a hook for legacy wrappers that still apply the class. */
   background-color: var(--background);
   color: var(--foreground);
+}
+
+/*
+ * TAKATAK premium dark band — apply via class="brand-dark" on a section
+ * wrapper to invert semantic tokens locally. Cards INSIDE keep their own
+ * `bg-card` look unless they also opt in. Use sparingly: hero band, CTA
+ * sections, protection panels, footer top strip, dashboard preview cards.
+ */
+.brand-dark {
+  --background: var(--brand-dark);
+  --foreground: var(--brand-dark-foreground);
+  --card: var(--brand-dark-2);
+  --card-foreground: var(--brand-dark-foreground);
+  --popover: var(--brand-dark-2);
+  --popover-foreground: var(--brand-dark-foreground);
+  --secondary: oklch(0.26 0.035 260);
+  --secondary-foreground: var(--brand-dark-foreground);
+  --muted: oklch(0.26 0.035 260);
+  --muted-foreground: var(--brand-dark-muted);
+  --border: var(--brand-dark-border);
+  --input: var(--brand-dark-border);
+  background-color: var(--brand-dark);
+  color: var(--brand-dark-foreground);
 }

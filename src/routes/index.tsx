@@ -50,8 +50,13 @@ function Index() {
   return (
     <SiteShell>
       {/* Marketplace-style hero */}
-      <section className="border-b border-border bg-background">
-        <div className="max-w-7xl mx-auto px-4 py-14 md:py-20 text-center">
+      <section className="brand-dark border-b border-border relative overflow-hidden">
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, var(--brand-accent-cyan), var(--brand-accent-violet), transparent)" }}
+        />
+        <div className="max-w-7xl mx-auto px-4 py-14 md:py-20 text-center relative">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold tracking-tight leading-[1.05] text-foreground max-w-3xl mx-auto">
             Find the right business service for your next project
           </h1>
@@ -59,8 +64,8 @@ function Index() {
             Websites, domains, hosting, marketing, local visibility, AI tools, and managed project delivery through TAKATAK.
           </p>
           <div className="mt-8 max-w-2xl mx-auto">
-            <div className="flex items-stretch rounded-lg border border-foreground/80 bg-card overflow-hidden focus-within:border-foreground transition-colors shadow-sm">
-              <div className="flex items-center pl-4 text-muted-foreground">
+            <div className="flex items-stretch rounded-lg border border-white/15 bg-white overflow-hidden focus-within:border-primary transition-colors shadow-[0_12px_40px_-20px_rgba(0,0,0,0.5)]">
+              <div className="flex items-center pl-4 text-neutral-500">
                 <Search size={18} />
               </div>
               <input
@@ -68,7 +73,7 @@ function Index() {
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") go(); }}
                 placeholder="What service are you looking for today?"
-                className="flex-1 bg-transparent outline-none px-3 py-3.5 text-[15px] min-w-0 text-foreground placeholder:text-muted-foreground"
+                className="flex-1 bg-transparent outline-none px-3 py-3.5 text-[15px] min-w-0 text-neutral-900 placeholder:text-neutral-500"
               />
               <button
                 onClick={() => go()}
@@ -83,7 +88,7 @@ function Index() {
                 <button
                   key={p}
                   onClick={() => { setQ(p); go(p); }}
-                  className="px-2.5 py-1 rounded-full border border-border bg-card text-foreground hover:border-foreground/40 transition-colors"
+                  className="px-2.5 py-1 rounded-full border border-white/15 bg-white/5 text-foreground/90 hover:border-white/30 hover:bg-white/10 transition-colors"
                 >
                   {p}
                 </button>
@@ -158,15 +163,15 @@ function Index() {
       </div>
 
       {/* Final CTA */}
-      <section className="border-t border-border bg-secondary/40">
-        <div className="max-w-7xl mx-auto px-4 py-14 text-center">
+      <section className="brand-dark border-t border-border">
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
           <h3 className="text-2xl md:text-3xl font-bold text-foreground">Ready to start your next project?</h3>
           <p className="mt-2 text-muted-foreground max-w-xl mx-auto text-sm">{brand.tagline}</p>
           <div className="mt-6 flex items-center justify-center gap-2 flex-wrap">
             <Link to="/marketplace/post-project" className="px-5 py-2.5 rounded-md text-sm font-semibold text-primary-foreground bg-primary inline-flex items-center gap-2">
               Post a custom project <ArrowRight size={14} />
             </Link>
-            <Link to="/dashboard" className="px-5 py-2.5 rounded-md text-sm font-medium border border-border bg-card hover:bg-secondary">
+            <Link to="/dashboard" className="px-5 py-2.5 rounded-md text-sm font-medium border border-white/15 text-foreground hover:bg-white/5">
               Open dashboard
             </Link>
           </div>

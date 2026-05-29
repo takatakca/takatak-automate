@@ -40,8 +40,13 @@ export function PopularServicesGrid() {
           key={s.slug}
           to="/marketplace/category/$slug"
           params={{ slug: s.slug }}
-          className="group flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-[var(--shadow-card)] transition-all"
+          className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-[var(--shadow-card)] transition-all"
         >
+          <span
+            aria-hidden
+            className="absolute inset-x-0 top-0 h-[3px] z-10"
+            style={{ background: "linear-gradient(90deg, var(--brand-dark), var(--brand-accent-cyan) 60%, var(--brand-accent-violet))" }}
+          />
           <div className="relative">
             <ServiceThumbnail kind={s.thumb} />
             {s.tag && (

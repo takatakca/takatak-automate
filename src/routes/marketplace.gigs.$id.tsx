@@ -145,7 +145,12 @@ function Page() {
           </section>
 
           {/* TAKATAK protection box */}
-          <section className="rounded-xl border border-primary/30 bg-primary/5 p-5 flex items-start gap-3">
+          <section className="brand-dark rounded-xl border border-white/10 p-5 flex items-start gap-3 relative overflow-hidden">
+            <div
+              aria-hidden
+              className="absolute inset-x-0 top-0 h-px"
+              style={{ background: "linear-gradient(90deg, transparent, var(--brand-accent-cyan), var(--brand-accent-violet), transparent)" }}
+            />
             <ShieldCheck size={20} className="text-primary mt-0.5 shrink-0" />
             <div className="text-sm">
               <div className="font-semibold text-foreground">TAKATAK protection</div>
@@ -241,7 +246,14 @@ function Page() {
 
         {/* Right: order summary */}
         <aside className="lg:sticky lg:top-24 h-fit space-y-3">
-          <div className="rounded-xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card overflow-hidden shadow-[var(--shadow-card)]">
+            <div className="brand-dark px-6 py-3 flex items-center justify-between text-xs font-semibold border-b border-white/10">
+              <span className="inline-flex items-center gap-1.5 text-foreground">
+                <ShieldCheck size={13} className="text-primary" /> TAKATAK escrow order
+              </span>
+              <span className="text-muted-foreground">CAD</span>
+            </div>
+            <div className="p-6">
             <div className="text-xs text-muted-foreground">Selected tier · {tier.name}</div>
             <div className="mt-1 text-3xl font-bold text-foreground">{dollars(total)}</div>
             <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground border-y border-border py-3">
@@ -272,6 +284,7 @@ function Page() {
               <ShieldCheck size={12} className="text-primary mt-0.5" />
               Payment is held by TAKATAK and only released after you approve the delivery.
             </p>
+            </div>
           </div>
 
           <div className="rounded-xl border border-border bg-card p-5 text-xs text-muted-foreground space-y-2">
