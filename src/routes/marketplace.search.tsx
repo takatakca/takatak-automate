@@ -1,20 +1,35 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { PackageResultCard } from "@/components/marketplace/PackageResultCard";
-import { searchPackages } from "@/lib/marketplacePackages";
+import {
+  searchPackages,
+  PACKAGE_CATEGORIES_DISPLAY,
+  shortestDelivery,
+} from "@/lib/marketplacePackages";
 import { MARKETPLACE_CATEGORIES } from "@/lib/marketplaceCategories";
 
 export const Route = createFileRoute("/marketplace/search")({
   validateSearch: (s: Record<string, unknown>) => ({
     q: typeof s.q === "string" ? s.q : "",
     category: typeof s.category === "string" ? s.category : "",
+    sort: typeof s.sort === "string" ? s.sort : "recommended",
   }),
   head: () => ({ meta: [{ title: "Search marketplace — TAKATAK" }] }),
   component: Page,
 });
 
 function Page() {
-  const { q, category } = Route.useSearch();
-  const packages = searchPackages(q, category || undefined);
+  const { q, category, sort } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const raw = searchPackages(q, category || undefined);
+  const packages = useMemo(() => {
+    const arr = [...raw];
+    if (sort === "price_asc") arr.sort((a, b) => Math.min(...a.tiers.map(t => t.priceCents)) - Math.min(...b.tiers.map(t => t.priceCents)));
+    else if (sort === "price_desc") arr.sort((a, b) => Math.min(...b.tiers.map(t => t.priceCents)) - Math.min(...a.tiers.map(t => t.priceCents)));
+    else if (sort === "delivery") arr.sort((a, b) => shortestDelivery(a) - shortestDelivery(b));
+    else if (sort === "rating") arr.sort((a, b) => b.rating - a.rating);
+    return arr;
+  }, [raw, sort]);
   const cat = MARKETPLACE_CATEGORIES.find((c) => c.slug === category);
 
   return (
@@ -27,6 +42,37 @@ function Page() {
         <p className="text-sm text-muted-foreground">
           Every TAKATAK package is delivered by a vetted freelancer. Payment is held in escrow and released only after you approve the work.
         </p>
+      </div>
+
+      {/* Filters */}
+      <div className="mt-6 flex flex-wrap items-center gap-3 border-y border-border py-3 text-sm">
+        <label className="text-xs uppercase tracking-wider text-muted-foreground">Category</label>
+        <select
+          value={category}
+          onChange={(e) => void navigate({ search: (p: { q: string; category: string; sort: string }) => ({ ...p, category: e.target.value }) })}
+          className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+        >
+          <option value="">All categories</option>
+          {PACKAGE_CATEGORIES_DISPLAY.map((c) => (
+            <option key={c.slug} value={c.slug}>{c.name}</option>
+          ))}
+        </select>
+        <label className="text-xs uppercase tracking-wider text-muted-foreground ml-2">Sort</label>
+        <select
+          value={sort}
+          onChange={(e) => void navigate({ search: (p: { q: string; category: string; sort: string }) => ({ ...p, sort: e.target.value }) })}
+          className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+        >
+          <option value="recommended">Recommended</option>
+          <option value="price_asc">Price: low to high</option>
+          <option value="price_desc">Price: high to low</option>
+          <option value="delivery">Fastest delivery</option>
+          <option value="rating">Highest rated</option>
+        </select>
+        <span className="ml-auto text-xs text-muted-foreground">{packages.length} result{packages.length === 1 ? "" : "s"}</span>
+        <Link to="/marketplace/post-project" className="px-3 py-1.5 rounded-md text-xs font-semibold border border-border hover:bg-secondary">
+          Post a custom project
+        </Link>
       </div>
 
       {packages.length === 0 ? (
