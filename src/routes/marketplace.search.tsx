@@ -49,7 +49,7 @@ function Page() {
         <label className="text-xs uppercase tracking-wider text-muted-foreground">Category</label>
         <select
           value={category}
-          onChange={(e) => void navigate({ search: (p) => ({ ...p, category: e.target.value }) })}
+          onChange={(e) => void navigate({ search: (p: { q: string; category: string; sort: string }) => ({ ...p, category: e.target.value }) })}
           className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
         >
           <option value="">All categories</option>
@@ -60,7 +60,7 @@ function Page() {
         <label className="text-xs uppercase tracking-wider text-muted-foreground ml-2">Sort</label>
         <select
           value={sort}
-          onChange={(e) => void navigate({ search: (p) => ({ ...p, sort: e.target.value }) })}
+          onChange={(e) => void navigate({ search: (p: { q: string; category: string; sort: string }) => ({ ...p, sort: e.target.value }) })}
           className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
         >
           <option value="recommended">Recommended</option>
