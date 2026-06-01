@@ -901,3 +901,18 @@ export function shortestDelivery(p: MarketplacePackageDetail): number {
 export const PACKAGE_CATEGORIES_DISPLAY: { slug: string; name: string }[] = Array.from(
   new Map(MARKETPLACE_PACKAGES.map((p) => [p.category, p.categoryName])).entries(),
 ).map(([slug, name]) => ({ slug, name }));
+
+export function getPackagesByCategory(slug: string): MarketplacePackageDetail[] {
+  return MARKETPLACE_PACKAGES.filter((p) => p.category === slug);
+}
+
+/** Suggest packages related to the given one: same category first, then same
+ *  related service key. Excludes the original. */
+export function relatedPackages(pkg: MarketplacePackageDetail, limit = 3): MarketplacePackageDetail[] {
+  const sameCat = MARKETPLACE_PACKAGES.filter((p) => p.id !== pkg.id && p.category === pkg.category);
+  const sameService = MARKETPLACE_PACKAGES.filter(
+    (p) => p.id !== pkg.id && p.category !== pkg.category && p.relatedServiceKey === pkg.relatedServiceKey,
+  );
+  const seen = new Set<string>();
+  return [...sameCat, ...sameService].filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true))).slice(0, limit);
+}
