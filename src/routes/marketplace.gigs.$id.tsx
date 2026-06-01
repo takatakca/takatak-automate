@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Star, Clock, ShieldCheck, MessageSquare, Check, RefreshCw } from "lucide-react";
 import { ServiceThumbnail } from "@/components/marketplace/ServiceThumbnail";
-import { getPackage } from "@/lib/marketplacePackages";
+import { getPackage, relatedPackages, formatStartingPrice, shortestDelivery } from "@/lib/marketplacePackages";
 import { startPackageCheckout, saveQuotePrefill } from "@/lib/orders";
 
 export const Route = createFileRoute("/marketplace/gigs/$id")({
@@ -33,6 +33,23 @@ function Page() {
           <Link to="/marketplace" className="px-4 py-2 rounded-md text-sm font-semibold border border-border hover:bg-secondary">Browse marketplace</Link>
           <Link to="/marketplace/post-project" className="px-4 py-2 rounded-md text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90">Post a custom project</Link>
         </div>
+        <div className="mt-10 text-left">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">You might like</h2>
+          <ul className="divide-y divide-border rounded-xl border border-border bg-card">
+            {[
+              { id: "website-starter", title: "Starter business website" },
+              { id: "logo-design", title: "Professional logo design" },
+              { id: "local-seo-setup", title: "Local SEO setup" },
+              { id: "flexs-lead-campaign", title: "FLEXS lead campaign setup" },
+            ].map((s) => (
+              <li key={s.id}>
+                <Link to="/marketplace/gigs/$id" params={{ id: s.id }} className="block px-4 py-3 text-sm hover:bg-secondary/40">
+                  {s.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     );
   }
@@ -40,6 +57,7 @@ function Page() {
   const tier = pkg.tiers[tierIdx];
   const addonsTotal = selectedAddons.reduce((s, i) => s + pkg.addons[i].priceCents, 0);
   const total = tier.priceCents + addonsTotal;
+  const related = relatedPackages(pkg, 3);
 
   const toggleAddon = (i: number) =>
     setSelectedAddons((prev) => (prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i]));
@@ -242,6 +260,29 @@ function Page() {
               ))}
             </ul>
           </section>
+
+          {/* Related packages */}
+          {related.length > 0 && (
+            <section className="rounded-xl border border-border bg-card p-6">
+              <h2 className="font-semibold text-foreground">Related packages</h2>
+              <ul className="mt-3 divide-y divide-border">
+                {related.map((r) => (
+                  <li key={r.id}>
+                    <Link
+                      to="/marketplace/gigs/$id" params={{ id: r.id }}
+                      className="flex items-center justify-between gap-3 py-3 hover:text-primary"
+                    >
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-foreground truncate">{r.title}</div>
+                        <div className="text-xs text-muted-foreground truncate">{r.categoryName} · {shortestDelivery(r)}-day delivery</div>
+                      </div>
+                      <div className="text-sm font-semibold text-foreground shrink-0">{formatStartingPrice(r)}</div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
 
         {/* Right: order summary */}
@@ -256,6 +297,11 @@ function Page() {
             <div className="p-6">
             <div className="text-xs text-muted-foreground">Selected tier · {tier.name}</div>
             <div className="mt-1 text-3xl font-bold text-foreground">{dollars(total)}</div>
+            {pkg.intakeRequired && (
+              <div className="mt-3 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-[11px] text-primary">
+                Intake required — TAKATAK will collect a short brief before kickoff.
+              </div>
+            )}
             <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground border-y border-border py-3">
               <span className="inline-flex items-center gap-1"><Clock size={12} /> {tier.deliveryDays} days</span>
               <span>·</span>
