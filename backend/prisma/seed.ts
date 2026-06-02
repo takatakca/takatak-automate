@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { MARKETPLACE_CATEGORIES } from "../src/seed/marketplaceCategories.js";
 import { SERVICE_DEFINITIONS } from "../src/seed/serviceDefinitions.js";
-import { MARKETPLACE_PACKAGES_SEED } from "../src/seed/marketplacePackages.js";
+import { MARKETPLACE_PACKAGES_SEED, assertValidSeedPackage } from "../src/seed/marketplacePackages.js";
 
 const prisma = new PrismaClient();
 
@@ -29,25 +29,36 @@ async function main() {
 
   // Marketplace packages: seed the catalog with freelancerId left null.
   // TAKATAK assigns a vetted freelancer per order — no fake freelancers seeded.
+  // Upserted by slug (= id) so re-running the seed never creates duplicates.
   for (const p of MARKETPLACE_PACKAGES_SEED) {
+    assertValidSeedPackage(p, `package[${p.id}]`);
+    const data = {
+      slug: p.slug,
+      title: p.title,
+      category: p.category,
+      description: p.description,
+      shortDescription: p.shortDescription,
+      longDescription: p.longDescription,
+      priceCents: p.priceCents,
+      currency: p.currency,
+      deliveryDays: p.deliveryDays,
+      deliveryEstimate: p.deliveryEstimate,
+      serviceKey: p.serviceKey,
+      requiresIntake: p.requiresIntake,
+      allowsQuote: p.allowsQuote,
+      status: p.status,
+      active: p.active,
+      tags: p.tags,
+      tiers: p.tiers as unknown as object,
+      addOns: p.addOns as unknown as object,
+      deliverables: p.deliverables as unknown as object,
+      faq: p.faq as unknown as object,
+      metadata: p.metadata as unknown as object,
+    };
     await prisma.marketplacePackage.upsert({
-      where: { id: p.id },
-      update: {
-        title: p.title,
-        category: p.category,
-        description: p.description,
-        priceCents: p.priceCents,
-        active: p.active,
-      },
-      create: {
-        id: p.id,
-        title: p.title,
-        category: p.category,
-        description: p.description,
-        priceCents: p.priceCents,
-        currency: "CAD",
-        active: p.active,
-      },
+      where: { slug: p.slug },
+      update: data,
+      create: { id: p.id, ...data },
     });
   }
 
