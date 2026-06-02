@@ -204,17 +204,37 @@ model MarketplaceCategory {
 
 model MarketplacePackage {
   id           String   @id @default(cuid())
+  slug         String   @unique
   title        String
   category     String
   description  String
+  shortDescription String?
+  longDescription  String?
   priceCents   Int
   currency     String   @default("CAD")
+  deliveryDays    Int?
+  deliveryEstimate String?
+  serviceKey   String?
+  requiresIntake  Boolean  @default(false)
+  allowsQuote     Boolean  @default(true)
+  status       String   @default("active") // active|draft|archived
+  tags         String[] @default([])
+  tiers        Json?
+  addOns       Json?
+  deliverables Json?
+  faq          Json?
+  metadata     Json?
   freelancerId String?
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
+  @@index([slug])
   @@index([category])
   @@index([freelancerId])
+  @@index([status])
+  @@index([active])
+  @@index([serviceKey])
 }
 
 model ClientProject {
