@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getCategory } from "@/lib/marketplaceCategories";
 import {
   getPackagesByCategory,
@@ -8,6 +9,8 @@ import {
 } from "@/lib/marketplacePackages";
 import { PackageResultCard } from "@/components/marketplace/PackageResultCard";
 import { ShieldCheck, Clock, BadgeCheck } from "lucide-react";
+import { getMarketplacePackages } from "@/lib/marketplaceCatalogApi";
+import { CatalogSourceIndicator } from "@/components/dev/CatalogSourceIndicator";
 
 export const Route = createFileRoute("/marketplace/category/$slug")({
   loader: ({ params }) => {
@@ -41,7 +44,14 @@ export const Route = createFileRoute("/marketplace/category/$slug")({
 
 function Page() {
   const { category } = Route.useLoaderData();
-  const packages = useMemo(() => getPackagesByCategory(category.slug), [category.slug]);
+  const local = useMemo(() => getPackagesByCategory(category.slug), [category.slug]);
+  const { data: remote } = useQuery({
+    queryKey: ["marketplace", "packages", { category: category.slug }],
+    queryFn: () => getMarketplacePackages({ category: category.slug }),
+    staleTime: 30_000,
+  });
+  const packages = remote?.data ?? local;
+  const source = remote?.source;
 
   const [maxBudget, setMaxBudget] = useState<string>("");
   const [maxDelivery, setMaxDelivery] = useState<string>("");
@@ -74,6 +84,7 @@ function Page() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 space-y-10">
+      <CatalogSourceIndicator source={source} />
       <header className="border-b border-border pb-6">
         <Link to="/marketplace" className="text-xs text-muted-foreground hover:text-foreground">← Marketplace</Link>
         <h1 className="mt-2 text-3xl md:text-4xl font-bold text-foreground">{category.name}</h1>
