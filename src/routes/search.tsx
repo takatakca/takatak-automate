@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { ServiceAdvisor } from "@/components/marketplace/ServiceAdvisor";
 import { PackageResultCard } from "@/components/marketplace/PackageResultCard";
 import { searchPackages } from "@/lib/marketplacePackages";
 import { localSearch, classifyIntent } from "@/lib/searchCatalog";
+import { getMarketplacePackages } from "@/lib/marketplaceCatalogApi";
+import { CatalogSourceIndicator } from "@/components/dev/CatalogSourceIndicator";
 
 export const Route = createFileRoute("/search")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -16,7 +19,15 @@ export const Route = createFileRoute("/search")({
 
 function Page() {
   const { q, category } = Route.useSearch();
-  const packages = searchPackages(q, category || undefined);
+  const local = searchPackages(q, category || undefined);
+  const { data: remote } = useQuery({
+    queryKey: ["marketplace", "packages", { q, category, scope: "global-search" }],
+    queryFn: () =>
+      getMarketplacePackages({ q: q || undefined, category: category || undefined }),
+    staleTime: 30_000,
+  });
+  const packages = remote?.data ?? local;
+  const source = remote?.source;
   const otherResults = localSearch(q, category || undefined).filter(
     (r) => r.kind === "domain" || r.kind === "hosting" || r.kind === "service" || r.kind === "action",
   );
@@ -26,6 +37,7 @@ function Page() {
     <SiteShell>
       <div className="market-light min-h-screen">
         <div className="max-w-6xl mx-auto px-4 py-10 space-y-8">
+          <CatalogSourceIndicator source={source} />
           <header>
             <h1 className="text-3xl font-bold">{q ? `Results for "${q}"` : "Search TAKATAK"}</h1>
             <p className="mt-1 text-sm text-muted-foreground">

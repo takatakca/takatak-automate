@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { PackageResultCard } from "@/components/marketplace/PackageResultCard";
 import {
   searchPackages,
@@ -7,6 +8,8 @@ import {
   shortestDelivery,
 } from "@/lib/marketplacePackages";
 import { MARKETPLACE_CATEGORIES } from "@/lib/marketplaceCategories";
+import { getMarketplacePackages } from "@/lib/marketplaceCatalogApi";
+import { CatalogSourceIndicator } from "@/components/dev/CatalogSourceIndicator";
 
 export const Route = createFileRoute("/marketplace/search")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -21,7 +24,19 @@ export const Route = createFileRoute("/marketplace/search")({
 function Page() {
   const { q, category, sort } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const raw = searchPackages(q, category || undefined);
+  const local = searchPackages(q, category || undefined);
+  const { data: remote } = useQuery({
+    queryKey: ["marketplace", "packages", { q, category, sort }],
+    queryFn: () =>
+      getMarketplacePackages({
+        q: q || undefined,
+        category: category || undefined,
+        sort: sort === "recommended" || sort === "price_asc" || sort === "delivery_asc" || sort === "category" || sort === "newest" ? sort : undefined,
+      }),
+    staleTime: 30_000,
+  });
+  const raw = remote?.data ?? local;
+  const source = remote?.source;
   const packages = useMemo(() => {
     const arr = [...raw];
     if (sort === "price_asc") arr.sort((a, b) => Math.min(...a.tiers.map(t => t.priceCents)) - Math.min(...b.tiers.map(t => t.priceCents)));
@@ -34,6 +49,7 @@ function Page() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
+      <CatalogSourceIndicator source={source} />
       <div className="flex flex-col gap-2">
         <Link to="/marketplace" className="text-xs text-muted-foreground hover:text-foreground">← Back to marketplace</Link>
         <h1 className="text-3xl font-bold">

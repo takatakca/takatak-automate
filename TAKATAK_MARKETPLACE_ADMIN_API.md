@@ -182,3 +182,55 @@ search and category pages but remain referenced by historical orders.
 - The frontend catalog at `src/lib/marketplacePackages.ts` stays in place as
   the UI fallback so the marketplace remains usable even if the backend
   catalog API is down.
+## Public catalog endpoints (live)
+
+### `GET /marketplace/categories`
+Returns active categories. Falls back to the static seed list when the DB has
+no rows yet.
+
+```json
+{ "categories": [{ "slug": "website_design", "name": "Website Design" }], "source": "db" }
+```
+
+### `GET /marketplace/packages`
+Returns active marketplace packages. Supports the following query params:
+
+| Param             | Type    | Notes |
+|-------------------|---------|-------|
+| `q`               | string  | Free-text match on title / descriptions / tags |
+| `category`        | string  | Category slug (e.g. `website_design`) |
+| `serviceKey`      | string  | Related TAKATAK service key |
+| `requiresIntake`  | bool    | `"true"` / `"false"` |
+| `allowsQuote`     | bool    | `"true"` / `"false"` |
+| `maxPriceCents`   | int     | Cap on starting price |
+| `maxDeliveryDays` | int     | Cap on fastest tier delivery |
+| `sort`            | enum    | `recommended` (default), `price_asc`, `delivery_asc`, `category`, `newest` |
+| `limit`           | int     | 1..200 (default 100) |
+
+Examples:
+
+```
+GET /marketplace/packages?category=website_design&sort=price_asc
+GET /marketplace/packages?q=logo&maxPriceCents=20000
+GET /marketplace/packages?requiresIntake=true&sort=delivery_asc
+```
+
+Only packages with `active=true` and `status="active"` are returned. Draft and
+archived packages are not exposed by this endpoint — they remain reserved for
+the future `/admin/marketplace/packages` surface.
+
+### `GET /marketplace/packages/:slug`
+Resolves a single package by `slug` first, then by `id` for backward
+compatibility. Returns `404` when missing, inactive, or archived.
+
+## Frontend fallback behavior
+
+The frontend uses `src/lib/marketplaceCatalogApi.ts` to load these endpoints
+through the existing `apiGet` proxy. Each loader returns
+`{ source: "backend" | "fallback", data }`. When the backend is unreachable,
+returns an empty list, or errors, the loaders fall back to the bundled
+`MARKETPLACE_PACKAGES` catalog so the marketplace pages never go blank.
+
+In development a small `Catalog: backend` / `Catalog: fallback` badge is shown
+in the bottom-left corner; the badge is stripped from production builds via
+`import.meta.env.DEV`.
