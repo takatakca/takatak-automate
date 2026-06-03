@@ -121,6 +121,7 @@ function Page() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
+      <CatalogSourceIndicator source={source} />
       <Link to="/marketplace" className="text-xs text-muted-foreground hover:text-foreground">← Back to marketplace</Link>
 
       <div className="mt-4 grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8">
