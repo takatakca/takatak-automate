@@ -4,6 +4,9 @@ import { Star, Clock, ShieldCheck, MessageSquare, Check, RefreshCw } from "lucid
 import { ServiceThumbnail } from "@/components/marketplace/ServiceThumbnail";
 import { getPackage, relatedPackages, formatStartingPrice, shortestDelivery } from "@/lib/marketplacePackages";
 import { startPackageCheckout, saveQuotePrefill } from "@/lib/orders";
+import { useQuery } from "@tanstack/react-query";
+import { getMarketplacePackage } from "@/lib/marketplaceCatalogApi";
+import { CatalogSourceIndicator } from "@/components/dev/CatalogSourceIndicator";
 
 export const Route = createFileRoute("/marketplace/gigs/$id")({
   head: () => ({ meta: [{ title: "Service — TAKATAK Marketplace" }] }),
@@ -16,7 +19,14 @@ function dollars(cents: number) {
 
 function Page() {
   const { id } = Route.useParams();
-  const pkg = getPackage(id);
+  const localPkg = getPackage(id);
+  const { data: remote } = useQuery({
+    queryKey: ["marketplace", "package", id],
+    queryFn: () => getMarketplacePackage(id),
+    staleTime: 60_000,
+  });
+  const pkg = remote?.data ?? localPkg;
+  const source = remote?.source;
   const navigate = useNavigate();
   const [tierIdx, setTierIdx] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
@@ -26,6 +36,7 @@ function Page() {
   if (!pkg) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center">
+        <CatalogSourceIndicator source={source} />
         <Link to="/marketplace" className="text-xs text-muted-foreground hover:text-foreground">← Back to marketplace</Link>
         <h1 className="mt-4 text-2xl font-bold">Package not found</h1>
         <p className="mt-2 text-sm text-muted-foreground">This package isn't published yet, or the link is incorrect.</p>
