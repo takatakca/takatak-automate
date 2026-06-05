@@ -189,7 +189,7 @@ webhooksRouter.post(
       data: {
         status: orderStatus,
         meta: {
-          ...(order.meta as object),
+          ...((order.meta as Record<string, unknown> | null) ?? {}),
           lastPaymentEventId: event.id,
           lastPaymentEventType: event.type,
           providerSessionId: event.providerSessionId ?? (order.meta as any)?.providerSessionId ?? null,
