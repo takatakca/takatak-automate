@@ -30,11 +30,16 @@ async function tryCreateCheckout(args: {
       metadata: args.metadata,
     });
     if ("checkoutUrl" in r) {
+      const existing = await prisma.order.findUnique({
+        where: { id: args.orderId },
+        select: { meta: true },
+      });
+      const prevMeta = (existing?.meta as Record<string, unknown> | null) ?? {};
       await prisma.order.update({
         where: { id: args.orderId },
         data: {
           meta: {
-            ...(await prisma.order.findUnique({ where: { id: args.orderId }, select: { meta: true } }))?.meta as object,
+            ...prevMeta,
             paymentProvider: r.provider,
             providerSessionId: r.providerSessionId,
           } as object,
