@@ -43,7 +43,7 @@ async function tryCreateCheckout(args: {
       return { checkoutUrl: r.checkoutUrl };
     }
     return { checkoutUrl: null, reason: r.reason };
-  } catch (e) {
+  } catch {
     return { checkoutUrl: null, reason: "checkout_provider_error" };
   }
 }
