@@ -141,3 +141,104 @@ webhooksRouter.post(
     res.json({ received: true, duplicate: false, processed: true });
   },
 );
+
+/**
+ * Payment processor webhook (Stripe-compatible).
+ *
+ * Requires raw body. Signature verified via verifyPaymentWebhook using
+ * STRIPE_WEBHOOK_SECRET. Idempotent on provider event id. Never marks an
+ * order paid unless the signature verifies successfully.
+ */
+webhooksRouter.post(
+  "/api/public/webhooks/payments",
+  raw({ type: "application/json" }),
+  async (req, res) => {
+    const body = req.body as Buffer;
+    const sig = req.header("stripe-signature") ?? req.header("x-webhook-signature");
+    const event = verifyPaymentWebhook(body.toString("utf8"), sig);
+    if (!event) return res.status(401).send("invalid_signature");
+
+    if (await alreadyProcessed(event.id, "payments")) {
+      return res.json({ received: true, duplicate: true, processed: false });
+    }
+
+    const next = mapPaymentEventToOrderState(event);
+    if (!next) {
+      return res.json({ received: true, duplicate: false, processed: false, reason: "ignored_event_type" });
+    }
+
+    const orderId = event.orderId;
+    if (!orderId) {
+      return res.status(202).json({ received: true, processed: false, reason: "no_order_ref" });
+    }
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) {
+      return res.status(202).json({ received: true, processed: false, reason: "order_not_found" });
+    }
+
+    const orderStatus =
+      next === "paid_to_takatak" ? "paid_to_takatak" :
+      next === "cancelled" ? "cancelled" :
+      next === "refunded" ? "refunded" :
+      next === "failed" ? "unpaid" :
+      next === "payment_pending" ? "checkout_started" :
+      order.status;
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        status: orderStatus,
+        meta: {
+          ...(order.meta as object),
+          lastPaymentEventId: event.id,
+          lastPaymentEventType: event.type,
+          providerSessionId: event.providerSessionId ?? (order.meta as any)?.providerSessionId ?? null,
+        } as object,
+      },
+    });
+
+    // Update service instance + project state when applicable.
+    if (order.serviceInstanceId && next === "paid_to_takatak") {
+      // Move state machine: draft/checkout_started -> payment_pending -> paid
+      await transition({
+        serviceInstanceId: order.serviceInstanceId,
+        next: "payment_pending",
+        label: "Payment received",
+      }).catch(() => undefined);
+      await transition({
+        serviceInstanceId: order.serviceInstanceId,
+        next: "paid",
+        label: "Paid to TAKATAK",
+      }).catch(() => undefined);
+      await transition({
+        serviceInstanceId: order.serviceInstanceId,
+        next: "waiting_for_takatak",
+        label: "Awaiting TAKATAK assignment",
+      }).catch(() => undefined);
+    }
+
+    const meta = order.meta as { projectId?: string; kind?: string } | null;
+    if (meta?.kind === "marketplace_project" && meta.projectId) {
+      const paymentState =
+        next === "paid_to_takatak" ? "paid_to_takatak" :
+        next === "refunded" ? "refunded" :
+        next === "cancelled" ? "cancelled" : null;
+      if (paymentState) {
+        await prisma.clientProject.update({
+          where: { id: meta.projectId },
+          data: { paymentState },
+        }).catch(() => undefined);
+        await prisma.projectAuditLog.create({
+          data: {
+            projectId: meta.projectId,
+            actor: "payments",
+            action: `payment.${next}`,
+            data: { orderId: order.id, eventId: event.id, eventType: event.type },
+          },
+        }).catch(() => undefined);
+      }
+    }
+
+    res.json({ received: true, duplicate: false, processed: true, mapped: next });
+  },
+);
