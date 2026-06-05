@@ -3,6 +3,55 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
 import { transition } from "../services/stateMachine.js";
+import {
+  createCheckoutSession,
+  getPaymentProvider,
+  isPaymentConfigured,
+} from "../services/payments.js";
+
+async function tryCreateCheckout(args: {
+  orderId: string;
+  amountCents: number;
+  currency: string;
+  description: string;
+  email?: string | null;
+  metadata?: Record<string, string>;
+}): Promise<{ checkoutUrl: string | null; reason?: string }> {
+  if (!isPaymentConfigured() || args.amountCents <= 0) {
+    return { checkoutUrl: null, reason: "checkout_not_configured" };
+  }
+  try {
+    const r = await createCheckoutSession({
+      orderId: args.orderId,
+      amountCents: args.amountCents,
+      currency: args.currency,
+      description: args.description,
+      customerEmail: args.email ?? null,
+      metadata: args.metadata,
+    });
+    if ("checkoutUrl" in r) {
+      const existing = await prisma.order.findUnique({
+        where: { id: args.orderId },
+        select: { meta: true },
+      });
+      const prevMeta = (existing?.meta as Record<string, unknown> | null) ?? {};
+      await prisma.order.update({
+        where: { id: args.orderId },
+        data: {
+          meta: {
+            ...prevMeta,
+            paymentProvider: r.provider,
+            providerSessionId: r.providerSessionId,
+          } as object,
+        },
+      });
+      return { checkoutUrl: r.checkoutUrl };
+    }
+    return { checkoutUrl: null, reason: r.reason };
+  } catch {
+    return { checkoutUrl: null, reason: "checkout_provider_error" };
+  }
+}
 
 export const ordersRouter = Router();
 
@@ -124,14 +173,23 @@ ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req:
   });
 
   // Payment processor integration point — return null until wired server-side.
-  const checkoutUrl: string | null = null;
+  // checkoutUrl computed below via tryCreateCheckout
   res.json({
     orderId: order.id,
     serviceInstanceId: instance.id,
     paymentStatus: order.status,
     currency: order.currency,
     totalCents: total,
-    checkoutUrl,
+    checkoutUrl: null,
+    provider: getPaymentProvider(),
+    reason: "checkout_not_configured",
+    ...(await tryCreateCheckout({
+      orderId: order.id,
+      amountCents: total,
+      currency: order.currency,
+      description: `${d.title} — ${d.tier.name}`,
+      metadata: { packageId: d.packageId, category: d.category, kind: "marketplace_package" },
+    })),
   });
 });
 
@@ -178,13 +236,24 @@ ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req:
   await prisma.projectAuditLog.create({
     data: { projectId: project.id, actor: req.userId!, action: "order.created", data: { orderId: order.id } },
   });
-  const checkoutUrl: string | null = null;
+  // checkoutUrl computed below via tryCreateCheckout
   res.json({
     orderId: order.id,
     serviceInstanceId: instance.id,
     paymentStatus: order.status,
     currency: order.currency,
     totalCents: total,
-    checkoutUrl,
+    checkoutUrl: null,
+    provider: getPaymentProvider(),
+    reason: total > 0 ? "checkout_not_configured" : "quote_only",
+    ...(total > 0
+      ? await tryCreateCheckout({
+          orderId: order.id,
+          amountCents: total,
+          currency: order.currency,
+          description: `Project: ${project.title}`,
+          metadata: { projectId: project.id, category: project.category, kind: "marketplace_project" },
+        })
+      : {}),
   });
 });
