@@ -3,6 +3,50 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
 import { transition } from "../services/stateMachine.js";
+import {
+  createCheckoutSession,
+  getPaymentProvider,
+  isPaymentConfigured,
+} from "../services/payments.js";
+
+async function tryCreateCheckout(args: {
+  orderId: string;
+  amountCents: number;
+  currency: string;
+  description: string;
+  email?: string | null;
+  metadata?: Record<string, string>;
+}): Promise<{ checkoutUrl: string | null; reason?: string }> {
+  if (!isPaymentConfigured() || args.amountCents <= 0) {
+    return { checkoutUrl: null, reason: "checkout_not_configured" };
+  }
+  try {
+    const r = await createCheckoutSession({
+      orderId: args.orderId,
+      amountCents: args.amountCents,
+      currency: args.currency,
+      description: args.description,
+      customerEmail: args.email ?? null,
+      metadata: args.metadata,
+    });
+    if ("checkoutUrl" in r) {
+      await prisma.order.update({
+        where: { id: args.orderId },
+        data: {
+          meta: {
+            ...(await prisma.order.findUnique({ where: { id: args.orderId }, select: { meta: true } }))?.meta as object,
+            paymentProvider: r.provider,
+            providerSessionId: r.providerSessionId,
+          } as object,
+        },
+      });
+      return { checkoutUrl: r.checkoutUrl };
+    }
+    return { checkoutUrl: null, reason: r.reason };
+  } catch (e) {
+    return { checkoutUrl: null, reason: "checkout_provider_error" };
+  }
+}
 
 export const ordersRouter = Router();
 
@@ -131,7 +175,16 @@ ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req:
     paymentStatus: order.status,
     currency: order.currency,
     totalCents: total,
-    checkoutUrl,
+    checkoutUrl: null,
+    provider: getPaymentProvider(),
+    reason: "checkout_not_configured",
+    ...(await tryCreateCheckout({
+      orderId: order.id,
+      amountCents: total,
+      currency: order.currency,
+      description: `${d.title} — ${d.tier.name}`,
+      metadata: { packageId: d.packageId, category: d.category, kind: "marketplace_package" },
+    })),
   });
 });
 
@@ -185,6 +238,17 @@ ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req:
     paymentStatus: order.status,
     currency: order.currency,
     totalCents: total,
-    checkoutUrl,
+    checkoutUrl: null,
+    provider: getPaymentProvider(),
+    reason: total > 0 ? "checkout_not_configured" : "quote_only",
+    ...(total > 0
+      ? await tryCreateCheckout({
+          orderId: order.id,
+          amountCents: total,
+          currency: order.currency,
+          description: `Project: ${project.title}`,
+          metadata: { projectId: project.id, category: project.category, kind: "marketplace_project" },
+        })
+      : {}),
   });
 });
