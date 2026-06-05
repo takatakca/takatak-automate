@@ -18,6 +18,10 @@ export interface CheckoutResponse {
   totalCents: number;
   /** null when no payment processor is configured server-side. */
   checkoutUrl: string | null;
+  /** "checkout_not_configured" | "quote_only" | "checkout_provider_error" | undefined */
+  reason?: string;
+  /** "stripe" | "none" — purely informational; no secrets. */
+  provider?: "stripe" | "none";
 }
 
 export interface OrderRecord {
