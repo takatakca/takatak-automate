@@ -168,7 +168,7 @@ ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req:
   });
 
   // Payment processor integration point — return null until wired server-side.
-  const checkoutUrl: string | null = null;
+  // checkoutUrl computed below via tryCreateCheckout
   res.json({
     orderId: order.id,
     serviceInstanceId: instance.id,
@@ -231,7 +231,7 @@ ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req:
   await prisma.projectAuditLog.create({
     data: { projectId: project.id, actor: req.userId!, action: "order.created", data: { orderId: order.id } },
   });
-  const checkoutUrl: string | null = null;
+  // checkoutUrl computed below via tryCreateCheckout
   res.json({
     orderId: order.id,
     serviceInstanceId: instance.id,
