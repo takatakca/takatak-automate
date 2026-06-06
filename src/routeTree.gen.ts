@@ -62,6 +62,7 @@ import { Route as DashboardMarketplaceDeliveriesRouteImport } from './routes/das
 import { Route as DashboardFreelancerPayoutsRouteImport } from './routes/dashboard.freelancer.payouts'
 import { Route as DashboardFreelancerDeliveriesRouteImport } from './routes/dashboard.freelancer.deliveries'
 import { Route as DashboardFreelancerContractsRouteImport } from './routes/dashboard.freelancer.contracts'
+import { Route as DashboardAdminProjectsRouteImport } from './routes/dashboard.admin.projects'
 import { Route as DashboardAdminExceptionsRouteImport } from './routes/dashboard.admin.exceptions'
 import { Route as DashboardFreelancerContractsIndexRouteImport } from './routes/dashboard.freelancer.contracts.index'
 import { Route as DashboardFreelancerContractsContractIdRouteImport } from './routes/dashboard.freelancer.contracts.$contractId'
@@ -340,6 +341,11 @@ const DashboardFreelancerContractsRoute =
     path: '/contracts',
     getParentRoute: () => DashboardFreelancerRoute,
   } as any)
+const DashboardAdminProjectsRoute = DashboardAdminProjectsRouteImport.update({
+  id: '/admin/projects',
+  path: '/admin/projects',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardAdminExceptionsRoute =
   DashboardAdminExceptionsRouteImport.update({
     id: '/admin/exceptions',
@@ -403,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/projects': typeof DashboardAdminProjectsRoute
   '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
@@ -457,6 +464,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/projects': typeof DashboardAdminProjectsRoute
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
   '/dashboard/marketplace/deliveries': typeof DashboardMarketplaceDeliveriesRoute
@@ -515,6 +523,7 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/projects': typeof DashboardAdminProjectsRoute
   '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
@@ -575,6 +584,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/projects'
     | '/dashboard/freelancer/contracts'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
@@ -629,6 +639,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/marketplace'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/projects'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
     | '/dashboard/marketplace/deliveries'
@@ -686,6 +697,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/projects'
     | '/dashboard/freelancer/contracts'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
@@ -1097,6 +1109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardFreelancerContractsRouteImport
       parentRoute: typeof DashboardFreelancerRoute
     }
+    '/dashboard/admin/projects': {
+      id: '/dashboard/admin/projects'
+      path: '/admin/projects'
+      fullPath: '/dashboard/admin/projects'
+      preLoaderRoute: typeof DashboardAdminProjectsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/admin/exceptions': {
       id: '/dashboard/admin/exceptions'
       path: '/admin/exceptions'
@@ -1195,6 +1214,7 @@ interface DashboardRouteChildren {
   DashboardWebsitesRoute: typeof DashboardWebsitesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardAdminExceptionsRoute: typeof DashboardAdminExceptionsRoute
+  DashboardAdminProjectsRoute: typeof DashboardAdminProjectsRoute
   DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
 }
 
@@ -1219,6 +1239,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardWebsitesRoute: DashboardWebsitesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAdminExceptionsRoute: DashboardAdminExceptionsRoute,
+  DashboardAdminProjectsRoute: DashboardAdminProjectsRoute,
   DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
 }
 
