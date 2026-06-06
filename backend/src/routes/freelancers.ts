@@ -77,12 +77,21 @@ freelancersRouter.post("/freelancers/contracts/:id/accept", requireAuth, async (
   if (!c) return res.status(404).json({ error: "not_found" });
   await prisma.freelancerContract.update({
     where: { id: c.id },
-    data: { status: "accepted", paymentState: "accepted_by_freelancer" },
+    data: { status: "in_progress", paymentState: "in_progress" },
+  });
+  await prisma.clientProject.update({
+    where: { id: c.projectId },
+    data: { paymentState: "in_progress", status: "in_progress" },
+  }).catch(() => undefined);
+  await prisma.projectAuditLog.create({
+    data: { projectId: c.projectId, actor: req.userId!, action: "contract.accepted", data: { contractId: c.id } },
   });
   res.json({ ok: true });
 });
 
 freelancersRouter.post("/freelancers/contracts/:id/decline", requireAuth, async (req: AuthedRequest, res) => {
+  const Body = z.object({ reason: z.string().max(2000).optional() });
+  const parsed = Body.safeParse(req.body ?? {});
   const c = await prisma.freelancerContract.findFirst({
     where: { id: req.params.id, freelancerId: req.userId! },
   });
@@ -91,7 +100,54 @@ freelancersRouter.post("/freelancers/contracts/:id/decline", requireAuth, async 
     where: { id: c.id },
     data: { status: "declined" },
   });
+  await prisma.clientProject.update({
+    where: { id: c.projectId },
+    data: { paymentState: "paid_to_takatak" },
+  }).catch(() => undefined);
+  await prisma.projectAuditLog.create({
+    data: { projectId: c.projectId, actor: req.userId!, action: "contract.declined", data: { contractId: c.id, reason: parsed.success ? parsed.data.reason : undefined } },
+  });
   res.json({ ok: true });
+});
+
+// ---- Freelancer messages (to TAKATAK mediator only — never reaches client directly) ----
+freelancersRouter.post("/freelancers/contracts/:id/messages", requireAuth, async (req: AuthedRequest, res) => {
+  const Body = z.object({ body: z.string().min(1).max(5000) });
+  const parsed = Body.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
+  const c = await prisma.freelancerContract.findFirst({ where: { id: req.params.id, freelancerId: req.userId! } });
+  if (!c) return res.status(404).json({ error: "not_found" });
+  const message = await prisma.projectMessage.create({
+    data: { projectId: c.projectId, fromUser: `freelancer:${req.userId!}`, body: parsed.data.body },
+  });
+  res.json({ message: { id: message.id, from: message.fromUser, body: message.body, at: message.at } });
+});
+
+// ---- Freelancer delivery submission ----
+freelancersRouter.post("/freelancers/contracts/:id/deliveries", requireAuth, async (req: AuthedRequest, res) => {
+  const Body = z.object({ note: z.string().max(5000).optional(), fileUrls: z.array(z.string().url()).max(20).optional() });
+  const parsed = Body.safeParse(req.body ?? {});
+  if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
+  const c = await prisma.freelancerContract.findFirst({ where: { id: req.params.id, freelancerId: req.userId! } });
+  if (!c) return res.status(404).json({ error: "not_found" });
+  const delivery = await prisma.projectDelivery.create({
+    data: { projectId: c.projectId, note: parsed.data.note ?? null },
+  });
+  await prisma.freelancerContract.update({
+    where: { id: c.id },
+    data: { status: "submitted", paymentState: "submitted" },
+  });
+  await prisma.clientProject.update({
+    where: { id: c.projectId },
+    data: { paymentState: "submitted", status: "submitted" },
+  }).catch(() => undefined);
+  await prisma.projectAuditLog.create({
+    data: {
+      projectId: c.projectId, actor: `freelancer:${req.userId!}`, action: "delivery.submitted",
+      data: { contractId: c.id, deliveryId: delivery.id, fileCount: parsed.data.fileUrls?.length ?? 0 },
+    },
+  });
+  res.json({ delivery });
 });
 
 freelancersRouter.get("/freelancers/payouts", requireAuth, async (req: AuthedRequest, res) => {
