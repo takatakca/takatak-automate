@@ -29,6 +29,8 @@ const schema = z.object({
   WORKER_BATCH: z.coerce.number().int().positive().default(5),
   WORKER_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
   WORKER_STUCK_MS: z.coerce.number().int().positive().default(10 * 60 * 1000),
+  PAYOUT_GRACE_PERIOD_HOURS: z.coerce.number().int().nonnegative().default(72),
+  PAYOUT_PROVIDER: z.enum(["stripe", "manual", "none"]).default("none"),
 });
 
 export const env = schema.parse(process.env);

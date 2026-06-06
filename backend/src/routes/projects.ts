@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
+import { startGracePeriod } from "../services/payouts.js";
 
 export const projectsRouter = Router();
 
@@ -72,10 +73,16 @@ projectsRouter.post("/marketplace/projects/:id/approve", requireAuth, async (req
     where: { id: project.id },
     data: { paymentState: "approved" },
   });
-  await prisma.projectAuditLog.create({
-    data: { projectId: project.id, actor: req.userId!, action: "delivery.approved" },
+  await prisma.freelancerContract.updateMany({
+    where: { projectId: project.id },
+    data: { paymentState: "approved" },
   });
-  res.json({ ok: true });
+  await prisma.projectAuditLog.create({
+    data: { projectId: project.id, actor: req.userId!, action: "delivery.approved", data: { by: "client" } },
+  });
+  // Auto-start grace period so payouts can release after the configured window.
+  const grace = await startGracePeriod(project.id, req.userId!);
+  res.json({ ok: true, grace });
 });
 
 projectsRouter.post("/marketplace/projects/:id/request-revision", requireAuth, async (req: AuthedRequest, res) => {
@@ -89,7 +96,7 @@ projectsRouter.post("/marketplace/projects/:id/request-revision", requireAuth, a
     data: { paymentState: "revision_requested" },
   });
   await prisma.projectAuditLog.create({
-    data: { projectId: project.id, actor: req.userId!, action: "revision.requested", data: parsed.data },
+    data: { projectId: project.id, actor: req.userId!, action: "revision.requested", data: { ...parsed.data, by: "client" } },
   });
   res.json({ ok: true });
 });
@@ -112,6 +119,9 @@ projectsRouter.post("/marketplace/projects/:id/dispute", requireAuth, async (req
       data: { contractId: project.contracts[0].id, openedBy: req.userId!, reason: parsed.data.reason },
     });
   }
+  await prisma.projectAuditLog.create({
+    data: { projectId: project.id, actor: req.userId!, action: "dispute.opened", data: { by: "client", reason: parsed.data.reason } },
+  });
   res.json({ ok: true });
 });
 

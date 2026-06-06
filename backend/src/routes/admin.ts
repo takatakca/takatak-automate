@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, requireAdmin, type AuthedRequest } from "../middleware/auth.js";
 import { transition } from "../services/stateMachine.js";
+import { createHoldForContract, releasePayment, startGracePeriod, sweepReleasable } from "../services/payouts.js";
 
 export const adminRouter = Router();
 adminRouter.use(requireAuth, requireAdmin);
@@ -77,4 +78,167 @@ adminRouter.get("/admin/exceptions", async (_req, res) => {
     intakeReview,
     provisioningFailures: pendingServices.filter((s) => s.state === "failed"),
   });
+});
+
+// ============================================================
+// Admin: marketplace projects fulfillment
+// ============================================================
+
+adminRouter.get("/admin/projects", async (req, res) => {
+  const filter = (req.query.filter as string | undefined) ?? "all";
+  const where: any = {};
+  if (filter === "awaiting_assignment") {
+    where.paymentState = "paid_to_takatak";
+  } else if (filter === "assigned") {
+    where.paymentState = { in: ["assigned", "accepted_by_freelancer", "in_progress"] };
+  } else if (filter === "submitted") {
+    where.paymentState = "submitted";
+  } else if (filter === "grace_period") {
+    where.paymentState = "grace_period";
+  } else if (filter === "disputed") {
+    where.paymentState = "disputed";
+  } else if (filter === "release_ready") {
+    where.paymentState = "released";
+  }
+  const projects = await prisma.clientProject.findMany({
+    where,
+    orderBy: { updatedAt: "desc" },
+    take: 200,
+    include: { contracts: { take: 1 } },
+  });
+  res.json({ projects });
+});
+
+adminRouter.get("/admin/projects/:id", async (req, res) => {
+  const project = await prisma.clientProject.findUnique({
+    where: { id: req.params.id },
+    include: {
+      contracts: { include: { holds: true, releases: true, disputes: true, assignments: true } },
+      messages: { orderBy: { at: "asc" } },
+      files: { orderBy: { uploadedAt: "asc" } },
+      milestones: { orderBy: { position: "asc" } },
+      deliveries: { orderBy: { submittedAt: "desc" } },
+      audits: { orderBy: { at: "desc" }, take: 100 },
+    },
+  });
+  if (!project) return res.status(404).json({ error: "not_found" });
+  res.json({ project });
+});
+
+const AssignBody = z.object({
+  freelancerId: z.string().min(1).max(128),
+  amountCents: z.number().int().positive(),
+  currency: z.string().min(3).max(8).default("CAD"),
+  note: z.string().max(2000).optional(),
+});
+adminRouter.post("/admin/projects/:id/assign", async (req: AuthedRequest, res) => {
+  const parsed = AssignBody.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
+  const project = await prisma.clientProject.findUnique({ where: { id: req.params.id } });
+  if (!project) return res.status(404).json({ error: "not_found" });
+  if (project.paymentState !== "paid_to_takatak" && project.paymentState !== "assigned") {
+    return res.status(409).json({ error: "not_paid", state: project.paymentState });
+  }
+  const contract = await prisma.freelancerContract.create({
+    data: {
+      projectId: project.id,
+      freelancerId: parsed.data.freelancerId,
+      amountCents: parsed.data.amountCents,
+      currency: parsed.data.currency,
+      status: "assigned",
+      paymentState: "assigned",
+    },
+  });
+  await prisma.contractAssignment.create({
+    data: { contractId: contract.id, assignedBy: req.userId!, note: parsed.data.note },
+  });
+  await createHoldForContract(contract.id);
+  await prisma.clientProject.update({
+    where: { id: project.id },
+    data: { paymentState: "assigned", status: "assigned" },
+  });
+  await prisma.projectAuditLog.create({
+    data: {
+      projectId: project.id, actor: req.userId!, action: "project.assigned",
+      data: { contractId: contract.id, freelancerId: parsed.data.freelancerId, amountCents: parsed.data.amountCents },
+    },
+  });
+  res.json({ contract });
+});
+
+adminRouter.post("/admin/projects/:id/request-revision", async (req: AuthedRequest, res) => {
+  const Body = z.object({ note: z.string().min(1).max(2000) });
+  const parsed = Body.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
+  const project = await prisma.clientProject.findUnique({ where: { id: req.params.id } });
+  if (!project) return res.status(404).json({ error: "not_found" });
+  await prisma.clientProject.update({
+    where: { id: project.id },
+    data: { paymentState: "revision_requested" },
+  });
+  await prisma.freelancerContract.updateMany({
+    where: { projectId: project.id },
+    data: { paymentState: "revision_requested", status: "in_progress" },
+  });
+  await prisma.projectAuditLog.create({
+    data: { projectId: project.id, actor: req.userId!, action: "revision.requested", data: { note: parsed.data.note, by: "admin" } },
+  });
+  res.json({ ok: true });
+});
+
+adminRouter.post("/admin/projects/:id/approve-delivery", async (req: AuthedRequest, res) => {
+  const project = await prisma.clientProject.findUnique({ where: { id: req.params.id } });
+  if (!project) return res.status(404).json({ error: "not_found" });
+  await prisma.clientProject.update({
+    where: { id: project.id },
+    data: { paymentState: "approved" },
+  });
+  await prisma.freelancerContract.updateMany({
+    where: { projectId: project.id },
+    data: { paymentState: "approved" },
+  });
+  await prisma.projectAuditLog.create({
+    data: { projectId: project.id, actor: req.userId!, action: "delivery.approved", data: { by: "admin" } },
+  });
+  res.json({ ok: true });
+});
+
+adminRouter.post("/admin/projects/:id/start-grace-period", async (req: AuthedRequest, res) => {
+  const r = await startGracePeriod(req.params.id, req.userId!);
+  if (!r) return res.status(404).json({ error: "not_found" });
+  res.json({ ok: true, ...r });
+});
+
+adminRouter.post("/admin/projects/:id/release-payment", async (req: AuthedRequest, res) => {
+  const Body = z.object({ force: z.boolean().optional() }).optional();
+  const parsed = Body?.safeParse(req.body ?? {}) ?? { success: true, data: {} as { force?: boolean } };
+  const force = (parsed as any).data?.force === true;
+  const r = await releasePayment(req.params.id, req.userId!, { force });
+  res.json(r);
+});
+
+adminRouter.post("/admin/projects/:id/dispute", async (req: AuthedRequest, res) => {
+  const Body = z.object({ reason: z.string().min(1).max(2000) });
+  const parsed = Body.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
+  const project = await prisma.clientProject.findUnique({
+    where: { id: req.params.id },
+    include: { contracts: { take: 1 } },
+  });
+  if (!project) return res.status(404).json({ error: "not_found" });
+  await prisma.clientProject.update({ where: { id: project.id }, data: { paymentState: "disputed" } });
+  if (project.contracts[0]) {
+    await prisma.disputeCase.create({
+      data: { contractId: project.contracts[0].id, openedBy: req.userId!, reason: parsed.data.reason },
+    });
+  }
+  await prisma.projectAuditLog.create({
+    data: { projectId: project.id, actor: req.userId!, action: "dispute.opened", data: { by: "admin", reason: parsed.data.reason } },
+  });
+  res.json({ ok: true });
+});
+
+adminRouter.post("/admin/payouts/sweep", async (req: AuthedRequest, res) => {
+  const out = await sweepReleasable(req.userId ?? "admin");
+  res.json({ ok: true, released: out });
 });

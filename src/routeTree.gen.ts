@@ -62,9 +62,11 @@ import { Route as DashboardMarketplaceDeliveriesRouteImport } from './routes/das
 import { Route as DashboardFreelancerPayoutsRouteImport } from './routes/dashboard.freelancer.payouts'
 import { Route as DashboardFreelancerDeliveriesRouteImport } from './routes/dashboard.freelancer.deliveries'
 import { Route as DashboardFreelancerContractsRouteImport } from './routes/dashboard.freelancer.contracts'
+import { Route as DashboardAdminProjectsRouteImport } from './routes/dashboard.admin.projects'
 import { Route as DashboardAdminExceptionsRouteImport } from './routes/dashboard.admin.exceptions'
 import { Route as DashboardFreelancerContractsIndexRouteImport } from './routes/dashboard.freelancer.contracts.index'
 import { Route as DashboardFreelancerContractsContractIdRouteImport } from './routes/dashboard.freelancer.contracts.$contractId'
+import { Route as DashboardAdminProjectsIdRouteImport } from './routes/dashboard.admin.projects.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -340,6 +342,11 @@ const DashboardFreelancerContractsRoute =
     path: '/contracts',
     getParentRoute: () => DashboardFreelancerRoute,
   } as any)
+const DashboardAdminProjectsRoute = DashboardAdminProjectsRouteImport.update({
+  id: '/admin/projects',
+  path: '/admin/projects',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardAdminExceptionsRoute =
   DashboardAdminExceptionsRouteImport.update({
     id: '/admin/exceptions',
@@ -357,6 +364,12 @@ const DashboardFreelancerContractsContractIdRoute =
     id: '/$contractId',
     path: '/$contractId',
     getParentRoute: () => DashboardFreelancerContractsRoute,
+  } as any)
+const DashboardAdminProjectsIdRoute =
+  DashboardAdminProjectsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => DashboardAdminProjectsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -403,6 +416,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
   '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
@@ -414,6 +428,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
   '/dashboard/freelancer/': typeof DashboardFreelancerIndexRoute
   '/dashboard/marketplace/': typeof DashboardMarketplaceIndexRoute
+  '/dashboard/admin/projects/$id': typeof DashboardAdminProjectsIdRoute
   '/dashboard/freelancer/contracts/$contractId': typeof DashboardFreelancerContractsContractIdRoute
   '/dashboard/freelancer/contracts/': typeof DashboardFreelancerContractsIndexRoute
 }
@@ -457,6 +472,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
   '/dashboard/marketplace/deliveries': typeof DashboardMarketplaceDeliveriesRoute
@@ -467,6 +483,7 @@ export interface FileRoutesByTo {
   '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
   '/dashboard/freelancer': typeof DashboardFreelancerIndexRoute
   '/dashboard/marketplace': typeof DashboardMarketplaceIndexRoute
+  '/dashboard/admin/projects/$id': typeof DashboardAdminProjectsIdRoute
   '/dashboard/freelancer/contracts/$contractId': typeof DashboardFreelancerContractsContractIdRoute
   '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsIndexRoute
 }
@@ -515,6 +532,7 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
   '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
@@ -526,6 +544,7 @@ export interface FileRoutesById {
   '/marketplace/gigs/$id': typeof MarketplaceGigsIdRoute
   '/dashboard/freelancer/': typeof DashboardFreelancerIndexRoute
   '/dashboard/marketplace/': typeof DashboardMarketplaceIndexRoute
+  '/dashboard/admin/projects/$id': typeof DashboardAdminProjectsIdRoute
   '/dashboard/freelancer/contracts/$contractId': typeof DashboardFreelancerContractsContractIdRoute
   '/dashboard/freelancer/contracts/': typeof DashboardFreelancerContractsIndexRoute
 }
@@ -575,6 +594,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/projects'
     | '/dashboard/freelancer/contracts'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
@@ -586,6 +606,7 @@ export interface FileRouteTypes {
     | '/marketplace/gigs/$id'
     | '/dashboard/freelancer/'
     | '/dashboard/marketplace/'
+    | '/dashboard/admin/projects/$id'
     | '/dashboard/freelancer/contracts/$contractId'
     | '/dashboard/freelancer/contracts/'
   fileRoutesByTo: FileRoutesByTo
@@ -629,6 +650,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/marketplace'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/projects'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
     | '/dashboard/marketplace/deliveries'
@@ -639,6 +661,7 @@ export interface FileRouteTypes {
     | '/marketplace/gigs/$id'
     | '/dashboard/freelancer'
     | '/dashboard/marketplace'
+    | '/dashboard/admin/projects/$id'
     | '/dashboard/freelancer/contracts/$contractId'
     | '/dashboard/freelancer/contracts'
   id:
@@ -686,6 +709,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/projects'
     | '/dashboard/freelancer/contracts'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
@@ -697,6 +721,7 @@ export interface FileRouteTypes {
     | '/marketplace/gigs/$id'
     | '/dashboard/freelancer/'
     | '/dashboard/marketplace/'
+    | '/dashboard/admin/projects/$id'
     | '/dashboard/freelancer/contracts/$contractId'
     | '/dashboard/freelancer/contracts/'
   fileRoutesById: FileRoutesById
@@ -1097,6 +1122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardFreelancerContractsRouteImport
       parentRoute: typeof DashboardFreelancerRoute
     }
+    '/dashboard/admin/projects': {
+      id: '/dashboard/admin/projects'
+      path: '/admin/projects'
+      fullPath: '/dashboard/admin/projects'
+      preLoaderRoute: typeof DashboardAdminProjectsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/admin/exceptions': {
       id: '/dashboard/admin/exceptions'
       path: '/admin/exceptions'
@@ -1117,6 +1149,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/freelancer/contracts/$contractId'
       preLoaderRoute: typeof DashboardFreelancerContractsContractIdRouteImport
       parentRoute: typeof DashboardFreelancerContractsRoute
+    }
+    '/dashboard/admin/projects/$id': {
+      id: '/dashboard/admin/projects/$id'
+      path: '/$id'
+      fullPath: '/dashboard/admin/projects/$id'
+      preLoaderRoute: typeof DashboardAdminProjectsIdRouteImport
+      parentRoute: typeof DashboardAdminProjectsRoute
     }
   }
 }
@@ -1174,6 +1213,20 @@ const DashboardMarketplaceRouteChildren: DashboardMarketplaceRouteChildren = {
 const DashboardMarketplaceRouteWithChildren =
   DashboardMarketplaceRoute._addFileChildren(DashboardMarketplaceRouteChildren)
 
+interface DashboardAdminProjectsRouteChildren {
+  DashboardAdminProjectsIdRoute: typeof DashboardAdminProjectsIdRoute
+}
+
+const DashboardAdminProjectsRouteChildren: DashboardAdminProjectsRouteChildren =
+  {
+    DashboardAdminProjectsIdRoute: DashboardAdminProjectsIdRoute,
+  }
+
+const DashboardAdminProjectsRouteWithChildren =
+  DashboardAdminProjectsRoute._addFileChildren(
+    DashboardAdminProjectsRouteChildren,
+  )
+
 interface DashboardRouteChildren {
   DashboardAccountRoute: typeof DashboardAccountRoute
   DashboardAiToolsRoute: typeof DashboardAiToolsRoute
@@ -1195,6 +1248,7 @@ interface DashboardRouteChildren {
   DashboardWebsitesRoute: typeof DashboardWebsitesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardAdminExceptionsRoute: typeof DashboardAdminExceptionsRoute
+  DashboardAdminProjectsRoute: typeof DashboardAdminProjectsRouteWithChildren
   DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
 }
 
@@ -1219,6 +1273,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardWebsitesRoute: DashboardWebsitesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAdminExceptionsRoute: DashboardAdminExceptionsRoute,
+  DashboardAdminProjectsRoute: DashboardAdminProjectsRouteWithChildren,
   DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
 }
 
@@ -1271,3 +1326,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
