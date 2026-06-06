@@ -116,7 +116,7 @@ export async function sweepReleasable(actor = "scheduler") {
   const out: { projectId: string; released: number }[] = [];
   for (const p of candidates) {
     const r = await releasePayment(p.id, actor);
-    if (r.ok) out.push({ projectId: p.id, released: r.released.length });
+    if (r.ok && r.released) out.push({ projectId: p.id, released: r.released.length });
   }
   return out;
 }
