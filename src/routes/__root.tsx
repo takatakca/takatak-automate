@@ -88,6 +88,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@takatak" },
+      { name: "twitter:title", content: "TAKATAK — Automated online business services" },
+      { name: "description", content: "TAKATAK automates business services, from domains and hosting to AI-driven marketing and a freelancer marketplace." },
+      { property: "og:description", content: "TAKATAK automates business services, from domains and hosting to AI-driven marketing and a freelancer marketplace." },
+      { name: "twitter:description", content: "TAKATAK automates business services, from domains and hosting to AI-driven marketing and a freelancer marketplace." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/0a5bb39a-8a5b-417a-9a4a-cf8caf8c04b8/id-preview-ac1a6a8d--a4525458-e39f-422b-a119-235d27785cf3.lovable.app-1780764098377.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/0a5bb39a-8a5b-417a-9a4a-cf8caf8c04b8/id-preview-ac1a6a8d--a4525458-e39f-422b-a119-235d27785cf3.lovable.app-1780764098377.png" },
     ],
     links: [
       {
