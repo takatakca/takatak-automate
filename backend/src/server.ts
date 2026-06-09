@@ -20,6 +20,7 @@ import { marketplaceRouter } from "./routes/marketplace.js";
 import { searchRouter } from "./routes/search.js";
 import { projectsRouter } from "./routes/projects.js";
 import { freelancersRouter } from "./routes/freelancers.js";
+import { notificationsRouter } from "./routes/notifications.js";
 
 initSentry();
 
@@ -83,6 +84,7 @@ app.use(marketplaceRouter);
 app.use(searchRouter);
 app.use(projectsRouter);
 app.use(freelancersRouter);
+app.use(notificationsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
