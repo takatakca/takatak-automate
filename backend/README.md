@@ -313,3 +313,83 @@ curl -fsS -X POST -H "Content-Type: application/json" -H "x-webhook-signature: $
   to roll back the web service and the worker independently.
 - For schema rollbacks, restore from a Render Postgres backup; never run
   `prisma migrate reset` against production.
+
+---
+
+## Operations automation (notifications + cron + payout readiness)
+
+### Workers (run as separate Render workers)
+
+Add two more Render Background Workers alongside the existing automation worker:
+
+```
+# Payout sweep — releases contracts past their grace period.
+# When STRIPE_CONNECT_ENABLED=false, releases become `release_ready`,
+# never `released`. No funds move without provider confirmation.
+node dist/workers/payoutSweepWorker.js
+
+# Notifications — scans for unpaid orders, pending freelancer acceptance,
+# overdue delivery review, stuck services, and missing-provider release-ready
+# contracts. Writes to the Notification table and emails when configured.
+node dist/workers/notificationWorker.js
+```
+
+Both honor `WORKER_POLL_MS` (minimum 30s sweep, 60s notifications).
+
+### Notification env vars
+
+| Var | Purpose |
+| --- | --- |
+| `ADMIN_NOTIFICATION_USER_ID` | userId that receives admin.exception / payout.release_ready notifications (default: `admin`) |
+| `APP_BASE_URL` | Used to build absolute `actionUrl`s in outbound emails |
+
+### Email provider
+
+Optional. When `EMAIL_PROVIDER=none` (default) the email service logs the
+would-be send and returns `ok` — notifications still persist to the DB.
+
+| Var | Purpose |
+| --- | --- |
+| `EMAIL_PROVIDER` | `resend` or `none` |
+| `RESEND_API_KEY` | Required when provider = `resend` |
+| `EMAIL_FROM` | e.g. `TAKATAK <noreply@takatak.ca>` |
+| `SUPPORT_EMAIL` | Support reply-to address (default `support@takatak.ca`) |
+
+Templates currently render plain text per notification type:
+`order_received`, `payment_received`, `project_assigned`,
+`delivery_submitted`, `revision_requested`, `approval_grace_period`,
+`dispute_opened`, `payout_release_ready`.
+
+### Stripe Connect (payout readiness)
+
+Default is **disabled**. The payout service exposes a Connect-shaped
+abstraction so wiring real transfers is additive.
+
+| Var | Purpose |
+| --- | --- |
+| `STRIPE_CONNECT_ENABLED` | `false` by default. Set to `true` to call provider APIs. |
+| `STRIPE_CONNECT_CLIENT_ID` | OAuth client id from Stripe Connect platform |
+| `STRIPE_CONNECT_WEBHOOK_SECRET` | Verifies Connect webhooks |
+| `STRIPE_PLATFORM_FEE_PERCENT` | TAKATAK fee percentage |
+| `PAYOUT_GRACE_PERIOD_HOURS` | Hold duration after client approval (default 72) |
+
+**Payout safety rules** (do not relax):
+- Sweeping a release-ready contract while Connect is disabled MUST leave it in
+  `release_ready` — never mark `released` without provider confirmation.
+- `payoutProvider.createTransfer()` returns `payout_provider_not_configured`
+  until Connect is wired.
+- Manual release process: admin acknowledges payout offline, then runs the
+  sweep — the admin payout dashboard (`/dashboard/admin/payouts`) surfaces
+  release-ready and disputed payouts for human action.
+
+### Smoke tests
+
+```sh
+# Notifications endpoint
+curl -fsS -H "Authorization: Bearer $JWT" $BASE/notifications
+
+# Payout sweep (admin)
+curl -fsS -X POST -H "Authorization: Bearer $ADMIN_JWT" $BASE/admin/payouts/sweep
+# When Connect disabled, response shows `released` items but contracts hold
+# `release_ready` reference strings (`release_ready:<contractId>`).
+```
