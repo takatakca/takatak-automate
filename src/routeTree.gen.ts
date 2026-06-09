@@ -40,6 +40,7 @@ import { Route as DashboardSocialMediaRouteImport } from './routes/dashboard.soc
 import { Route as DashboardServicesRouteImport } from './routes/dashboard.services'
 import { Route as DashboardOverviewRouteImport } from './routes/dashboard.overview'
 import { Route as DashboardOrdersRouteImport } from './routes/dashboard.orders'
+import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.notifications'
 import { Route as DashboardMobileAppsRouteImport } from './routes/dashboard.mobile-apps'
 import { Route as DashboardMarketplaceRouteImport } from './routes/dashboard.marketplace'
 import { Route as DashboardMarketingRouteImport } from './routes/dashboard.marketing'
@@ -63,6 +64,7 @@ import { Route as DashboardFreelancerPayoutsRouteImport } from './routes/dashboa
 import { Route as DashboardFreelancerDeliveriesRouteImport } from './routes/dashboard.freelancer.deliveries'
 import { Route as DashboardFreelancerContractsRouteImport } from './routes/dashboard.freelancer.contracts'
 import { Route as DashboardAdminProjectsRouteImport } from './routes/dashboard.admin.projects'
+import { Route as DashboardAdminPayoutsRouteImport } from './routes/dashboard.admin.payouts'
 import { Route as DashboardAdminExceptionsRouteImport } from './routes/dashboard.admin.exceptions'
 import { Route as DashboardFreelancerContractsIndexRouteImport } from './routes/dashboard.freelancer.contracts.index'
 import { Route as DashboardFreelancerContractsContractIdRouteImport } from './routes/dashboard.freelancer.contracts.$contractId'
@@ -223,6 +225,11 @@ const DashboardOrdersRoute = DashboardOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardMobileAppsRoute = DashboardMobileAppsRouteImport.update({
   id: '/mobile-apps',
   path: '/mobile-apps',
@@ -347,6 +354,11 @@ const DashboardAdminProjectsRoute = DashboardAdminProjectsRouteImport.update({
   path: '/admin/projects',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAdminPayoutsRoute = DashboardAdminPayoutsRouteImport.update({
+  id: '/admin/payouts',
+  path: '/admin/payouts',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardAdminExceptionsRoute =
   DashboardAdminExceptionsRouteImport.update({
     id: '/admin/exceptions',
@@ -395,6 +407,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/marketing': typeof DashboardMarketingRoute
   '/dashboard/marketplace': typeof DashboardMarketplaceRouteWithChildren
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
   '/dashboard/services': typeof DashboardServicesRoute
@@ -416,6 +429,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
   '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
   '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
@@ -451,6 +465,7 @@ export interface FileRoutesByTo {
   '/dashboard/local-listings': typeof DashboardLocalListingsRoute
   '/dashboard/marketing': typeof DashboardMarketingRoute
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
   '/dashboard/services': typeof DashboardServicesRoute
@@ -472,6 +487,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
   '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
@@ -511,6 +527,7 @@ export interface FileRoutesById {
   '/dashboard/marketing': typeof DashboardMarketingRoute
   '/dashboard/marketplace': typeof DashboardMarketplaceRouteWithChildren
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
   '/dashboard/services': typeof DashboardServicesRoute
@@ -532,6 +549,7 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
+  '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
   '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
   '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
@@ -573,6 +591,7 @@ export interface FileRouteTypes {
     | '/dashboard/marketing'
     | '/dashboard/marketplace'
     | '/dashboard/mobile-apps'
+    | '/dashboard/notifications'
     | '/dashboard/orders'
     | '/dashboard/overview'
     | '/dashboard/services'
@@ -594,6 +613,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/payouts'
     | '/dashboard/admin/projects'
     | '/dashboard/freelancer/contracts'
     | '/dashboard/freelancer/deliveries'
@@ -629,6 +649,7 @@ export interface FileRouteTypes {
     | '/dashboard/local-listings'
     | '/dashboard/marketing'
     | '/dashboard/mobile-apps'
+    | '/dashboard/notifications'
     | '/dashboard/orders'
     | '/dashboard/overview'
     | '/dashboard/services'
@@ -650,6 +671,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/marketplace'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/payouts'
     | '/dashboard/admin/projects'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
@@ -688,6 +710,7 @@ export interface FileRouteTypes {
     | '/dashboard/marketing'
     | '/dashboard/marketplace'
     | '/dashboard/mobile-apps'
+    | '/dashboard/notifications'
     | '/dashboard/orders'
     | '/dashboard/overview'
     | '/dashboard/services'
@@ -709,6 +732,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/marketplace/'
     | '/dashboard/admin/exceptions'
+    | '/dashboard/admin/payouts'
     | '/dashboard/admin/projects'
     | '/dashboard/freelancer/contracts'
     | '/dashboard/freelancer/deliveries'
@@ -968,6 +992,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardOrdersRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/notifications': {
+      id: '/dashboard/notifications'
+      path: '/notifications'
+      fullPath: '/dashboard/notifications'
+      preLoaderRoute: typeof DashboardNotificationsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/mobile-apps': {
       id: '/dashboard/mobile-apps'
       path: '/mobile-apps'
@@ -1129,6 +1160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminProjectsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/admin/payouts': {
+      id: '/dashboard/admin/payouts'
+      path: '/admin/payouts'
+      fullPath: '/dashboard/admin/payouts'
+      preLoaderRoute: typeof DashboardAdminPayoutsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/admin/exceptions': {
       id: '/dashboard/admin/exceptions'
       path: '/admin/exceptions'
@@ -1239,6 +1277,7 @@ interface DashboardRouteChildren {
   DashboardMarketingRoute: typeof DashboardMarketingRoute
   DashboardMarketplaceRoute: typeof DashboardMarketplaceRouteWithChildren
   DashboardMobileAppsRoute: typeof DashboardMobileAppsRoute
+  DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardOrdersRoute: typeof DashboardOrdersRoute
   DashboardOverviewRoute: typeof DashboardOverviewRoute
   DashboardServicesRoute: typeof DashboardServicesRoute
@@ -1248,6 +1287,7 @@ interface DashboardRouteChildren {
   DashboardWebsitesRoute: typeof DashboardWebsitesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardAdminExceptionsRoute: typeof DashboardAdminExceptionsRoute
+  DashboardAdminPayoutsRoute: typeof DashboardAdminPayoutsRoute
   DashboardAdminProjectsRoute: typeof DashboardAdminProjectsRouteWithChildren
   DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
 }
@@ -1264,6 +1304,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardMarketingRoute: DashboardMarketingRoute,
   DashboardMarketplaceRoute: DashboardMarketplaceRouteWithChildren,
   DashboardMobileAppsRoute: DashboardMobileAppsRoute,
+  DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardOrdersRoute: DashboardOrdersRoute,
   DashboardOverviewRoute: DashboardOverviewRoute,
   DashboardServicesRoute: DashboardServicesRoute,
@@ -1273,6 +1314,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardWebsitesRoute: DashboardWebsitesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAdminExceptionsRoute: DashboardAdminExceptionsRoute,
+  DashboardAdminPayoutsRoute: DashboardAdminPayoutsRoute,
   DashboardAdminProjectsRoute: DashboardAdminProjectsRouteWithChildren,
   DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
 }
