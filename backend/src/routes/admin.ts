@@ -4,6 +4,8 @@ import { prisma } from "../lib/prisma.js";
 import { requireAuth, requireAdmin, type AuthedRequest } from "../middleware/auth.js";
 import { transition } from "../services/stateMachine.js";
 import { createHoldForContract, releasePayment, startGracePeriod, sweepReleasable } from "../services/payouts.js";
+import { notify } from "../services/notifications.js";
+import { isConfigured as payoutProviderConfigured } from "../services/payoutProvider.js";
 
 export const adminRouter = Router();
 adminRouter.use(requireAuth, requireAdmin);
@@ -162,6 +164,14 @@ adminRouter.post("/admin/projects/:id/assign", async (req: AuthedRequest, res) =
       projectId: project.id, actor: req.userId!, action: "project.assigned",
       data: { contractId: contract.id, freelancerId: parsed.data.freelancerId, amountCents: parsed.data.amountCents },
     },
+  });
+  await notify({
+    userId: parsed.data.freelancerId,
+    type: "project.assigned",
+    title: "You've been assigned a new contract",
+    message: `TAKATAK assigned you to project "${project.title}". Open it to accept or decline.`,
+    actionUrl: `/dashboard/freelancer/contracts/${contract.id}`,
+    metadata: { contractId: contract.id, projectId: project.id },
   });
   res.json({ contract });
 });
