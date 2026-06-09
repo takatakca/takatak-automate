@@ -40,6 +40,7 @@ import { Route as DashboardSocialMediaRouteImport } from './routes/dashboard.soc
 import { Route as DashboardServicesRouteImport } from './routes/dashboard.services'
 import { Route as DashboardOverviewRouteImport } from './routes/dashboard.overview'
 import { Route as DashboardOrdersRouteImport } from './routes/dashboard.orders'
+import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.notifications'
 import { Route as DashboardMobileAppsRouteImport } from './routes/dashboard.mobile-apps'
 import { Route as DashboardMarketplaceRouteImport } from './routes/dashboard.marketplace'
 import { Route as DashboardMarketingRouteImport } from './routes/dashboard.marketing'
@@ -223,6 +224,11 @@ const DashboardOrdersRoute = DashboardOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardMobileAppsRoute = DashboardMobileAppsRouteImport.update({
   id: '/mobile-apps',
   path: '/mobile-apps',
@@ -395,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/marketing': typeof DashboardMarketingRoute
   '/dashboard/marketplace': typeof DashboardMarketplaceRouteWithChildren
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
   '/dashboard/services': typeof DashboardServicesRoute
@@ -451,6 +458,7 @@ export interface FileRoutesByTo {
   '/dashboard/local-listings': typeof DashboardLocalListingsRoute
   '/dashboard/marketing': typeof DashboardMarketingRoute
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
   '/dashboard/services': typeof DashboardServicesRoute
@@ -511,6 +519,7 @@ export interface FileRoutesById {
   '/dashboard/marketing': typeof DashboardMarketingRoute
   '/dashboard/marketplace': typeof DashboardMarketplaceRouteWithChildren
   '/dashboard/mobile-apps': typeof DashboardMobileAppsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/overview': typeof DashboardOverviewRoute
   '/dashboard/services': typeof DashboardServicesRoute
@@ -573,6 +582,7 @@ export interface FileRouteTypes {
     | '/dashboard/marketing'
     | '/dashboard/marketplace'
     | '/dashboard/mobile-apps'
+    | '/dashboard/notifications'
     | '/dashboard/orders'
     | '/dashboard/overview'
     | '/dashboard/services'
@@ -629,6 +639,7 @@ export interface FileRouteTypes {
     | '/dashboard/local-listings'
     | '/dashboard/marketing'
     | '/dashboard/mobile-apps'
+    | '/dashboard/notifications'
     | '/dashboard/orders'
     | '/dashboard/overview'
     | '/dashboard/services'
@@ -688,6 +699,7 @@ export interface FileRouteTypes {
     | '/dashboard/marketing'
     | '/dashboard/marketplace'
     | '/dashboard/mobile-apps'
+    | '/dashboard/notifications'
     | '/dashboard/orders'
     | '/dashboard/overview'
     | '/dashboard/services'
@@ -968,6 +980,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardOrdersRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/notifications': {
+      id: '/dashboard/notifications'
+      path: '/notifications'
+      fullPath: '/dashboard/notifications'
+      preLoaderRoute: typeof DashboardNotificationsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/mobile-apps': {
       id: '/dashboard/mobile-apps'
       path: '/mobile-apps'
@@ -1239,6 +1258,7 @@ interface DashboardRouteChildren {
   DashboardMarketingRoute: typeof DashboardMarketingRoute
   DashboardMarketplaceRoute: typeof DashboardMarketplaceRouteWithChildren
   DashboardMobileAppsRoute: typeof DashboardMobileAppsRoute
+  DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardOrdersRoute: typeof DashboardOrdersRoute
   DashboardOverviewRoute: typeof DashboardOverviewRoute
   DashboardServicesRoute: typeof DashboardServicesRoute
@@ -1264,6 +1284,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardMarketingRoute: DashboardMarketingRoute,
   DashboardMarketplaceRoute: DashboardMarketplaceRouteWithChildren,
   DashboardMobileAppsRoute: DashboardMobileAppsRoute,
+  DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardOrdersRoute: DashboardOrdersRoute,
   DashboardOverviewRoute: DashboardOverviewRoute,
   DashboardServicesRoute: DashboardServicesRoute,
