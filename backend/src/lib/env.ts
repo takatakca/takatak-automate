@@ -31,6 +31,15 @@ const schema = z.object({
   WORKER_STUCK_MS: z.coerce.number().int().positive().default(10 * 60 * 1000),
   PAYOUT_GRACE_PERIOD_HOURS: z.coerce.number().int().nonnegative().default(72),
   PAYOUT_PROVIDER: z.enum(["stripe", "manual", "none"]).default("none"),
+  EMAIL_PROVIDER: z.enum(["resend", "none"]).default("none"),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
+  SUPPORT_EMAIL: z.string().default("support@takatak.ca"),
+  STRIPE_CONNECT_ENABLED: z.coerce.boolean().default(false),
+  STRIPE_CONNECT_CLIENT_ID: z.string().optional(),
+  STRIPE_CONNECT_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PLATFORM_FEE_PERCENT: z.coerce.number().nonnegative().default(0),
+  APP_BASE_URL: z.string().url().optional(),
 });
 
 export const env = schema.parse(process.env);
