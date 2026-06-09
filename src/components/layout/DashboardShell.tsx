@@ -2,6 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { ReactNode } from "react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import {
   LayoutDashboard, Boxes, Globe, Server, Globe2, Megaphone, Share2,
   MapPin, Target, Phone, Sparkles, Store, ReceiptText, FileText,
@@ -59,7 +60,12 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               </ul>
             </nav>
           </aside>
-          <main className="min-w-0">{children}</main>
+          <main className="min-w-0">
+            <div className="flex justify-end mb-4">
+              <NotificationBell />
+            </div>
+            {children}
+          </main>
         </div>
       </ProtectedRoute>
     </SiteShell>
