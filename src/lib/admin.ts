@@ -8,6 +8,14 @@ export interface AdminProjectRow extends ClientProject {
   contracts: { id: string; freelancerId: string; status: string; paymentState: PaymentReleaseState; amountCents: number; currency: string }[];
 }
 
+export interface ApprovedFreelancer {
+  id: string;
+  userId: string;
+  displayName: string;
+  skills: string[];
+  rating?: number | null;
+}
+
 export const listAdminProjects = (filter: AdminProjectFilter = "all") =>
   apiGet<{ projects: AdminProjectRow[] }>(`/admin/projects?filter=${encodeURIComponent(filter)}`);
 
@@ -39,3 +47,6 @@ export const adminDispute = (id: string, reason: string) =>
 
 export const adminSweepPayouts = () =>
   apiPost<{ ok: true; released: { projectId: string; released: number }[] }>(`/admin/payouts/sweep`, {});
+
+export const listApprovedFreelancers = () =>
+  apiGet<{ freelancers: ApprovedFreelancer[] }>("/admin/freelancers/approved");
