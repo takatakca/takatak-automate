@@ -190,6 +190,7 @@ enum PaymentReleaseState {
   revision_requested
   approved
   grace_period
+  release_ready
   released
   disputed
   cancelled
