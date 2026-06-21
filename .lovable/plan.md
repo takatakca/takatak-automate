@@ -1,78 +1,108 @@
+# TAKATAK Real Marketplace Operation Phase — Plan
 
-# TAKATAK Marketplace + AI Search Phase
+This is a large, multi-area change. I'll execute it in 6 ordered passes, each leaving the project build-green before moving on. No fake paid states, no fake payouts, no copyrighted assets.
 
-Scope is large. I'll deliver it in one coordinated pass: frontend menu cleanup + marketplace UX + AI search + project/freelancer dashboards, and backend Prisma models + Express endpoint scaffolds wired to the existing contract. No real payment processor integration (documented as remaining work).
+## Pass 1 — Backend endpoint completeness audit
 
-## 1. Menu cleanup (frontend)
+Audit existing routes and add only what's missing. Expected gaps based on current files:
 
-- Edit `src/components/layout/SiteHeader.tsx` (and any nav config): remove Cuba Travel, Dating, Property Management. Ensure these links exist: Today's Deals, Domains, Hosting, Websites, Mobile Apps, Local Listings/QMAPS, Lead Generation/FLEXS, VoIP, Marketing, Social Media, AI Business Tools, Service Marketplace, Dashboard.
-- Add `/deals` route stub if missing.
+- `POST /marketplace/packages/:id/checkout` — create order in `unpaid` / `checkout_not_configured` state, link to package + tier + add-ons. No fake `paid_to_takatak`.
+- `POST /marketplace/projects/:id/files` — wraps existing `/files/sign` + records metadata row.
+- `GET /orders`, `GET /orders/:id`, `GET /orders/:id/status` — verify present in `routes/orders.ts`, add if missing.
+- Freelancer: `POST /freelancers/apply`, `GET /freelancers/me`, `GET /freelancers/contracts`, `GET/POST contracts/:id`, `accept`, `decline`, `messages`, `deliveries`, `GET /freelancers/payouts`.
+- Admin: `GET /admin/projects`, `GET /admin/projects/:id`, `approve-delivery`, `request-revision`, `start-grace-period`, `release-payment` (gated → `release_ready` when provider missing), `dispute`, `GET /admin/exceptions`, `GET /admin/payouts`.
+- Notifications: verify `GET /notifications`, `POST /:id/read`, `POST /read-all`.
 
-## 2. Global AI search
+Reuse existing services (`payouts.ts`, `payoutProvider.ts`, `stateMachine.ts`). No schema changes unless strictly required; if a field is needed (e.g. `order.tier`, `order.addOns`), add via Prisma migration with GRANTs.
 
-- New `src/components/search/GlobalSearchBar.tsx` mounted in `SiteHeader`: input + category dropdown + autocomplete from a local catalog (`src/lib/searchCatalog.ts`) that indexes domains, hosting, websites, mobile apps, QMAPS, FLEXS, VoIP, AI tools, marketplace categories, freelancer services.
-- New route `/search` (`src/routes/search.tsx`): reads `?q=&category=`, calls `GET /search` via proxy with local-catalog fallback, routes domain queries to `/domain`, hosting to `/hosting`, freelancer/custom to `/marketplace/post-project`, otherwise displays grouped results.
-- New `src/lib/search.ts` typed client (`apiGet("/search", {q, category})`).
+## Pass 2 — Dev-only demo seed
 
-## 3. AI Service Advisor
+Add `backend/prisma/seed.demo.ts` guarded by `SEED_DEMO_MARKETPLACE=true` AND `NODE_ENV!=='production'`. Seeds: demo client, demo freelancer, demo project, assigned contract, messages, milestones, delivery, notification. Wired via new npm script `prisma:seed:demo`. Production-safe (early-exit otherwise).
 
-- New `src/components/ai/ServiceAdvisor.tsx`: textarea + "Get recommendations". Calls server fn `aiServiceAdvisor` (new `src/lib/advisor.functions.ts`) which proxies `POST /ai/service-advisor`. On failure, fallback uses local catalog keyword matching to recommend services + next-step CTAs (start intake / checkout / post project).
-- Mount advisor on `/search` and on homepage marketplace section.
+## Pass 3 — Realistic visual asset system
 
-## 4. Homepage marketplace section + Marketplace UX
+New files:
 
-- Edit `src/routes/index.tsx` to add a "Get business work done through TAKATAK" section near the bottom with category grid (17 categories from `MARKETPLACE_CATEGORIES`) + advisor + CTA to `/marketplace`.
-- New `src/routes/marketplace.tsx`: hero, big search, category chips, popular packages grid (from `GET /marketplace/packages`), CTA to post project.
-- `src/routes/marketplace.search.tsx` → reuses `/search` with category preset.
-- `src/routes/marketplace.category.$slug.tsx` → lists packages filtered by category.
-- `src/routes/marketplace.gigs.$id.tsx` → package detail + "Order" CTA → starts a ClientProject (paid flow placeholder).
-- `src/routes/marketplace.post-project.tsx` → form (title, brief, category, budget, files placeholder) → `POST /marketplace/projects`.
-- Update `src/routes/services.marketplace.tsx` to route into `/marketplace`.
+- `src/lib/serviceVisuals.ts` — map `serviceKey` → `{ cover, gallery[], category, altText, fallbackBg }`.
+- `src/components/marketplace/ServiceImage.tsx` — large responsive image with realistic SVG/CSS mockup fallback (browser chrome, app frame, dashboard frame), professional alt text, lazy load.
+- `src/components/marketplace/ServiceGallery.tsx` — thumbnail strip + large preview, keyboard accessible.
+- `src/components/marketplace/visuals/` — pure CSS/SVG mockup components (BrowserMockup, PhoneMockup, DashboardMockup, LogoBoardMockup, SocialGridMockup, CRMMockup, MenuFlyerMockup, WorkflowMockup, AIToolsMockup, VoIPMockup, SpreadsheetMockup, EcomMockup). All hand-built SVG — no external image hotlinks, no Fiverr assets.
 
-## 5. Dashboard additions
+Replace `ServiceThumbnail` usage on:
+- `MarketplacePackageCard`, `PackageResultCard`, `GigCard`, `FeaturedServicesStrip`
+- `marketplace.gigs.$id.tsx` — gallery strip + large preview
+- `marketplace.category.$slug.tsx` — bigger image area
 
-- New routes (all use `DashboardShell`):
-  - `dashboard/marketplace.projects.tsx`, `dashboard/marketplace.messages.tsx`, `dashboard/marketplace.deliveries.tsx`
-  - `dashboard/projects.$projectId.tsx` — project workstation: brief, milestones list, files, messages, deliveries, status timeline, approve/request-revision/dispute buttons
-  - `dashboard/freelancer.tsx`, `dashboard/freelancer.contracts.tsx`, `dashboard/freelancer.contracts.$contractId.tsx`, `dashboard/freelancer.deliveries.tsx`, `dashboard/freelancer.payouts.tsx`
-- Update `src/routes/dashboard.marketplace.tsx` to add tabs linking to subpages.
-- Update `src/routes/dashboard.index.tsx` to surface marketplace projects, pending approvals, deliveries needing review, freelancer status, payout release status (uses `GET /user/services` + `GET /marketplace/projects` + `GET /freelancers/contracts`).
+Mobile: aspect-ratio + `object-cover`, no fixed widths.
 
-## 6. Frontend typed clients
+## Pass 4 — Operational buyer/quote/workroom flows
 
-- `src/lib/marketplace.ts` — categories, packages, projects (list/get/create), files/messages/milestones/deliveries, approve/revision/dispute.
-- `src/lib/freelancer.ts` — apply, me, contracts, accept/decline, messages, deliveries, payouts.
-- `src/lib/payments.ts` — payment release state enum + helpers.
+### Buyer package flow
+- `marketplace.gigs.$id.tsx`: add Basic/Standard/Premium tier picker (from package or synthetic tiers), add-on checkboxes, total CAD, "Continue" → calls `POST /marketplace/packages/:id/checkout`.
+- On success: route to `/dashboard/orders` showing the order. If provider missing, order persists with state `checkout_not_configured` and message "Saved — checkout not configured yet."
+- Never display `paid_to_takatak` unless backend returned it from a verified webhook.
 
-## 7. Backend (Prisma + Express)
+### Buyer quote flow
+- "Request Quote" CTA → `/marketplace/post-project?packageId=&category=` prefilled.
+- Submit → `POST /marketplace/projects` → redirect to `/dashboard/projects/:projectId`.
 
-Add to `backend/prisma/schema.prisma`:
+### Workroom — `/dashboard/projects/:projectId`
+Audit existing route and ensure it renders:
+brief, tier, payment status badge, mediator status, milestones, messages, files, delivery list, revision form, approve button, dispute button, audit timeline, "Next action" call-out. Wire to existing endpoints.
 
-- Enum `PaymentReleaseState`: unpaid, paid_to_takatak, assigned, accepted_by_freelancer, in_progress, submitted, revision_requested, approved, grace_period, released, disputed, cancelled, refunded.
-- Enum `ContractStatus`, `ProjectStatus`, `MilestoneStatus`.
-- Models: `MarketplaceCategory`, `MarketplacePackage`, `ClientProject`, `ProjectFile`, `ProjectMessage`, `ProjectMilestone`, `ProjectDelivery`, `FreelancerApplication`, extend `FreelancerProfile`, `FreelancerContract`, `ContractAssignment`, `PayoutHold`, `PayoutRelease`, `DisputeCase`, `ProjectAuditLog`.
-- Replace existing simple `MarketplaceGig`/`MarketplaceProject` with the new models (keep `MarketplaceGig` as alias for packages for backward compatibility or remove and update routes).
+### Admin
+Verify `dashboard.admin.projects.tsx`, `…$id.tsx`, `exceptions`, `payouts` show real data and expose: assign freelancer modal, approve, request revision, start grace, release-payment (which calls `release_ready` when provider unset), dispute.
 
-New routers:
+### Freelancer
+Verify routes show assigned contracts only, accept/decline, message, upload delivery, payouts list. Hide client billing fields server-side and in UI.
 
-- `backend/src/routes/search.ts` — `GET /search`, `POST /ai/service-advisor` (uses `aiBriefGenerator`-style call with template fallback).
-- `backend/src/routes/projects.ts` — marketplace project CRUD + files/messages/milestones/deliveries/approve/request-revision/dispute.
-- `backend/src/routes/freelancers.ts` — apply/me/contracts/accept/decline/messages/deliveries/payouts.
-- Extend `backend/src/routes/admin.ts` — projects list/get/assign/approve-delivery/request-revision/start-grace-period/release-payment/dispute + freelancer-applications approve/reject.
-- Update `backend/src/routes/marketplace.ts` — packages endpoints (replace gigs internally but keep `GET /marketplace/gigs` as alias if reasonable).
-- Mount new routers in `backend/src/server.ts` with rate limits where appropriate.
+## Pass 5 — Frontend data fetch with fallback
 
-State machine extension in `backend/src/services/stateMachine.ts` for `PaymentReleaseState` transitions.
+For each listed page:
+- try backend (`apiGet`) first
+- public catalog pages fall back to static `marketplacePackages` / `marketplaceCategories`
+- dashboard / workroom / admin / freelancer pages show empty/error states — NEVER fall back to fake data
 
-File uploads: document contract in `backend/README.md` — multipart not implemented; placeholder endpoints accept metadata + URL, with signed-URL TODO note. Authorization: client only own projects, freelancer only assigned, admin all.
+Add a tiny `useApiWithFallback` helper where useful, otherwise inline in each loader.
 
-## 8. Build & verify
+## Pass 6 — Verification
 
-- `cd backend && npx prisma generate && npm run build`
-- Frontend build runs automatically.
-- Fix any TS errors.
+Run in order:
+1. `cd backend && npx prisma generate`
+2. `cd backend && npm run typecheck`
+3. `cd backend && npm run build`
+4. `bun run build` (frontend)
+5. Smoke script syntax check.
+6. Manual route walk-through via `code--view` of each affected route confirming wiring.
 
-## 9. Final report
+Cannot execute live end-to-end clicks without a running deployed backend; will document each acceptance test's code-level evidence (which handler is called, which state is set) rather than fabricate "live PASS" results.
 
-Summarize: files changed, menu cleanup, AI search, marketplace routes, workflows, payment release states, workstation, backend models/endpoints, file-upload notes, build result, remaining work (real file storage with signed URLs, real payment processor integration, real AI gateway responses for advisor, freelancer onboarding KYC, escrow ledger).
+## Technical details
 
+- **No schema changes** unless `Order` lacks `tier` / `addOns` fields. If needed: add `tier String?` and `addOns String[]` with migration + GRANTs already covered by existing table grants.
+- **Checkout endpoint** returns `{ order, paymentRequired: boolean, providerConfigured: boolean }`. Frontend uses these flags — never invents `paid_to_takatak`.
+- **Release-payment endpoint** delegates to `payoutProvider.release()`; if provider unconfigured, sets contract.paymentState=`release_ready` and writes audit log — never `released`.
+- **Visuals**: all SVG/CSS components live in `src/components/marketplace/visuals/`. No network image fetches. Each mockup ~80–150 lines of hand-rolled SVG simulating product UI (browser frame with site, dashboard with charts, etc.).
+- **Seed safety**: `seed.demo.ts` guards with `if (process.env.NODE_ENV === 'production' || process.env.SEED_DEMO_MARKETPLACE !== 'true') { console.log('skip'); process.exit(0); }`.
+
+## Files (estimated)
+
+Created (~20): checkout route, freelancer routes (if missing), admin route gaps, `seed.demo.ts`, `serviceVisuals.ts`, `ServiceImage.tsx`, `ServiceGallery.tsx`, 12 mockup components, dev seed script entry.
+
+Modified (~15): existing marketplace routes/components to use new visuals, `marketplace.gigs.$id.tsx` (tier/add-on/Continue), `marketplace.post-project.tsx` (prefill), workroom enhancements, dashboard pages to fetch backend with fallback.
+
+## Out of scope (explicit)
+
+- Real Stripe checkout completion — still requires live Stripe config.
+- Real payout release — still requires live payout provider config.
+- Live deployed smoke run — requires user to provide Render URL.
+- Any UI refactor outside marketplace surfaces.
+- Brand/copy redesign.
+
+## Estimated risk
+
+Medium-high — touches many surfaces. Mitigated by doing each pass with a build check before the next. If any pass breaks the build, I stop and fix before continuing.
+
+---
+
+Please confirm to proceed, or tell me which passes to skip / reorder.
