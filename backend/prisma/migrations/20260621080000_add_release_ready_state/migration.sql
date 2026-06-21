@@ -1,0 +1,1 @@
+ALTER TYPE "PaymentReleaseState" ADD VALUE IF NOT EXISTS 'release_ready';
