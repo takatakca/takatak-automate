@@ -19,6 +19,7 @@ const prisma = new PrismaClient();
 
 const DEMO_CLIENT = "demo-client-user";
 const DEMO_FREELANCER = "demo-freelancer-user";
+const DEMO_ADMIN = "demo-admin";
 
 async function main() {
   if (process.env.NODE_ENV === "production") {
@@ -33,8 +34,36 @@ async function main() {
   // Freelancer profile (idempotent by unique userId).
   await prisma.freelancerProfile.upsert({
     where: { userId: DEMO_FREELANCER },
-    update: { displayName: "Demo Freelancer", skills: ["web", "logo"] },
-    create: { userId: DEMO_FREELANCER, displayName: "Demo Freelancer", skills: ["web", "logo"] },
+    update: { displayName: "Groupe TAKATAK Demo Freelancer", skills: ["website_design", "logo_design", "delivery_review"] },
+    create: { userId: DEMO_FREELANCER, displayName: "Groupe TAKATAK Demo Freelancer", skills: ["website_design", "logo_design", "delivery_review"] },
+  });
+
+  await prisma.marketplacePackage.findFirst({ where: { slug: "website-starter" } }).then(async (pkg) => {
+    if (!pkg) return;
+    const existingOrder = await prisma.order.findFirst({
+      where: { userId: DEMO_CLIENT, serviceKey: "marketplace:website_design", status: "unpaid" },
+    });
+    if (!existingOrder) {
+      const service = await prisma.serviceInstance.create({
+        data: {
+          userId: DEMO_CLIENT,
+          serviceKey: "marketplace:website_design",
+          state: "checkout_started",
+          meta: { kind: "demo_marketplace_package", packageId: pkg.id, title: pkg.title },
+        },
+      });
+      await prisma.order.create({
+        data: {
+          userId: DEMO_CLIENT,
+          serviceKey: "marketplace:website_design",
+          serviceInstanceId: service.id,
+          status: "unpaid",
+          amountCents: 54900,
+          currency: "CAD",
+          meta: { kind: "demo_marketplace_package", packageId: pkg.id, title: pkg.title, tier: "Standard" },
+        },
+      });
+    }
   });
 
   // Project — look up an existing demo project for this user so re-runs
@@ -92,7 +121,10 @@ async function main() {
       },
     });
     await prisma.contractAssignment.create({
-      data: { contractId: contract.id, assignedBy: "demo-admin", note: "Demo seed assignment" },
+      data: { contractId: contract.id, assignedBy: DEMO_ADMIN, note: "Demo seed assignment" },
+    });
+    await prisma.payoutHold.create({
+      data: { contractId: contract.id, amountCents: contract.amountCents, currency: contract.currency, holdUntil: new Date(Date.now() + 72 * 3600_000) },
     });
   }
 
@@ -100,6 +132,16 @@ async function main() {
   if ((await prisma.projectDelivery.count({ where: { projectId: project.id } })) === 0) {
     await prisma.projectDelivery.create({
       data: { projectId: project.id, note: "Demo: first design draft uploaded for review." },
+    });
+  }
+
+  if ((await prisma.projectAuditLog.count({ where: { projectId: project.id } })) === 0) {
+    await prisma.projectAuditLog.createMany({
+      data: [
+        { projectId: project.id, actor: DEMO_CLIENT, action: "project.created", data: { demo: true } },
+        { projectId: project.id, actor: DEMO_ADMIN, action: "project.assigned", data: { contractId: contract.id, freelancerId: DEMO_FREELANCER } },
+        { projectId: project.id, actor: `freelancer:${DEMO_FREELANCER}`, action: "delivery.submitted", data: { demo: true } },
+      ],
     });
   }
 
