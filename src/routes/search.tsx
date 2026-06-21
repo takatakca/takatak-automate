@@ -55,6 +55,16 @@ function Page() {
               Looking for hosting? <Link to="/hosting" className="font-medium text-primary hover:underline">View hosting plans →</Link>
             </div>
           )}
+          {intent === "qmaps" && q && (
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
+              Local listings? <Link to="/services/local-listings" className="font-medium text-primary hover:underline">Explore QMAPS →</Link>
+            </div>
+          )}
+          {intent === "flexs" && q && (
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
+              Need leads? <Link to="/services/lead-generation" className="font-medium text-primary hover:underline">Explore FLEXS →</Link>
+            </div>
+          )}
 
           <section>
             <div className="flex items-end justify-between">

@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { apiPost, apiGet } from "./api-client";
 import { getAuthToken, setAuthToken, setVerifyContext } from "./auth-store";
+import { fetchUpmindClientId } from "./legacyAuthAdapter";
 
 export interface TakatakUser {
   id?: string;
@@ -18,6 +19,7 @@ export interface TakatakUser {
   lastName?: string;
   username?: string;
   phone?: string;
+  upmindClientId?: string | null;
 }
 
 interface DashboardData {
@@ -193,6 +195,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             (a as { status?: string }).status === "open",
         ).length,
       });
+      // Auxiliary: hydrate Upmind client ID. Failures are swallowed —
+      // auth and Upmind are independent so widgets stay anonymous on error.
+      try {
+        const upmindClientId = await fetchUpmindClientId();
+        if (upmindClientId) {
+          setUser((u) => ({ ...(u ?? {}), upmindClientId }));
+        }
+      } catch {
+        /* never block dashboard on Upmind */
+      }
     } catch (err) {
       console.error("Dashboard fetch failed:", err);
     } finally {

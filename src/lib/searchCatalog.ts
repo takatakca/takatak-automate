@@ -59,10 +59,14 @@ export function localSearch(q: string, category?: string): SearchEntry[] {
 }
 
 /** Heuristic: which "intent" does this query map to? */
-export function classifyIntent(q: string): "domain" | "hosting" | "freelance" | "service" | "unknown" {
+export function classifyIntent(
+  q: string,
+): "domain" | "hosting" | "qmaps" | "flexs" | "freelance" | "service" | "unknown" {
   const s = q.toLowerCase();
   if (/\.(com|ca|net|org|io|app|co)\b/.test(s) || s.includes("domain")) return "domain";
   if (s.includes("host") || s.includes("cpanel") || s.includes("wordpress hosting")) return "hosting";
+  if (/(qmaps|google maps|local listing|gbp|google business)/.test(s)) return "qmaps";
+  if (/(flexs|lead gen|lead generation|prospect)/.test(s)) return "flexs";
   if (/(freelanc|custom|hire|gig|design|writer|writing|logo|data entry|virtual assistant)/.test(s)) return "freelance";
   return "service";
 }

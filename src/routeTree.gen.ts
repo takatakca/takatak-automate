@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as PrivacyManagerRouteImport } from './routes/privacy-manager'
 import { Route as OtpRouteImport } from './routes/otp'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LoginRouteImport } from './routes/login'
@@ -78,6 +79,11 @@ const SignupRoute = SignupRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyManagerRoute = PrivacyManagerRouteImport.update({
+  id: '/privacy-manager',
+  path: '/privacy-manager',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OtpRoute = OtpRouteImport.update({
@@ -394,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/otp': typeof OtpRoute
+  '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
@@ -454,6 +461,7 @@ export interface FileRoutesByTo {
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/otp': typeof OtpRoute
+  '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
@@ -514,6 +522,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/otp': typeof OtpRoute
+  '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
@@ -578,6 +587,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/marketplace'
     | '/otp'
+    | '/privacy-manager'
     | '/search'
     | '/signup'
     | '/dashboard/account'
@@ -638,6 +648,7 @@ export interface FileRouteTypes {
     | '/hosting'
     | '/login'
     | '/otp'
+    | '/privacy-manager'
     | '/search'
     | '/signup'
     | '/dashboard/account'
@@ -697,6 +708,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/marketplace'
     | '/otp'
+    | '/privacy-manager'
     | '/search'
     | '/signup'
     | '/dashboard/account'
@@ -760,6 +772,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   OtpRoute: typeof OtpRoute
+  PrivacyManagerRoute: typeof PrivacyManagerRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
   ServicesAiBusinessToolsRoute: typeof ServicesAiBusinessToolsRoute
@@ -787,6 +800,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-manager': {
+      id: '/privacy-manager'
+      path: '/privacy-manager'
+      fullPath: '/privacy-manager'
+      preLoaderRoute: typeof PrivacyManagerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/otp': {
@@ -1353,6 +1373,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   OtpRoute: OtpRoute,
+  PrivacyManagerRoute: PrivacyManagerRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
   ServicesAiBusinessToolsRoute: ServicesAiBusinessToolsRoute,

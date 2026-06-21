@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Server, Shield, Repeat, Rocket } from "lucide-react";
 import { SiteShell } from "@/components/layout/SiteShell";
-import { UpmindDac } from "@/components/UpmindDac";
+import { UpmindDomainSearch } from "@/components/upmind/UpmindDomainSearch";
+import { UpmindHostingPlans } from "@/components/upmind/UpmindHostingPlans";
 
 const features = [
   { icon: Rocket, title: "One-click WordPress", desc: "Launch in seconds with guided setup." },
@@ -35,9 +36,16 @@ function HostingPage() {
             </div>
           ))}
         </div>
+        <div className="mt-16">
+          <div className="text-center max-w-3xl mx-auto mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold">Pick a plan and supercharge your WordPress</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Live pricing in CAD via Upmind. Bundle a domain at checkout.</p>
+          </div>
+          <UpmindHostingPlans />
+        </div>
         <div className="mt-16 rounded-2xl border border-border bg-card p-4 sm:p-6">
           <h2 className="text-xl font-semibold mb-4">Search a domain to bundle</h2>
-          <UpmindDac />
+          <UpmindDomainSearch />
         </div>
       </section>
     </SiteShell>
