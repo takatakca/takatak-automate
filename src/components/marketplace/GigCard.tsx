@@ -1,4 +1,6 @@
 import { Star } from "lucide-react";
+import { ServiceThumbnail } from "./ServiceThumbnail";
+import { thumbForCategory } from "@/lib/serviceVisuals";
 
 export function GigCard({
   title,
@@ -11,10 +13,7 @@ export function GigCard({
 }) {
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-colors">
-      <div
-        className="h-32 w-full opacity-60"
-        style={{ backgroundImage: "var(--gradient-hero)" }}
-      />
+      <ServiceThumbnail kind={thumbForCategory(category)} />
       <div className="p-5">
         <div className="text-xs text-muted-foreground">{category}</div>
         <h4 className="mt-1 font-semibold">{title}</h4>

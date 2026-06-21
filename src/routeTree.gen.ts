@@ -63,7 +63,6 @@ import { Route as DashboardMarketplaceMessagesRouteImport } from './routes/dashb
 import { Route as DashboardMarketplaceDeliveriesRouteImport } from './routes/dashboard.marketplace.deliveries'
 import { Route as DashboardFreelancerPayoutsRouteImport } from './routes/dashboard.freelancer.payouts'
 import { Route as DashboardFreelancerDeliveriesRouteImport } from './routes/dashboard.freelancer.deliveries'
-import { Route as DashboardFreelancerContractsRouteImport } from './routes/dashboard.freelancer.contracts'
 import { Route as DashboardAdminProjectsRouteImport } from './routes/dashboard.admin.projects'
 import { Route as DashboardAdminPayoutsRouteImport } from './routes/dashboard.admin.payouts'
 import { Route as DashboardAdminExceptionsRouteImport } from './routes/dashboard.admin.exceptions'
@@ -349,12 +348,6 @@ const DashboardFreelancerDeliveriesRoute =
     path: '/deliveries',
     getParentRoute: () => DashboardFreelancerRoute,
   } as any)
-const DashboardFreelancerContractsRoute =
-  DashboardFreelancerContractsRouteImport.update({
-    id: '/contracts',
-    path: '/contracts',
-    getParentRoute: () => DashboardFreelancerRoute,
-  } as any)
 const DashboardAdminProjectsRoute = DashboardAdminProjectsRouteImport.update({
   id: '/admin/projects',
   path: '/admin/projects',
@@ -373,15 +366,15 @@ const DashboardAdminExceptionsRoute =
   } as any)
 const DashboardFreelancerContractsIndexRoute =
   DashboardFreelancerContractsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => DashboardFreelancerContractsRoute,
+    id: '/contracts/',
+    path: '/contracts/',
+    getParentRoute: () => DashboardFreelancerRoute,
   } as any)
 const DashboardFreelancerContractsContractIdRoute =
   DashboardFreelancerContractsContractIdRouteImport.update({
-    id: '/$contractId',
-    path: '/$contractId',
-    getParentRoute: () => DashboardFreelancerContractsRoute,
+    id: '/contracts/$contractId',
+    path: '/contracts/$contractId',
+    getParentRoute: () => DashboardFreelancerRoute,
   } as any)
 const DashboardAdminProjectsIdRoute =
   DashboardAdminProjectsIdRouteImport.update({
@@ -438,7 +431,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
   '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
   '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
-  '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
   '/dashboard/marketplace/deliveries': typeof DashboardMarketplaceDeliveriesRoute
@@ -560,7 +552,6 @@ export interface FileRoutesById {
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
   '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
   '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
-  '/dashboard/freelancer/contracts': typeof DashboardFreelancerContractsRouteWithChildren
   '/dashboard/freelancer/deliveries': typeof DashboardFreelancerDeliveriesRoute
   '/dashboard/freelancer/payouts': typeof DashboardFreelancerPayoutsRoute
   '/dashboard/marketplace/deliveries': typeof DashboardMarketplaceDeliveriesRoute
@@ -625,7 +616,6 @@ export interface FileRouteTypes {
     | '/dashboard/admin/exceptions'
     | '/dashboard/admin/payouts'
     | '/dashboard/admin/projects'
-    | '/dashboard/freelancer/contracts'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
     | '/dashboard/marketplace/deliveries'
@@ -746,7 +736,6 @@ export interface FileRouteTypes {
     | '/dashboard/admin/exceptions'
     | '/dashboard/admin/payouts'
     | '/dashboard/admin/projects'
-    | '/dashboard/freelancer/contracts'
     | '/dashboard/freelancer/deliveries'
     | '/dashboard/freelancer/payouts'
     | '/dashboard/marketplace/deliveries'
@@ -1166,13 +1155,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardFreelancerDeliveriesRouteImport
       parentRoute: typeof DashboardFreelancerRoute
     }
-    '/dashboard/freelancer/contracts': {
-      id: '/dashboard/freelancer/contracts'
-      path: '/contracts'
-      fullPath: '/dashboard/freelancer/contracts'
-      preLoaderRoute: typeof DashboardFreelancerContractsRouteImport
-      parentRoute: typeof DashboardFreelancerRoute
-    }
     '/dashboard/admin/projects': {
       id: '/dashboard/admin/projects'
       path: '/admin/projects'
@@ -1196,17 +1178,17 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/freelancer/contracts/': {
       id: '/dashboard/freelancer/contracts/'
-      path: '/'
+      path: '/contracts'
       fullPath: '/dashboard/freelancer/contracts/'
       preLoaderRoute: typeof DashboardFreelancerContractsIndexRouteImport
-      parentRoute: typeof DashboardFreelancerContractsRoute
+      parentRoute: typeof DashboardFreelancerRoute
     }
     '/dashboard/freelancer/contracts/$contractId': {
       id: '/dashboard/freelancer/contracts/$contractId'
-      path: '/$contractId'
+      path: '/contracts/$contractId'
       fullPath: '/dashboard/freelancer/contracts/$contractId'
       preLoaderRoute: typeof DashboardFreelancerContractsContractIdRouteImport
-      parentRoute: typeof DashboardFreelancerContractsRoute
+      parentRoute: typeof DashboardFreelancerRoute
     }
     '/dashboard/admin/projects/$id': {
       id: '/dashboard/admin/projects/$id'
@@ -1218,37 +1200,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface DashboardFreelancerContractsRouteChildren {
+interface DashboardFreelancerRouteChildren {
+  DashboardFreelancerDeliveriesRoute: typeof DashboardFreelancerDeliveriesRoute
+  DashboardFreelancerPayoutsRoute: typeof DashboardFreelancerPayoutsRoute
+  DashboardFreelancerIndexRoute: typeof DashboardFreelancerIndexRoute
   DashboardFreelancerContractsContractIdRoute: typeof DashboardFreelancerContractsContractIdRoute
   DashboardFreelancerContractsIndexRoute: typeof DashboardFreelancerContractsIndexRoute
 }
 
-const DashboardFreelancerContractsRouteChildren: DashboardFreelancerContractsRouteChildren =
-  {
-    DashboardFreelancerContractsContractIdRoute:
-      DashboardFreelancerContractsContractIdRoute,
-    DashboardFreelancerContractsIndexRoute:
-      DashboardFreelancerContractsIndexRoute,
-  }
-
-const DashboardFreelancerContractsRouteWithChildren =
-  DashboardFreelancerContractsRoute._addFileChildren(
-    DashboardFreelancerContractsRouteChildren,
-  )
-
-interface DashboardFreelancerRouteChildren {
-  DashboardFreelancerContractsRoute: typeof DashboardFreelancerContractsRouteWithChildren
-  DashboardFreelancerDeliveriesRoute: typeof DashboardFreelancerDeliveriesRoute
-  DashboardFreelancerPayoutsRoute: typeof DashboardFreelancerPayoutsRoute
-  DashboardFreelancerIndexRoute: typeof DashboardFreelancerIndexRoute
-}
-
 const DashboardFreelancerRouteChildren: DashboardFreelancerRouteChildren = {
-  DashboardFreelancerContractsRoute:
-    DashboardFreelancerContractsRouteWithChildren,
   DashboardFreelancerDeliveriesRoute: DashboardFreelancerDeliveriesRoute,
   DashboardFreelancerPayoutsRoute: DashboardFreelancerPayoutsRoute,
   DashboardFreelancerIndexRoute: DashboardFreelancerIndexRoute,
+  DashboardFreelancerContractsContractIdRoute:
+    DashboardFreelancerContractsContractIdRoute,
+  DashboardFreelancerContractsIndexRoute:
+    DashboardFreelancerContractsIndexRoute,
 }
 
 const DashboardFreelancerRouteWithChildren =

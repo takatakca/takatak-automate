@@ -50,3 +50,18 @@ export const declineContract = (id: string, reason?: string) =>
 
 export const listPayouts = () =>
   apiGet<{ payouts: PayoutRow[] }>("/freelancers/payouts");
+
+export const sendContractMessage = (id: string, body: string) =>
+  apiPost<{ message: { id: string; from: string; body: string; at: string } }>(
+    `/freelancers/contracts/${encodeURIComponent(id)}/messages`,
+    { body },
+  );
+
+export const submitContractDelivery = (
+  id: string,
+  body: { note?: string; fileUrls?: string[] },
+) =>
+  apiPost<{ delivery: { id: string; submittedAt: string } }>(
+    `/freelancers/contracts/${encodeURIComponent(id)}/deliveries`,
+    body,
+  );
