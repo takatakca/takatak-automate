@@ -5,7 +5,7 @@ services:
     plan: starter
     region: oregon
     rootDir: backend
-    buildCommand: npm install && npx prisma generate && npm run build && npx prisma migrate deploy
+    buildCommand: npm install && npm run prisma:generate && npm run build && npm run prisma:deploy
     startCommand: npm start
     healthCheckPath: /health
     autoDeploy: true
@@ -51,8 +51,8 @@ services:
     plan: starter
     region: oregon
     rootDir: backend
-    buildCommand: npm install && npx prisma generate && npm run build
-    startCommand: node dist/workers/aiIntakeWorker.js
+    buildCommand: npm install && npm run prisma:generate && npm run build
+    startCommand: npm run worker:ai-intake
     autoDeploy: true
     envVars:
       - key: NODE_ENV
@@ -72,6 +72,52 @@ services:
       - key: WORKER_STUCK_MS
         value: "600000"
 
+  - type: worker
+    name: takatak-payout-sweep-worker
+    runtime: node
+    plan: starter
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install && npm run prisma:generate && npm run build
+    startCommand: npm run worker:payout
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: WORKER_POLL_MS
+        value: "30000"
+      - key: PAYOUT_PROVIDER
+        value: none
+      - key: PAYOUT_GRACE_PERIOD_HOURS
+        value: "72"
+      - key: STRIPE_CONNECT_ENABLED
+        value: "false"
+
+  - type: worker
+    name: takatak-notification-worker
+    runtime: node
+    plan: starter
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install && npm run prisma:generate && npm run build
+    startCommand: npm run worker:notifications
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: WORKER_POLL_MS
+        value: "60000"
+      - key: ADMIN_NOTIFICATION_USER_ID
+        sync: false
+      - key: EMAIL_PROVIDER
+        value: none
+      - key: APP_BASE_URL
+        value: https://takatak.ca
+
 databases:
   - name: takatak-db
     plan: starter
@@ -80,5 +126,4 @@ databases:
 # After first deploy:
 # 1. Provision the Postgres DB (link it to the web service so DATABASE_URL is wired).
 # 2. Fill the secrets marked sync:false in the Render dashboard.
-# 3. Run the worker process locally or as a second Render "background worker"
-#    service with `startCommand: node dist/workers/aiIntakeWorker.js`.
+# 3. Worker services use npm scripts: worker:ai-intake, worker:payout, worker:notifications.

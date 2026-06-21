@@ -172,24 +172,22 @@ ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req:
     },
   });
 
-  // Payment processor integration point — return null until wired server-side.
-  // checkoutUrl computed below via tryCreateCheckout
+  const checkout = await tryCreateCheckout({
+    orderId: order.id,
+    amountCents: total,
+    currency: order.currency,
+    description: `${d.title} — ${d.tier.name}`,
+    metadata: { packageId: d.packageId, category: d.category, kind: "marketplace_package" },
+  });
   res.json({
     orderId: order.id,
     serviceInstanceId: instance.id,
     paymentStatus: order.status,
     currency: order.currency,
     totalCents: total,
-    checkoutUrl: null,
+    checkoutUrl: checkout.checkoutUrl,
     provider: getPaymentProvider(),
-    reason: "checkout_not_configured",
-    ...(await tryCreateCheckout({
-      orderId: order.id,
-      amountCents: total,
-      currency: order.currency,
-      description: `${d.title} — ${d.tier.name}`,
-      metadata: { packageId: d.packageId, category: d.category, kind: "marketplace_package" },
-    })),
+    reason: checkout.reason ?? null,
   });
 });
 
@@ -236,24 +234,23 @@ ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req:
   await prisma.projectAuditLog.create({
     data: { projectId: project.id, actor: req.userId!, action: "order.created", data: { orderId: order.id } },
   });
-  // checkoutUrl computed below via tryCreateCheckout
+  const checkout = total > 0
+    ? await tryCreateCheckout({
+        orderId: order.id,
+        amountCents: total,
+        currency: order.currency,
+        description: `Project: ${project.title}`,
+        metadata: { projectId: project.id, category: project.category, kind: "marketplace_project" },
+      })
+    : { checkoutUrl: null, reason: "quote_only" };
   res.json({
     orderId: order.id,
     serviceInstanceId: instance.id,
     paymentStatus: order.status,
     currency: order.currency,
     totalCents: total,
-    checkoutUrl: null,
+    checkoutUrl: checkout.checkoutUrl,
     provider: getPaymentProvider(),
-    reason: total > 0 ? "checkout_not_configured" : "quote_only",
-    ...(total > 0
-      ? await tryCreateCheckout({
-          orderId: order.id,
-          amountCents: total,
-          currency: order.currency,
-          description: `Project: ${project.title}`,
-          metadata: { projectId: project.id, category: project.category, kind: "marketplace_project" },
-        })
-      : {}),
+    reason: checkout.reason ?? null,
   });
 });

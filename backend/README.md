@@ -155,14 +155,13 @@ The repo includes `backend/render.yaml`. Two paths:
 3. Render reads `backend/render.yaml`, creates the web service + Postgres DB,
    and links `DATABASE_URL` automatically.
 4. Fill the `sync: false` secrets in the dashboard (see list below).
-5. (Optional) Create a second **Background Worker** service:
-   - Same repo, `rootDir: backend`
-   - Build: `npm install && npx prisma generate && npm run build`
-   - Start: `node dist/workers/aiIntakeWorker.js`
+5. Render also creates the background workers declared in `render.yaml`:
+   `npm run worker:ai-intake`, `npm run worker:payout`, and
+   `npm run worker:notifications`.
 
 ### Option B — Manual
 - New Web Service, rootDir `backend`
-- Build: `npm install && npx prisma generate && npm run build && npx prisma migrate deploy`
+- Build: `npm install && npm run prisma:generate && npm run build && npm run prisma:deploy`
 - Start: `npm start`
 - Health check: `/health`
 - Add a Render Postgres DB and copy its `DATABASE_URL` into the web service.
@@ -385,6 +384,13 @@ abstraction so wiring real transfers is additive.
 ### Smoke tests
 
 ```sh
+# Local deploy-readiness checks
+cd backend && npm install
+cd backend && npx prisma generate
+cd backend && npm run typecheck
+cd backend && npm run build
+bun run build
+
 # Notifications endpoint
 curl -fsS -H "Authorization: Bearer $JWT" $BASE/notifications
 
