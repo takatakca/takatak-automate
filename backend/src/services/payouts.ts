@@ -8,8 +8,8 @@
  *   the hold expiry from the grace-period env.
  * - releaseIfEligible: writes a PayoutRelease when the grace period has
  *   elapsed AND there's no open dispute. If no payout provider is
- *   configured the contract is marked `released` with a `release_ready`
- *   reference rather than dispatching real money.
+ *   configured the contract/project is marked `release_ready` with a
+ *   `release_ready` reference rather than dispatching real money.
  * - sweepReleasable: scans all contracts in `grace_period`, releases the
  *   eligible ones. Invoked by an admin endpoint or scheduled job.
  */
@@ -84,20 +84,21 @@ export async function releasePayment(projectId: string, actor: string, opts: { f
       const hold = c.holds[0];
       if (hold && hold.holdUntil.getTime() > now) continue;
     }
-    const reference = provider() === "none" ? `release_ready:${c.id}` : `pending_${provider()}:${c.id}`;
+    const isReleaseReadyOnly = provider() === "none";
+    const reference = isReleaseReadyOnly ? `release_ready:${c.id}` : `pending_${provider()}:${c.id}`;
     await prisma.payoutRelease.create({
       data: { contractId: c.id, amountCents: c.amountCents, currency: c.currency, reference },
     });
     await prisma.freelancerContract.update({
       where: { id: c.id },
-      data: { paymentState: "released", status: "completed" },
+      data: { paymentState: isReleaseReadyOnly ? "release_ready" : "released", status: "completed" },
     });
     released.push({ contractId: c.id, reference });
   }
   if (released.length > 0) {
     await prisma.clientProject.update({
       where: { id: projectId },
-      data: { paymentState: "released" },
+      data: { paymentState: provider() === "none" ? "release_ready" : "released" },
     });
     await prisma.projectAuditLog.create({
       data: { projectId, actor, action: "payout.released", data: { released, provider: provider() } },
