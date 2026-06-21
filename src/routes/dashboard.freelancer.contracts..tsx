@@ -15,7 +15,7 @@ import {
   type FreelancerContract,
 } from "@/lib/freelancer";
 
-export const Route = createFileRoute("/dashboard/freelancer/contracts/$contractId")({
+export const Route = createFileRoute("/dashboard/freelancer/contracts/")({
   head: () => ({ meta: [{ title: "Contract — TAKATAK" }] }),
   component: Page,
 });

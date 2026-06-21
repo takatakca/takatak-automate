@@ -13,6 +13,7 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:seed:demo": "tsx prisma/seed.demo.ts",
     "worker:payout": "node dist/workers/payoutSweepWorker.js",
     "worker:notifications": "node dist/workers/notificationWorker.js",
     "worker:ai-intake": "node dist/workers/aiIntakeWorker.js"
