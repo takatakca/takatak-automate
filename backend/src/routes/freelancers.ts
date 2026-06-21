@@ -53,8 +53,26 @@ freelancersRouter.get("/freelancers/contracts", requireAuth, async (req: AuthedR
 
 freelancersRouter.get("/freelancers/contracts/:id", requireAuth, async (req: AuthedRequest, res) => {
   const c = await prisma.freelancerContract.findFirst({
-    where: { id: req.params.id, freelancerId: req.userId! },
-    include: { project: { select: { title: true } } },
+    where: {
+      freelancerId: req.userId!,
+      OR: [
+        { id: req.params.id },
+        ...(req.params.id === "demo" ? [{ project: { title: { startsWith: "Demo:" } } }] : []),
+      ],
+    },
+    include: {
+      project: {
+        include: {
+          milestones: { orderBy: { position: "asc" } },
+          messages: { orderBy: { at: "asc" } },
+          deliveries: { orderBy: { submittedAt: "desc" } },
+          files: { orderBy: { uploadedAt: "asc" } },
+        },
+      },
+      holds: true,
+      releases: true,
+      disputes: true,
+    },
   });
   if (!c) return res.status(404).json({ error: "not_found" });
   res.json({
@@ -62,10 +80,19 @@ freelancersRouter.get("/freelancers/contracts/:id", requireAuth, async (req: Aut
       id: c.id,
       projectId: c.projectId,
       projectTitle: c.project.title,
+      projectBrief: c.project.brief,
+      category: c.project.category,
       status: c.status,
       paymentState: c.paymentState,
       amountCents: c.amountCents,
       currency: c.currency,
+      milestones: c.project.milestones,
+      messages: c.project.messages.map((m) => ({ id: m.id, from: m.fromUser, body: m.body, at: m.at })),
+      deliveries: c.project.deliveries.map((d) => ({ id: d.id, note: d.note ?? undefined, submittedAt: d.submittedAt })),
+      files: c.project.files.map((f) => ({ id: f.id, name: f.name, url: f.url, size: f.size, uploadedAt: f.uploadedAt })),
+      holds: c.holds,
+      releases: c.releases,
+      disputes: c.disputes,
     },
   });
 });

@@ -100,7 +100,7 @@ adminRouter.get("/admin/projects", async (req, res) => {
   } else if (filter === "disputed") {
     where.paymentState = "disputed";
   } else if (filter === "release_ready") {
-    where.paymentState = "released";
+    where.paymentState = "release_ready";
   }
   const projects = await prisma.clientProject.findMany({
     where,
@@ -109,6 +109,14 @@ adminRouter.get("/admin/projects", async (req, res) => {
     include: { contracts: { take: 1 } },
   });
   res.json({ projects });
+});
+
+adminRouter.get("/admin/freelancers/approved", async (_req, res) => {
+  const freelancers = await prisma.freelancerProfile.findMany({
+    orderBy: { displayName: "asc" },
+    take: 100,
+  });
+  res.json({ freelancers });
 });
 
 adminRouter.get("/admin/projects/:id", async (req, res) => {

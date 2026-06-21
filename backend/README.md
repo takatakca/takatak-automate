@@ -85,6 +85,26 @@ curl -s -X POST -H "Authorization: Bearer $JWT" -H 'Content-Type: application/js
   -d '{"serviceKey":"qmaps"}' localhost:10000/integrations/launch
 ```
 
+## Dev-only marketplace walkthrough
+
+Use this only against local/staging data. It never marks real payments paid and never releases a real payout.
+
+```sh
+export NODE_ENV=development
+export SEED_DEMO_MARKETPLACE=true
+export AUTH_JWT_SECRET=dev-demo-secret-change-me
+export DATABASE_URL=postgresql://user:pass@localhost:5432/takatak
+
+npm run prisma:seed
+npm run prisma:seed:demo
+npm run dev
+
+# in another terminal
+AUTH_JWT_SECRET=dev-demo-secret-change-me bash backend/scripts/demo-flow-test.sh
+```
+
+Frontend reviewers can also set `VITE_DEMO_MARKETPLACE=true` to surface demo-data labels while walking `/dashboard/projects/demo` and `/dashboard/freelancer/contracts/demo`.
+
 ## Remaining production setup
 
 - Replace HS256 JWT verification with JWKS if your auth provider uses RS256.

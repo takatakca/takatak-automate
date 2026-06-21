@@ -36,12 +36,20 @@ projectsRouter.post("/marketplace/projects", requireAuth, async (req: AuthedRequ
 
 projectsRouter.get("/marketplace/projects/:id", requireAuth, async (req: AuthedRequest, res) => {
   const project = await prisma.clientProject.findFirst({
-    where: { id: req.params.id, userId: req.userId! },
+    where: {
+      userId: req.userId!,
+      OR: [
+        { id: req.params.id },
+        ...(req.params.id === "demo" ? [{ title: { startsWith: "Demo:" } }] : []),
+      ],
+    },
     include: {
       messages: { orderBy: { at: "asc" } },
       files: { orderBy: { uploadedAt: "asc" } },
       milestones: { orderBy: { position: "asc" } },
       deliveries: { orderBy: { submittedAt: "desc" } },
+      contracts: { include: { holds: true, releases: true, disputes: true, assignments: true } },
+      audits: { orderBy: { at: "desc" }, take: 100 },
     },
   });
   if (!project) return res.status(404).json({ error: "not_found" });

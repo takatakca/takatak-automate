@@ -11,6 +11,7 @@ const TONE: Record<PaymentReleaseState, { cls: string; Icon: typeof Clock }> = {
   revision_requested: { cls: "bg-warning/10 text-warning", Icon: AlertTriangle },
   approved: { cls: "bg-success/10 text-success", Icon: CheckCircle2 },
   grace_period: { cls: "bg-warning/10 text-warning", Icon: Clock },
+  release_ready: { cls: "bg-warning/10 text-warning", Icon: ShieldCheck },
   released: { cls: "bg-success/10 text-success", Icon: CheckCircle2 },
   disputed: { cls: "bg-destructive/10 text-destructive", Icon: AlertTriangle },
   cancelled: { cls: "bg-muted text-muted-foreground", Icon: AlertTriangle },

@@ -91,7 +91,7 @@ async function scanAdminExceptions() {
   }
   if (!isConfigured()) {
     const ready = await prisma.freelancerContract.findMany({
-      where: { paymentState: "released", status: "completed" }, take: 50,
+      where: { paymentState: "release_ready", status: "completed" }, take: 50,
       orderBy: { updatedAt: "desc" },
     });
     for (const c of ready) {
