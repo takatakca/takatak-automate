@@ -3,7 +3,7 @@ import { apiGet, apiPost } from "./api-client";
 export type PaymentReleaseState =
   | "unpaid" | "paid_to_takatak" | "assigned" | "accepted_by_freelancer"
   | "in_progress" | "submitted" | "revision_requested" | "approved"
-  | "grace_period" | "released" | "disputed" | "cancelled" | "refunded";
+  | "grace_period" | "release_ready" | "released" | "disputed" | "cancelled" | "refunded";
 
 export type ProjectStatus =
   | "draft" | "submitted" | "quoted" | "active" | "delivered" | "completed" | "cancelled";
@@ -78,6 +78,7 @@ export function paymentReleaseLabel(s: PaymentReleaseState): string {
     revision_requested: "Revision requested",
     approved: "Approved",
     grace_period: "Grace period",
+    release_ready: "Release ready",
     released: "Released to freelancer",
     disputed: "In dispute",
     cancelled: "Cancelled",
