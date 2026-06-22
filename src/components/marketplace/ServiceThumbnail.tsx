@@ -3,26 +3,61 @@ type Kind =
   | "data" | "menu" | "flyer" | "ecommerce" | "automation" | "ai";
 
 /**
- * Marketplace thumbnails rendered as pure-CSS/SVG mockups.
- * No copyrighted imagery, no AI gradient blobs — each kind shows a
- * realistic representation of the deliverable (browser window, phone,
- * logo board, social post, SEO chart, data table, menu card, flyer…).
+ * Marketplace thumbnails. Each `kind` maps to a locally-hosted
+ * portfolio-style photo under /marketplace/visuals/*.jpg. The pure-CSS
+ * mockups below are kept as a fallback for unknown kinds and to avoid
+ * a layout shift while the image decodes.
  */
+const PHOTO: Record<Kind, string> = {
+  website: "/marketplace/visuals/website.jpg",
+  ecommerce: "/marketplace/visuals/ecommerce.jpg",
+  mobile: "/marketplace/visuals/mobile.jpg",
+  logo: "/marketplace/visuals/logo.jpg",
+  branding: "/marketplace/visuals/branding.jpg",
+  social: "/marketplace/visuals/social.jpg",
+  seo: "/marketplace/visuals/seo.jpg",
+  data: "/marketplace/visuals/data.jpg",
+  menu: "/marketplace/visuals/menu.jpg",
+  flyer: "/marketplace/visuals/flyer.jpg",
+  automation: "/marketplace/visuals/automation.jpg",
+  ai: "/marketplace/visuals/ai.jpg",
+};
+
+const ALT: Record<Kind, string> = {
+  website: "Website design preview",
+  ecommerce: "Online store preview",
+  mobile: "Mobile app design preview",
+  logo: "Logo design exploration",
+  branding: "Brand identity stationery",
+  social: "Social media content preview",
+  seo: "SEO analytics dashboard",
+  data: "Data entry spreadsheet",
+  menu: "Menu design preview",
+  flyer: "Promotional flyer design",
+  automation: "Automation workflow",
+  ai: "AI assistant dashboard",
+};
+
 export function ServiceThumbnail({ kind }: { kind: Kind }) {
+  const src = PHOTO[kind];
   return (
     <div className="relative aspect-[5/3] w-full overflow-hidden border-b border-border bg-gradient-to-br from-secondary to-background">
-      {/* subtle dot texture */}
-      <div
-        className="absolute inset-0 opacity-[0.35] pointer-events-none"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.06) 1px, transparent 0)",
-          backgroundSize: "10px 10px",
-        }}
-      />
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <Mockup kind={kind} />
-      </div>
+      {src ? (
+        <img
+          src={src}
+          alt={ALT[kind]}
+          loading="lazy"
+          decoding="async"
+          width={1280}
+          height={800}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center p-4">
+          <Mockup kind={kind} />
+        </div>
+      )}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent" />
     </div>
   );
 }
