@@ -1,4 +1,5 @@
 import { Router, type Request } from "express";
+import crypto from "node:crypto";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { verifyAccessToken } from "../lib/tokens.js";
@@ -35,16 +36,13 @@ domainRequestsRouter.post("/domain-requests", async (req, res) => {
   }
   const data = parsed.data;
   const userId = optionalUserId(req);
-  const request = await prisma.domainRequest.create({
-    data: {
-      userId,
-      domain: data.domain,
-      tld: data.tld,
-      contactName: data.contactName,
-      contactEmail: data.contactEmail || null,
-      contactPhone: data.contactPhone || null,
-      source: data.source ?? "upmind_fallback",
-    },
-  });
-  return res.status(201).json({ request });
+  const id = crypto.randomUUID();
+  const request = await prisma.$queryRaw<unknown[]>`
+    INSERT INTO "DomainRequest" (
+      "id", "userId", "domain", "tld", "contactName", "contactEmail", "contactPhone", "source", "updatedAt"
+    ) VALUES (
+      ${id}, ${userId}, ${data.domain}, ${data.tld}, ${data.contactName}, ${data.contactEmail || null}, ${data.contactPhone || null}, ${data.source ?? "upmind_fallback"}, NOW()
+    ) RETURNING *
+  `;
+  return res.status(201).json({ request: request[0] });
 });
