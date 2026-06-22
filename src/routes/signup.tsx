@@ -2,15 +2,27 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { useAuth } from "@/lib/auth-context";
+import { SignupPromoPanel } from "@/components/promotions/SignupPromoPanel";
+import { savePendingPromo, trackPromo } from "@/lib/promotions";
+import { z } from "zod";
+
+const searchSchema = z.object({ promo: z.string().optional() });
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Create account — TAKATAK" }] }),
+  validateSearch: (s) => searchSchema.parse(s),
   component: SignupPage,
 });
 
 function SignupPage() {
   const { signup, loading } = useAuth();
   const nav = useNavigate();
+  const { promo } = Route.useSearch();
+  const promoActive = (promo ?? "").toUpperCase() === "FIRST10";
+  if (promoActive && typeof window !== "undefined") {
+    // ensure local state is at least "pending" so OTP success can promote it
+    savePendingPromo();
+  }
   const [form, setForm] = useState({
     firstName: "", lastName: "", username: "",
     email: "", phone: "", password: "",
@@ -24,16 +36,22 @@ function SignupPage() {
     setErr(null);
     try {
       await signup(form);
+      if (promoActive) trackPromo("signup_completed_with_promo", { stage: "signup" });
       nav({ to: "/otp" });
     } catch (e) { setErr((e as Error).message); }
   };
 
   return (
     <SiteShell>
-      <div className="max-w-lg mx-auto px-4 py-20">
+      <div className="max-w-6xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-8 items-start">
+        <SignupPromoPanel />
         <div className="rounded-2xl border border-border bg-card p-8">
           <h1 className="text-2xl font-bold">Start with TAKATAK</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Your first step toward an automated business.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {promoActive
+              ? "Create your account to save your 10% first-service offer in your dashboard."
+              : "Create your TAKATAK account to manage services, orders, and projects."}
+          </p>
           <form onSubmit={submit} className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input required placeholder="First name" value={form.firstName} onChange={upd("firstName")} className="px-4 py-3 rounded-md bg-input border border-border text-sm" />
             <input required placeholder="Last name" value={form.lastName} onChange={upd("lastName")} className="px-4 py-3 rounded-md bg-input border border-border text-sm" />
