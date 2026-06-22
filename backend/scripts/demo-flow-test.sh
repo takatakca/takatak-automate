@@ -44,7 +44,7 @@ ADMIN_JWT=$(token "$ADMIN_ID" "admin")
 echo "▶ TAKATAK demo flow test → $BASE_URL"
 public_request /health >/dev/null; pass "health"
 public_request /ready >/dev/null; pass "ready"
-packages=$(public_request /marketplace/packages); package_id=$(printf '%s' "$packages" | json_get 'packages.0.id'); test -n "$package_id"; pass "marketplace packages"
+packages=$(request GET /marketplace/packages "$CLIENT_JWT"); package_id=$(printf '%s' "$packages" | json_get 'packages.0.id'); test -n "$package_id"; pass "marketplace packages"
 
 project=$(request POST /marketplace/projects "$CLIENT_JWT" '{"title":"Demo flow quote project","brief":"Real endpoint walkthrough project.","category":"website_design","budgetCents":54900}')
 project_id=$(printf '%s' "$project" | json_get 'project.id'); test -n "$project_id"; pass "create project $project_id"
