@@ -14,6 +14,7 @@
  * rest of the lifecycle.
  */
 import { PrismaClient } from "@prisma/client";
+import { MARKETPLACE_PACKAGES_SEED, assertValidSeedPackage } from "../src/seed/marketplacePackages.js";
 
 const prisma = new PrismaClient();
 
@@ -38,8 +39,36 @@ async function main() {
     create: { userId: DEMO_FREELANCER, displayName: "Groupe TAKATAK Demo Freelancer", skills: ["website_design", "logo_design", "delivery_review"] },
   });
 
-  await prisma.marketplacePackage.findFirst({ where: { slug: "website-starter" } }).then(async (pkg) => {
-    if (!pkg) return;
+  const demoPackage = MARKETPLACE_PACKAGES_SEED.find((p) => p.slug === "website-starter") ?? MARKETPLACE_PACKAGES_SEED[0];
+  assertValidSeedPackage(demoPackage, "demoPackage");
+  const pkg = await prisma.marketplacePackage.upsert({
+    where: { slug: demoPackage.slug },
+    update: {
+      title: demoPackage.title, category: demoPackage.category, description: demoPackage.description,
+      shortDescription: demoPackage.shortDescription, longDescription: demoPackage.longDescription,
+      priceCents: demoPackage.priceCents, currency: demoPackage.currency, deliveryDays: demoPackage.deliveryDays,
+      deliveryEstimate: demoPackage.deliveryEstimate, serviceKey: demoPackage.serviceKey,
+      requiresIntake: demoPackage.requiresIntake, allowsQuote: demoPackage.allowsQuote,
+      status: demoPackage.status, active: demoPackage.active, tags: demoPackage.tags,
+      tiers: demoPackage.tiers as unknown as object, addOns: demoPackage.addOns as unknown as object,
+      deliverables: demoPackage.deliverables as unknown as object, faq: demoPackage.faq as unknown as object,
+      metadata: { ...demoPackage.metadata, demo: true } as object,
+    },
+    create: {
+      id: demoPackage.id, slug: demoPackage.slug, title: demoPackage.title, category: demoPackage.category,
+      description: demoPackage.description, shortDescription: demoPackage.shortDescription,
+      longDescription: demoPackage.longDescription, priceCents: demoPackage.priceCents,
+      currency: demoPackage.currency, deliveryDays: demoPackage.deliveryDays,
+      deliveryEstimate: demoPackage.deliveryEstimate, serviceKey: demoPackage.serviceKey,
+      requiresIntake: demoPackage.requiresIntake, allowsQuote: demoPackage.allowsQuote,
+      status: demoPackage.status, active: demoPackage.active, tags: demoPackage.tags,
+      tiers: demoPackage.tiers as unknown as object, addOns: demoPackage.addOns as unknown as object,
+      deliverables: demoPackage.deliverables as unknown as object, faq: demoPackage.faq as unknown as object,
+      metadata: { ...demoPackage.metadata, demo: true } as object,
+    },
+  });
+
+  await Promise.resolve().then(async () => {
     const existingOrder = await prisma.order.findFirst({
       where: { userId: DEMO_CLIENT, serviceKey: "marketplace:website_design", status: "unpaid" },
     });
@@ -82,7 +111,7 @@ async function main() {
         category: "website_design",
         budgetCents: 54900,
         status: "assigned",
-        paymentState: "paid_to_takatak",
+        paymentState: "assigned",
       },
     }));
 

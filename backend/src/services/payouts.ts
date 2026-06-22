@@ -86,9 +86,11 @@ export async function releasePayment(projectId: string, actor: string, opts: { f
     }
     const isReleaseReadyOnly = provider() === "none";
     const reference = isReleaseReadyOnly ? `release_ready:${c.id}` : `pending_${provider()}:${c.id}`;
-    await prisma.payoutRelease.create({
-      data: { contractId: c.id, amountCents: c.amountCents, currency: c.currency, reference },
-    });
+    if (!isReleaseReadyOnly) {
+      await prisma.payoutRelease.create({
+        data: { contractId: c.id, amountCents: c.amountCents, currency: c.currency, reference },
+      });
+    }
     await prisma.freelancerContract.update({
       where: { id: c.id },
       data: { paymentState: isReleaseReadyOnly ? "release_ready" : "released", status: "completed" },
@@ -101,7 +103,7 @@ export async function releasePayment(projectId: string, actor: string, opts: { f
       data: { paymentState: provider() === "none" ? "release_ready" : "released" },
     });
     await prisma.projectAuditLog.create({
-      data: { projectId, actor, action: "payout.released", data: { released, provider: provider() } },
+      data: { projectId, actor, action: provider() === "none" ? "payout.release_ready" : "payout.released", data: { released, provider: provider() } },
     });
   }
   return { ok: true, released, provider: provider() };
