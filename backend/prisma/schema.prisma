@@ -420,3 +420,45 @@ model Notification {
   @@index([userId, createdAt])
   @@index([userId, readAt])
 }
+
+// =====================================================================
+// Promotions (FIRST10 etc.)
+// =====================================================================
+
+enum PromotionStatus {
+  available
+  claimed
+  applied
+  redeemed
+  expired
+  cancelled
+}
+
+enum PromotionType {
+  percent
+  fixed
+}
+
+model Promotion {
+  id          String          @id @default(cuid())
+  userId      String
+  code        String
+  type        PromotionType   @default(percent)
+  percentOff  Int             @default(0)
+  amountOffCents Int          @default(0)
+  status      PromotionStatus @default(available)
+  claimedAt   DateTime?
+  appliedAt   DateTime?
+  redeemedAt  DateTime?
+  expiresAt   DateTime?
+  orderId     String?
+  metadata    Json?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@unique([userId, code])
+  @@index([userId])
+  @@index([code])
+  @@index([status])
+  @@index([orderId])
+}
