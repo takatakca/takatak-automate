@@ -17,6 +17,13 @@ export function UpmindHostingPlans({ clientId }: { clientId?: string | null }) {
     null;
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (ready) return;
+    const t = setTimeout(() => { if (!ready) setFailed(true); }, 8000);
+    return () => clearTimeout(t);
+  }, [ready]);
 
   useEffect(() => {
     if (!ready || !containerRef.current) return;
@@ -45,7 +52,10 @@ export function UpmindHostingPlans({ clientId }: { clientId?: string | null }) {
 
   return (
     <div className="w-full">
-      <UpmindScripts onReady={() => setReady(true)} />
+      <UpmindScripts
+        onReady={() => { setReady(true); setFailed(false); }}
+        onError={() => setFailed(true)}
+      />
       <div
         ref={containerRef}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
@@ -60,7 +70,7 @@ export function UpmindHostingPlans({ clientId }: { clientId?: string | null }) {
               <h3 className="font-semibold text-foreground">{p.name}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{p.tagline}</p>
               <p className="mt-auto text-xs text-muted-foreground">
-                Loading live pricing…
+                {failed ? "Hosting checkout is temporarily unavailable." : "Loading live pricing…"}
               </p>
             </div>
           ))}

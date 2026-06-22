@@ -14,6 +14,7 @@ import { FeaturedServicesStrip } from "@/components/marketplace/FeaturedServices
 import { HowItWorks } from "@/components/marketplace/HowItWorks";
 import { TrustBlock } from "@/components/marketplace/TrustBlock";
 import { PromoMarquee } from "@/components/promotions/PromoMarquee";
+import { UpmindDomainSearch } from "@/components/upmind/UpmindDomainSearch";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -104,6 +105,22 @@ function Index() {
       </section>
 
       <PromoMarquee />
+
+      {/* Domain search — same Upmind DAC widget as /domain */}
+      <section className="max-w-5xl mx-auto px-4 pt-14">
+        <div className="text-center max-w-2xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            Find your perfect domain
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Instant availability search, registration, and DNS — fully managed
+            through TAKATAK.
+          </p>
+        </div>
+        <div className="mt-6 rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <UpmindDomainSearch />
+        </div>
+      </section>
 
       {/* Popular services */}
       <section className="max-w-7xl mx-auto px-4 py-16">
