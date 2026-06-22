@@ -11,6 +11,9 @@ import {
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/lib/auth-context";
 import { DemoModeBanner } from "@/components/dev/DemoModeBanner";
+import { PromoTopBar } from "@/components/promotions/PromoTopBar";
+import { PromoStickyCard } from "@/components/promotions/PromoStickyCard";
+import { SignupPromoModal } from "@/components/promotions/SignupPromoModal";
 
 function NotFoundComponent() {
   return (
@@ -165,7 +168,10 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <DemoModeBanner />
+        <PromoTopBar />
         <Outlet />
+        <PromoStickyCard />
+        <SignupPromoModal />
       </AuthProvider>
     </QueryClientProvider>
   );
