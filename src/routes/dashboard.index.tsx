@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { UserServicesPanel } from "@/components/dashboard/UserServicesPanel";
 import { useAuth } from "@/lib/auth-context";
+import { DashboardPromoCard } from "@/components/promotions/DashboardPromoCard";
 
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
@@ -31,6 +32,9 @@ function DashboardOverview() {
         >
           Add a service
         </Link>
+      </div>
+      <div className="mt-6">
+        <DashboardPromoCard />
       </div>
       <div className="mt-8">
         <UserServicesPanel
