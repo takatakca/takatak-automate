@@ -1,5 +1,25 @@
 # TAKATAK frontend — deployment
 
+## ⚠️ Render: legacy `node index.js` / MongoDB error
+
+If a Render service is crashing with logs like:
+
+```
+Running 'node index.js'
+Error: querySrv ENOTFOUND _mongodb._tcp.cluster0.mjle4b3.mongodb.net
+```
+
+…the service is still using an **old project's Build/Start commands**. This
+repo has no `index.js`, no MongoDB code, and no `MONGO_URI`. Fix it in Render
+by updating the service settings (or recreate from `render.yaml` at the repo
+root):
+
+- **Frontend service** — Build: `npm install && npm run build` · Start: `node start.mjs` · Root: repo root
+- **Backend service**  — Build: `npm install && npx prisma generate && npm run build && npx prisma migrate deploy` · Start: `node dist/server.js` · Root: `backend`
+
+Both run on Node 20+. The backend uses Prisma / Postgres (`DATABASE_URL`); do
+not set `MONGO_URI` — it is unused and ignored.
+
 ## What the build produces
 
 `bun run build` (or `npm run build`) runs `vite build`. Output:
