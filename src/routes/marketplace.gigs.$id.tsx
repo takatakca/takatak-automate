@@ -7,6 +7,7 @@ import { startPackageCheckout, saveQuotePrefill } from "@/lib/orders";
 import { useQuery } from "@tanstack/react-query";
 import { getMarketplacePackage } from "@/lib/marketplaceCatalogApi";
 import { CatalogSourceIndicator } from "@/components/dev/CatalogSourceIndicator";
+import { CheckoutPromoInput } from "@/components/promotions/CheckoutPromoInput";
 
 export const Route = createFileRoute("/marketplace/gigs/$id")({
   head: () => ({ meta: [{ title: "Service — TAKATAK Marketplace" }] }),
@@ -319,6 +320,9 @@ function Page() {
               <span>·</span>
               <span>{tier.revisions} revisions</span>
               {selectedAddons.length > 0 && <><span>·</span><span>+{selectedAddons.length} add-on{selectedAddons.length === 1 ? "" : "s"}</span></>}
+            </div>
+            <div className="mt-3">
+              <CheckoutPromoInput subtotalCents={total} />
             </div>
             <button
               onClick={continueCheckout}
