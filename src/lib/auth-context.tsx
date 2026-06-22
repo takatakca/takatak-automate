@@ -22,6 +22,48 @@ export interface TakatakUser {
   upmindClientId?: string | null;
 }
 
+/** Raw backend response shape across /auth/* and /user/dashboard endpoints. */
+interface AuthResponseShape {
+  message?: string;
+  token?: string;
+  accessToken?: string;
+  sid?: string;
+  user?: TakatakUser;
+  userId?: string;
+  email?: string;
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  upmindClientId?: string | null;
+  promotion?: unknown;
+}
+
+/**
+ * Backend returns flat fields (userId, email, phone, upmindClientId) on some
+ * endpoints and a nested `user` on others. Normalize to a TakatakUser.
+ */
+function normalizeUser(res: AuthResponseShape, fallback?: Record<string, unknown>): TakatakUser | null {
+  if (res.user && typeof res.user === "object") return res.user;
+  const id = res.userId;
+  const email = res.email ?? (typeof fallback?.email === "string" ? (fallback.email as string) : undefined);
+  const phone = res.phone ?? (typeof fallback?.phone === "string" ? (fallback.phone as string) : undefined);
+  if (!id && !email && !phone) return null;
+  return {
+    id,
+    email,
+    phone,
+    firstName: res.firstName ?? (typeof fallback?.firstName === "string" ? (fallback.firstName as string) : undefined),
+    lastName: res.lastName ?? (typeof fallback?.lastName === "string" ? (fallback.lastName as string) : undefined),
+    username: res.username ?? (typeof fallback?.username === "string" ? (fallback.username as string) : undefined),
+    upmindClientId: res.upmindClientId ?? null,
+  };
+}
+
+function tokenFrom(res: AuthResponseShape): string | null {
+  return res.token ?? res.accessToken ?? null;
+}
+
 interface DashboardData {
   user: TakatakUser | null;
   orders: unknown[];
@@ -97,15 +139,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = useCallback(async (data: Record<string, unknown>) => {
     setLoading(true);
     try {
-      const res = await apiPost<{ user?: TakatakUser; token?: string }>(
+      const res = await apiPost<AuthResponseShape>(
         "/auth/register",
         data,
         { noAuth: true },
       );
-      if (res.user) setUser(res.user);
-      if (res.token) setAuthToken(res.token);
+      const u = normalizeUser(res, data);
+      if (u) setUser(u);
+      const tk = tokenFrom(res);
+      if (tk) setAuthToken(tk);
       if (typeof data.email === "string")
         setVerifyContext({ email: data.email });
+      if (typeof data.phone === "string")
+        setVerifyContext({ phone: data.phone });
       return res;
     } finally {
       setLoading(false);
@@ -115,13 +161,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (data: Record<string, unknown>) => {
     setLoading(true);
     try {
-      const res = await apiPost<{ user?: TakatakUser; token?: string }>(
+      const res = await apiPost<AuthResponseShape>(
         "/auth/login",
         data,
         { noAuth: true },
       );
-      if (res.user) setUser(res.user);
-      if (res.token) setAuthToken(res.token);
+      const u = normalizeUser(res, data);
+      if (u) setUser(u);
+      const tk = tokenFrom(res);
+      if (tk) setAuthToken(tk);
       if (typeof data.email === "string")
         setVerifyContext({ email: data.email });
       if (typeof data.phone === "string")
@@ -135,13 +183,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const verifyOtp = useCallback(async (data: Record<string, unknown>) => {
     setLoading(true);
     try {
-      const res = await apiPost<{ user?: TakatakUser; token?: string }>(
+      const res = await apiPost<AuthResponseShape>(
         "/auth/verify-otp",
         data,
         { noAuth: true },
       );
-      if (res.user) setUser(res.user);
-      if (res.token) setAuthToken(res.token);
+      const u = normalizeUser(res, data);
+      if (u) setUser(u);
+      const tk = tokenFrom(res);
+      if (tk) setAuthToken(tk);
       return res;
     } finally {
       setLoading(false);
