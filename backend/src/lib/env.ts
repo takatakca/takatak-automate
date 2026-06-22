@@ -40,6 +40,27 @@ const schema = z.object({
   STRIPE_CONNECT_WEBHOOK_SECRET: z.string().optional(),
   STRIPE_PLATFORM_FEE_PERCENT: z.coerce.number().nonnegative().default(0),
   APP_BASE_URL: z.string().url().optional(),
+  // Auth / sessions
+  AUTH_PRIVATE_KEY: z.string().optional(),
+  AUTH_PUBLIC_KEY: z.string().optional(),
+  AUTH_ISSUER: z.string().default("https://takatak.ca"),
+  AUTH_ACCESS_TTL: z.string().default("1h"),
+  AUTH_REFRESH_TTL_DAYS: z.coerce.number().int().positive().default(30),
+  AUTH_KID: z.string().default("takatak-key"),
+  COOKIE_DOMAIN: z.string().optional(),
+  PASSWORD_ENCRYPT_SECRET: z.string().optional(),
+  // OTP
+  OTP_TTL_MINUTES: z.coerce.number().int().positive().default(5),
+  OTP_RESEND_COOLDOWN_SECONDS: z.coerce.number().int().nonnegative().default(30),
+  SENDGRID_API_KEY: z.string().optional(),
+  SENDER_EMAIL: z.string().optional(),
+  TWILIO_ACCOUNT_SID: z.string().optional(),
+  TWILIO_AUTH_TOKEN: z.string().optional(),
+  TWILIO_VERIFY_SERVICE_SID: z.string().optional(),
+  // Upmind
+  UPMIND_API_KEY: z.string().optional(),
+  UPMIND_BRAND_ID: z.string().optional(),
+  UPMIND_SESSION_SECRET: z.string().optional(),
 });
 
 export const env = schema.parse(process.env);
