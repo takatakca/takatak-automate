@@ -26,6 +26,7 @@ import { notificationsRouter } from "./routes/notifications.js";
 import { promotionsRouter } from "./routes/promotions.js";
 import { authRouter } from "./routes/auth.js";
 import { userRouter } from "./routes/user.js";
+import { domainRequestsRouter } from "./routes/domainRequests.js";
 
 initSentry();
 assertEnvOrExit();
@@ -95,6 +96,7 @@ app.use(notificationsRouter);
 app.use(promotionsRouter);
 app.use(authRouter);
 app.use(userRouter);
+app.use(domainRequestsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
