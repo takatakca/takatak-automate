@@ -88,22 +88,34 @@ curl -s -X POST -H "Authorization: Bearer $JWT" -H 'Content-Type: application/js
 ## Dev-only marketplace walkthrough
 
 Use this only against local/staging data. It never marks real payments paid and never releases a real payout.
+When `PAYOUT_PROVIDER=none`, the final payout test must stop at `release_ready`.
 
 ```sh
+cd backend
+npm install
 export NODE_ENV=development
-export SEED_DEMO_MARKETPLACE=true
-export AUTH_JWT_SECRET=dev-demo-secret-change-me
 export DATABASE_URL=postgresql://user:pass@localhost:5432/takatak
+export AUTH_JWT_SECRET=dev-demo-secret-change-me
+export PORTAL_SIGNING_SECRET=dev-portal-signing-secret
+export PAYMENT_PROVIDER=none
+export PAYOUT_PROVIDER=none
+export PAYOUT_GRACE_PERIOD_HOURS=72
+export SEED_DEMO_MARKETPLACE=true
 
+npx prisma generate
+npx prisma migrate dev --name demo_flow_validation
 npm run prisma:seed
 npm run prisma:seed:demo
 npm run dev
-
-# in another terminal
-AUTH_JWT_SECRET=dev-demo-secret-change-me bash backend/scripts/demo-flow-test.sh
 ```
 
-Frontend reviewers can also set `VITE_DEMO_MARKETPLACE=true` to surface demo-data labels while walking `/dashboard/projects/demo` and `/dashboard/freelancer/contracts/demo`.
+In another terminal, run the real endpoint walkthrough. The script generates HS256 demo JWTs from `AUTH_JWT_SECRET`; do not use this secret in production.
+
+```sh
+AUTH_JWT_SECRET=dev-demo-secret-change-me BASE_URL=http://localhost:10000 bash backend/scripts/demo-flow-test.sh
+```
+
+Frontend reviewers can also set `VITE_DEMO_MARKETPLACE=true` while walking `/dashboard/marketplace`, `/dashboard/projects/demo`, `/dashboard/admin/projects`, `/dashboard/freelancer/contracts/demo`, and `/dashboard/notifications` against that seeded backend.
 
 ## Remaining production setup
 

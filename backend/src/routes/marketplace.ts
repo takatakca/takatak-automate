@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
-import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
 import { MARKETPLACE_CATEGORIES } from "../seed/marketplaceCategories.js";
 
 export const marketplaceRouter = Router();
@@ -100,22 +99,6 @@ marketplaceRouter.get("/marketplace/gigs/:id", async (req, res) => {
   const gig = await prisma.marketplaceGig.findUnique({ where: { id: req.params.id } });
   if (!gig) return res.status(404).json({ error: "not_found" });
   res.json({ gig });
-});
-
-const ProjectBody = z.object({
-  title: z.string().min(1).max(200),
-  brief: z.string().min(1).max(5000),
-  budgetCents: z.number().int().positive().optional(),
-  category: z.string().min(1).max(64),
-});
-
-marketplaceRouter.post("/marketplace/projects", requireAuth, async (req: AuthedRequest, res) => {
-  const parsed = ProjectBody.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
-  const project = await prisma.marketplaceProject.create({
-    data: { ...parsed.data, userId: req.userId! },
-  });
-  res.json({ project });
 });
 
 marketplaceRouter.get("/marketplace/freelancers/:id", async (req, res) => {
