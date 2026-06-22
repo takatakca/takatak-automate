@@ -16,6 +16,7 @@ services:
     rootDir: .
     buildCommand: npm install && npm run build
     startCommand: node start.mjs
+    healthCheckPath: /
     envVars:
       - key: NODE_VERSION
         value: "20"
@@ -29,6 +30,7 @@ services:
     rootDir: backend
     buildCommand: npm install && npx prisma generate && npm run build && npx prisma migrate deploy
     startCommand: node dist/server.js
+    healthCheckPath: /health
     envVars:
       - key: NODE_VERSION
         value: "20"
@@ -37,6 +39,18 @@ services:
           name: takatak-postgres
           property: connectionString
       - key: AUTH_JWT_SECRET
+        sync: false
+      - key: AUTH_PRIVATE_KEY
+        sync: false
+      - key: AUTH_PUBLIC_KEY
+        sync: false
+      - key: AUTH_ISSUER
+        value: "https://takatak.ca"
+      - key: CORS_ORIGINS
+        value: "https://takatak.ca,https://app.takatak.ca"
+      - key: COOKIE_DOMAIN
+        value: ".takatak.ca"
+      - key: PORTAL_SIGNING_SECRET
         sync: false
 
   - type: worker
@@ -66,6 +80,22 @@ services:
         fromDatabase:
           name: takatak-postgres
           property: connectionString
+
+  - type: worker
+    name: takatak-ai-intake-worker
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: node dist/workers/aiIntakeWorker.js
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: takatak-postgres
+          property: connectionString
+      - key: LOVABLE_API_KEY
+        sync: false
 
 databases:
   - name: takatak-postgres
