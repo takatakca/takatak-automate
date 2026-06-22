@@ -48,6 +48,45 @@ A Node entry is provided at `start.mjs` and exposed as `bun run start` / `npm st
 
 Requires **Node.js 20+** (uses the built-in `fetch`, `Request`, `Response`, `Headers`, `URL`).
 
+## Upmind production checklist (domain + hosting)
+
+The TAKATAK code now handles Upmind failures gracefully (DAC widget falls
+back to `POST /domain-requests`, hosting plan cards fall back to
+`POST /hosting-requests`). **A 401 `Unrecognised domain name` or 404 product
+response from Upmind is an Upmind dashboard config issue, not a code bug** —
+work through this list inside the connected Upmind account:
+
+### DAC / domain search (`upm-dac`)
+- [ ] Authorize the live domain (`takatakca.lovable.app` and any custom domain, e.g. `takatak.ca`) under Upmind → Brand → Allowed origins / referrers.
+- [ ] Authorize the staging domain (`id-preview--*.lovable.app`) so the preview widget works while iterating.
+- [ ] Confirm `VITE_UPMIND_ORDER_CONFIG_URL` matches the brand's order config URL (currently `https://fimjpyw0mnzy.upmind.app/order/product`).
+- [ ] Confirm `VITE_UPMIND_BRAND_ID` and `VITE_UPMIND_ACCOUNT_ID` belong to the same Upmind account that owns the order config URL.
+- [ ] Enable DAC / domain search for the brand and verify TLDs `.ca`, `.com`, `.net`, `.org` are all enabled and priced.
+- [ ] Verify CORS / referrer / domain restrictions inside Upmind allow the live domain.
+- [ ] Confirm widget script URLs are current (`VITE_UPMIND_WIDGET_SCRIPT_URL`, `VITE_UPMIND_DAC_SCRIPT_URL`).
+
+### Hosting widget (`upm-widget`)
+The four product IDs configured (Portfolio / Bronze / Silver / Gold) must exist in the **same Upmind account** that owns the order config URL:
+
+| Plan      | Product ID                              |
+| --------- | --------------------------------------- |
+| Portfolio | `61e50989-73d2-4752-053c-e45e610832d7`  |
+| Bronze    | `1e96d298-537d-4e75-383b-14e120637085`  |
+| Silver    | `80d1639e-237d-4395-3e2a-54610589e572`  |
+| Gold      | `0381d780-e72d-4dd6-701c-8413569926e5`  |
+
+- [ ] Verify each product ID resolves in Upmind admin (not 404).
+- [ ] Each product is active, published, and orderable.
+- [ ] All four products belong to the **same brand** as the order config URL.
+- [ ] No product IDs come from a different Upmind account / sandbox.
+- [ ] Override via `VITE_UPMIND_PLAN_PORTFOLIO` / `VITE_UPMIND_PLAN_BRONZE` / `VITE_UPMIND_PLAN_SILVER` / `VITE_UPMIND_PLAN_GOLD` if IDs change.
+
+### What the code does while Upmind is misconfigured
+- `/domain` — DAC widget renders if Upmind succeeds; otherwise the page swaps to the TAKATAK-managed domain request form (`POST /domain-requests`), saved to the `DomainRequest` table.
+- `/hosting` — each plan card renders the Upmind product; on failure, each card swaps to a "Request this hosting plan" form (`POST /hosting-requests` → `HostingRequest` table).
+- Admins can review incoming leads via `GET /admin/domain-requests` and `GET /admin/hosting-requests` (auth + admin role required).
+- Local fallback: if the backend is unreachable, both forms persist the request to `localStorage` so nothing is lost.
+
 #### Render (Web Service, runtime = Node)
 
 - Build command: `npm install && npm run build`

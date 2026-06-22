@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { UpmindScripts } from "./UpmindScripts";
 import { UPMIND_CURRENCY, UPMIND_HOSTING_PLANS } from "@/lib/upmindConfig";
 import { useAuth } from "@/lib/auth-context";
+import { HostingRequestFallback } from "./HostingRequestFallback";
 
 /**
  * Renders the four TAKATAK hosting plan cards via Upmind's <upm-widget>.
@@ -56,11 +57,13 @@ export function UpmindHostingPlans({ clientId }: { clientId?: string | null }) {
         onReady={() => { setReady(true); setFailed(false); }}
         onError={() => setFailed(true)}
       />
-      <div
-        ref={containerRef}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
-      />
-      {!ready && (
+      {!failed && (
+        <div
+          ref={containerRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+        />
+      )}
+      {!ready && !failed && (
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {UPMIND_HOSTING_PLANS.map((p) => (
             <div
@@ -70,9 +73,16 @@ export function UpmindHostingPlans({ clientId }: { clientId?: string | null }) {
               <h3 className="font-semibold text-foreground">{p.name}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{p.tagline}</p>
               <p className="mt-auto text-xs text-muted-foreground">
-                {failed ? "Hosting checkout is temporarily unavailable." : "Loading live pricing…"}
+                Loading live pricing…
               </p>
             </div>
+          ))}
+        </div>
+      )}
+      {failed && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {UPMIND_HOSTING_PLANS.map((plan) => (
+            <HostingRequestFallback key={plan.key} plan={plan} diagnosticCode="upmind_product_unavailable" />
           ))}
         </div>
       )}
