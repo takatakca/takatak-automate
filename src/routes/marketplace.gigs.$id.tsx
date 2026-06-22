@@ -88,6 +88,7 @@ function Page() {
         addons: buildAddons(),
         quantity: 1,
         currency: "CAD",
+        promoCode: promoCode ?? undefined,
       });
       if (res.checkoutUrl) {
         window.location.href = res.checkoutUrl;
