@@ -27,6 +27,8 @@ import { promotionsRouter } from "./routes/promotions.js";
 import { authRouter } from "./routes/auth.js";
 import { userRouter } from "./routes/user.js";
 import { domainRequestsRouter } from "./routes/domainRequests.js";
+import { hostingRequestsRouter } from "./routes/hostingRequests.js";
+import { adminDomainRequestsRouter } from "./routes/adminDomainRequests.js";
 
 initSentry();
 assertEnvOrExit();
@@ -97,6 +99,8 @@ app.use(promotionsRouter);
 app.use(authRouter);
 app.use(userRouter);
 app.use(domainRequestsRouter);
+app.use(hostingRequestsRouter);
+app.use(adminDomainRequestsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
