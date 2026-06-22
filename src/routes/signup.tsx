@@ -6,7 +6,11 @@ import { SignupPromoPanel } from "@/components/promotions/SignupPromoPanel";
 import { savePendingPromo, trackPromo } from "@/lib/promotions";
 import { z } from "zod";
 
-const searchSchema = z.object({ promo: z.string().optional() });
+const searchSchema = z.object({
+  promo: z.string().optional(),
+  next: z.string().optional(),
+  domain: z.string().optional(),
+});
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Create account — TAKATAK" }] }),
@@ -17,7 +21,7 @@ export const Route = createFileRoute("/signup")({
 function SignupPage() {
   const { signup, loading } = useAuth();
   const nav = useNavigate();
-  const { promo } = Route.useSearch();
+  const { promo, domain } = Route.useSearch();
   const promoActive = (promo ?? "").toUpperCase() === "FIRST10";
   if (promoActive && typeof window !== "undefined") {
     // ensure local state is at least "pending" so OTP success can promote it
@@ -48,7 +52,9 @@ function SignupPage() {
         <div className="rounded-2xl border border-border bg-card p-8">
           <h1 className="text-2xl font-bold">Start with TAKATAK</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {promoActive
+            {domain
+              ? `Create your account to continue your ${domain} domain registration request.`
+              : promoActive
               ? "Create your account to save your 10% first-service offer in your dashboard."
               : "Create your TAKATAK account to manage services, orders, and projects."}
           </p>
