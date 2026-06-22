@@ -91,3 +91,64 @@ Never put server secrets behind a `VITE_` prefix — they would ship to the brow
 
 - The Express backend in `backend/` deploys separately (`backend/render.yaml`, `backend/DEPLOYMENT.md`).
 - `start.mjs` only serves the marketing/marketplace/dashboard frontend.
+
+## Render Blueprint (one-shot)
+
+The root `render.yaml` provisions everything in one shot: frontend web service,
+backend web service, payout/notification/AI-intake workers, and a Postgres 16
+database. From the Render dashboard: **New → Blueprint → point at this repo**.
+
+## Manual Render setup (if not using the Blueprint)
+
+- **Frontend service** — Root `/`, Build `npm install && npm run build`, Start
+  `node start.mjs`, Health `/`.
+- **Backend service** — Root `backend`, Build `npm install && npx prisma
+  generate && npm run build && npx prisma migrate deploy`, Start `node
+  dist/server.js`, Health `/health`.
+- **Workers** (Root `backend`, Build same as backend):
+  - payout: `node dist/workers/payoutSweepWorker.js`
+  - notifications: `node dist/workers/notificationWorker.js`
+  - AI intake: `node dist/workers/aiIntakeWorker.js`
+- **Postgres** — Render Postgres 16; wire `DATABASE_URL` into backend + workers.
+
+### Required backend env (production)
+
+`DATABASE_URL`, `AUTH_ISSUER`, `CORS_ORIGINS`, plus either
+`AUTH_PRIVATE_KEY` + `AUTH_PUBLIC_KEY` (preferred RS256) or a strong
+`AUTH_JWT_SECRET` (≥32 chars). Server refuses to boot in production if these
+are missing — see `backend/src/config/env.ts`.
+
+### Optional integrations (warn only)
+
+OTP: `SENDGRID_API_KEY` + `SENDER_EMAIL`, `TWILIO_ACCOUNT_SID` + `TWILIO_AUTH_TOKEN` + `TWILIO_VERIFY_SERVICE_SID`.
+Upmind: `UPMIND_API_KEY`, `UPMIND_BRAND_ID`, `UPMIND_SESSION_SECRET`.
+Payments: `PAYMENT_PROVIDER=stripe`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.
+Payouts (Stripe Connect): `PAYOUT_PROVIDER=stripe`, `STRIPE_CONNECT_ENABLED=true`, `STRIPE_CONNECT_CLIENT_ID`, `STRIPE_CONNECT_WEBHOOK_SECRET`.
+
+### Rotating JWT keys
+
+Generate a fresh RSA keypair (never reuse the legacy committed `keys/private.pem`):
+
+```
+openssl genrsa -out private.pem 2048
+openssl rsa -in private.pem -pubout -out public.pem
+```
+
+Paste into Render env as `AUTH_PRIVATE_KEY` / `AUTH_PUBLIC_KEY` (escape newlines as `\n` if needed). The JWKS endpoint at `/auth/well-known/jwks.json` exposes the public key automatically.
+
+## Smoke test
+
+```
+FRONTEND_URL=https://takatak.ca \
+BACKEND_URL=https://api.takatak.ca \
+./scripts/render-smoke-test.sh
+```
+
+Fails on any 5xx or connection error. Set `ALLOW_PROD_TEST_USER=true` + `TEST_AUTH_TOKEN=...` to also hit `/user/dashboard` and `/promotions/me`.
+
+## Identifying a wrong (legacy) deployment
+
+If Render logs show `node index.js` or `querySrv ENOTFOUND ...mongodb...`,
+the service is running the old MongoDB backend. This repo has no `index.js`,
+no Mongo, and no `MONGO_URI`. Fix the service's Build/Start commands (see
+above) or recreate from the Blueprint.
