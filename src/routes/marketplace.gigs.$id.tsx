@@ -33,6 +33,7 @@ function Page() {
   const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [fallback, setFallback] = useState<string | null>(null);
+  const [promoCode, setPromoCode] = useState<string | null>(null);
 
   if (!pkg) {
     return (
