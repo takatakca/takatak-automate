@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import { env, corsOrigins } from "./lib/env.js";
+import { assertEnvOrExit } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
 import { initSentry, captureException } from "./lib/sentry.js";
 import { requestId } from "./lib/requestId.js";
@@ -27,6 +28,7 @@ import { authRouter } from "./routes/auth.js";
 import { userRouter } from "./routes/user.js";
 
 initSentry();
+assertEnvOrExit();
 
 const app = express();
 app.set("trust proxy", 1);
