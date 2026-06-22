@@ -42,10 +42,28 @@ interface Promotion {
 - Failure responses must include a machine-readable reason
   (`ineligible_already_used`, `ineligible_not_first_order`, `expired`, `invalid_code`).
 
-## Frontend fallback (current)
+## Implementation status
 
-If `/promotions/*` returns 404 the frontend:
+Endpoints implemented in `backend/src/routes/promotions.ts`:
 
-1. Saves the offer to local state (`status: "pending"` pre-signup, `"claimed"` post-signup).
-2. Shows the user-facing message: "Your offer is saved. It will be applied when promotions are enabled."
-3. Never modifies order totals or payment state on its own.
+- `GET /promotions/me` — returns the caller's promotions + available codes.
+- `POST /promotions/claim` — idempotent; one row per `(userId, code)`.
+- `POST /promotions/apply` — server-side discount calc; attaches promo to a
+  draft order when `orderId` is provided.
+- `GET /admin/promotions`, `POST /admin/promotions/:id/cancel`,
+  `POST /admin/promotions/:id/restore` — admin maintenance.
+
+Checkout endpoints (`/marketplace/packages/:id/checkout`,
+`/marketplace/projects/:id/checkout`) accept an optional `promoCode` and
+compute `subtotalCents`, `discountCents`, `totalCents` server-side. The
+payment webhook (`/api/public/webhooks/payments`) calls
+`redeemPromotionForOrder` on `paid_to_takatak` and `releasePromotionForOrder`
+on `failed` / `cancelled`. Refunded orders keep promo `redeemed` unless an
+admin restores it manually.
+
+## Frontend fallback
+
+If `/promotions/*` returns an error the frontend keeps the existing local
+behaviour (`status: "pending" | "claimed"`), shows
+"Offer saved locally. Final discount is confirmed at checkout.", and never
+modifies order totals or payment state on its own.
