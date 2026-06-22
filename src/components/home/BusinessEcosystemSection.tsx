@@ -9,7 +9,7 @@ const secondaryServices = [
   { title: "Lead Generation / FLEXS", to: "/services/lead-generation", icon: Users, chips: ["Prospects", "Routing", "CRM"] },
   { title: "VoIP", to: "/services/voip", icon: PhoneCall, chips: ["Numbers", "IVR", "Call flow"] },
   { title: "AI-Assisted Business Tools", to: "/services/ai-business-tools", icon: Bot, chips: ["Agents", "Parsing", "Ops"] },
-];
+] as const;
 
 function Chip({ children }: { children: string }) {
   return <span className="rounded-full border border-border bg-secondary px-2.5 py-1 text-[11px] font-medium text-muted-foreground">{children}</span>;
