@@ -45,7 +45,10 @@ export function UpmindDac({ clientId }: { clientId?: string | null }) {
     ref.current.appendChild(el);
 
     const scanForWidgetFailure = () => {
-      const text = ref.current?.innerText?.toLowerCase() ?? "";
+      const text = [
+        ref.current?.innerText,
+        el.shadowRoot?.textContent,
+      ].filter(Boolean).join(" ").toLowerCase();
       if (text.includes("oops") || text.includes("something went wrong")) {
         setWidgetError("upmind_widget_runtime_error");
         setFailed(true);
