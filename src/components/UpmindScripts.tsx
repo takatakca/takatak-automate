@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UPMIND_DAC_SCRIPT_URL, UPMIND_WIDGET_SCRIPT_URL } from "@/lib/upmind";
+import { UPMIND_DAC_SCRIPT_URL, UPMIND_WIDGET_SCRIPT_URL } from "@/lib/upmindConfig";
 
 /**
  * Module-level singleton loader. Multiple `<UpmindScripts />` instances
