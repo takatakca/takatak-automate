@@ -8,6 +8,31 @@ import {
   getPaymentProvider,
   isPaymentConfigured,
 } from "../services/payments.js";
+import {
+  attachPromotionToOrder,
+  previewPromotion,
+} from "../services/promotions.js";
+
+interface PromoApplied {
+  code: string;
+  promotionId: string;
+  discountCents: number;
+}
+
+async function maybeApplyPromo(
+  userId: string,
+  promoCode: string | undefined,
+  subtotalCents: number,
+): Promise<{ totalCents: number; discountCents: number; applied?: PromoApplied; reason?: string }> {
+  if (!promoCode || subtotalCents <= 0) return { totalCents: subtotalCents, discountCents: 0 };
+  const r = await previewPromotion(userId, promoCode, subtotalCents);
+  if (!r.ok) return { totalCents: subtotalCents, discountCents: 0, reason: r.reason };
+  return {
+    totalCents: r.totalCents,
+    discountCents: r.discountCents,
+    applied: { code: promoCode.toUpperCase(), promotionId: r.promotion.id, discountCents: r.discountCents },
+  };
+}
 
 async function tryCreateCheckout(args: {
   orderId: string;
@@ -123,6 +148,7 @@ const PackageCheckout = z.object({
   })).max(20).default([]),
   quantity: z.number().int().positive().max(20).default(1),
   currency: z.string().min(3).max(8).default("CAD"),
+  promoCode: z.string().min(2).max(32).optional(),
 });
 
 ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req: AuthedRequest, res) => {
@@ -131,7 +157,8 @@ ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req:
   const d = parsed.data;
   const addonsTotal = d.addons.reduce((s, a) => s + a.priceCents, 0);
   const subtotal = (d.tier.priceCents + addonsTotal) * d.quantity;
-  const total = subtotal; // taxes computed by payment processor when configured
+  const promo = await maybeApplyPromo(req.userId!, d.promoCode, subtotal);
+  const total = promo.totalCents; // taxes computed by payment processor when configured
 
   const serviceKey = `marketplace:${d.category}`;
   const instance = await prisma.serviceInstance.create({
@@ -166,11 +193,18 @@ ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req:
         addons: d.addons,
         quantity: d.quantity,
         subtotalCents: subtotal,
+        discountCents: promo.discountCents,
+        promoCode: promo.applied?.code ?? null,
+        promotionId: promo.applied?.promotionId ?? null,
+        promoReason: promo.reason ?? null,
         taxesCents: 0,
         totalCents: total,
       } as object,
     },
   });
+  if (promo.applied) {
+    await attachPromotionToOrder(promo.applied.promotionId, order.id).catch(() => undefined);
+  }
 
   const checkout = await tryCreateCheckout({
     orderId: order.id,
@@ -185,6 +219,10 @@ ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req:
     paymentStatus: order.status,
     currency: order.currency,
     totalCents: total,
+    subtotalCents: subtotal,
+    discountCents: promo.discountCents,
+    promoCode: promo.applied?.code ?? null,
+    promoReason: promo.reason ?? null,
     checkoutUrl: checkout.checkoutUrl,
     provider: getPaymentProvider(),
     reason: checkout.reason ?? null,
@@ -193,11 +231,16 @@ ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req:
 
 // ---- Project checkout ----
 ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req: AuthedRequest, res) => {
+  const Body = z.object({ promoCode: z.string().min(2).max(32).optional() });
+  const parsedBody = Body.safeParse(req.body ?? {});
+  const promoCode = parsedBody.success ? parsedBody.data.promoCode : undefined;
   const project = await prisma.clientProject.findFirst({
     where: { id: req.params.id, userId: req.userId! },
   });
   if (!project) return res.status(404).json({ error: "not_found" });
-  const total = project.budgetCents ?? 0;
+  const subtotal = project.budgetCents ?? 0;
+  const promo = await maybeApplyPromo(req.userId!, promoCode, subtotal);
+  const total = promo.totalCents;
   const serviceKey = `marketplace:${project.category}`;
   const instance = await prisma.serviceInstance.create({
     data: {
@@ -227,10 +270,18 @@ ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req:
         projectId: project.id,
         title: project.title,
         category: project.category,
+        subtotalCents: subtotal,
+        discountCents: promo.discountCents,
+        promoCode: promo.applied?.code ?? null,
+        promotionId: promo.applied?.promotionId ?? null,
+        promoReason: promo.reason ?? null,
         totalCents: total,
       } as object,
     },
   });
+  if (promo.applied) {
+    await attachPromotionToOrder(promo.applied.promotionId, order.id).catch(() => undefined);
+  }
   await prisma.projectAuditLog.create({
     data: { projectId: project.id, actor: req.userId!, action: "order.created", data: { orderId: order.id } },
   });
@@ -249,6 +300,10 @@ ordersRouter.post("/marketplace/projects/:id/checkout", requireAuth, async (req:
     paymentStatus: order.status,
     currency: order.currency,
     totalCents: total,
+    subtotalCents: subtotal,
+    discountCents: promo.discountCents,
+    promoCode: promo.applied?.code ?? null,
+    promoReason: promo.reason ?? null,
     checkoutUrl: checkout.checkoutUrl,
     provider: getPaymentProvider(),
     reason: checkout.reason ?? null,

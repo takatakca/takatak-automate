@@ -33,6 +33,7 @@ function Page() {
   const [selectedAddons, setSelectedAddons] = useState<number[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [fallback, setFallback] = useState<string | null>(null);
+  const [promoCode, setPromoCode] = useState<string | null>(null);
 
   if (!pkg) {
     return (
@@ -88,6 +89,7 @@ function Page() {
         addons: buildAddons(),
         quantity: 1,
         currency: "CAD",
+        promoCode: promoCode ?? undefined,
       });
       if (res.checkoutUrl) {
         window.location.href = res.checkoutUrl;
@@ -322,7 +324,10 @@ function Page() {
               {selectedAddons.length > 0 && <><span>·</span><span>+{selectedAddons.length} add-on{selectedAddons.length === 1 ? "" : "s"}</span></>}
             </div>
             <div className="mt-3">
-              <CheckoutPromoInput subtotalCents={total} />
+              <CheckoutPromoInput
+                subtotalCents={total}
+                onChange={(applied, c) => setPromoCode(applied ? c ?? null : null)}
+              />
             </div>
             <button
               onClick={continueCheckout}

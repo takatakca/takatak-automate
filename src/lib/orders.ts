@@ -45,6 +45,7 @@ export interface PackageCheckoutBody {
   addons?: { label: string; priceCents: number }[];
   quantity?: number;
   currency?: string;
+  promoCode?: string;
 }
 
 export const startPackageCheckout = (body: PackageCheckoutBody) =>
@@ -53,10 +54,10 @@ export const startPackageCheckout = (body: PackageCheckoutBody) =>
     body,
   );
 
-export const startProjectCheckout = (projectId: string) =>
+export const startProjectCheckout = (projectId: string, opts?: { promoCode?: string }) =>
   apiPost<CheckoutResponse>(
     `/marketplace/projects/${encodeURIComponent(projectId)}/checkout`,
-    {},
+    opts?.promoCode ? { promoCode: opts.promoCode } : {},
   );
 
 export const listOrders = () => apiGet<{ orders: OrderRecord[] }>("/orders");
