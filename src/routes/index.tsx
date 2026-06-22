@@ -13,6 +13,7 @@ import { PopularServicesGrid } from "@/components/marketplace/PopularServicesGri
 import { FeaturedServicesStrip } from "@/components/marketplace/FeaturedServicesStrip";
 import { HowItWorks } from "@/components/marketplace/HowItWorks";
 import { TrustBlock } from "@/components/marketplace/TrustBlock";
+import { PromoMarquee } from "@/components/promotions/PromoMarquee";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -101,6 +102,8 @@ function Index() {
           </div>
         </div>
       </section>
+
+      <PromoMarquee />
 
       {/* Popular services */}
       <section className="max-w-7xl mx-auto px-4 py-16">
