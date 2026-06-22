@@ -123,45 +123,11 @@ function Index() {
         <FeaturedServicesStrip />
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 pb-16">
-        <HowItWorks />
-      </div>
+      <PremiumProcessSection />
 
-      {/* Core services / business solutions */}
-      <section className="max-w-7xl mx-auto px-4 pb-16">
-        <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Business services built to launch, manage, and grow online</h2>
-            <p className="mt-1 text-sm text-muted-foreground max-w-2xl">TAKATAK combines domains, hosting, websites, marketing, local visibility, lead generation, communications, and managed project delivery in one connected platform.</p>
-          </div>
-          <Link to="/services/marketplace" className="text-sm text-primary inline-flex items-center gap-1">
-            Explore TAKATAK services <ArrowRight size={14} />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {services.map((s) => {
-            const Icon = serviceIcons[s.key] ?? Sparkles;
-            return (
-              <Link
-                key={s.key}
-                to={s.publicRoute}
-                className="group rounded-xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-sm transition-all"
-              >
-                <div className="w-9 h-9 rounded-md bg-primary/10 text-primary flex items-center justify-center">
-                  <Icon size={18} />
-                </div>
-                <h3 className="mt-3 font-semibold text-foreground">{s.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{s.shortDescription}</p>
-                <div className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
-                  {s.ctaLabel} <ArrowRight size={13} />
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+      <BusinessEcosystemSection />
 
-      <div className="max-w-7xl mx-auto px-4 pb-20">
+      <div className="max-w-7xl mx-auto px-4 py-16 pb-24 md:pb-28">
         <TrustBlock />
       </div>
 
