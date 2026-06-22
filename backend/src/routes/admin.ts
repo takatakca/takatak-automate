@@ -8,7 +8,10 @@ import { notify } from "../services/notifications.js";
 import { isConfigured as payoutProviderConfigured } from "../services/payoutProvider.js";
 
 export const adminRouter = Router();
-adminRouter.use(requireAuth, requireAdmin);
+// Scope auth to /admin/* only — without a path, Express runs this middleware
+// for ANY request that reaches this router (the mount is `/`), which blocks
+// every other router below it in server.ts.
+adminRouter.use("/admin", requireAuth, requireAdmin);
 
 adminRouter.get("/admin/automation/jobs", async (req, res) => {
   const status = (req.query.status as string | undefined);
