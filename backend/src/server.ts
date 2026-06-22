@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import { env, corsOrigins } from "./lib/env.js";
 import { prisma } from "./lib/prisma.js";
@@ -22,6 +23,8 @@ import { projectsRouter } from "./routes/projects.js";
 import { freelancersRouter } from "./routes/freelancers.js";
 import { notificationsRouter } from "./routes/notifications.js";
 import { promotionsRouter } from "./routes/promotions.js";
+import { authRouter } from "./routes/auth.js";
+import { userRouter } from "./routes/user.js";
 
 initSentry();
 
@@ -46,6 +49,7 @@ app.use(pinoHttp({
   },
 }));
 app.use(cors({ origin: corsOrigins.length ? corsOrigins : true, credentials: false }));
+app.use(cookieParser());
 
 // --- Health & readiness (no auth, no rate-limit) ---
 app.get("/health", (_req, res) => res.json({ ok: true }));
@@ -87,6 +91,8 @@ app.use(projectsRouter);
 app.use(freelancersRouter);
 app.use(notificationsRouter);
 app.use(promotionsRouter);
+app.use(authRouter);
+app.use(userRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

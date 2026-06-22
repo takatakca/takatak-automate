@@ -462,3 +462,59 @@ model Promotion {
   @@index([status])
   @@index([orderId])
 }
+
+// =====================================================================
+// Auth — User + Session (ported from legacy Mongo backend onto Prisma)
+// =====================================================================
+
+enum UserRole {
+  user
+  admin
+  freelancer
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  firstName            String?
+  lastName             String?
+  email                String    @unique
+  phone                String?
+  username             String?
+  passwordHash         String?
+  encryptedPassword    String?   // optional, only for Upmind onboarding; cleared after use
+  role                 UserRole  @default(user)
+  isVerified           Boolean   @default(false)
+  verifiedAt           DateTime?
+  otpHash              String?
+  otpExpiresAt         DateTime?
+  lastOtpRequestedAt   DateTime?
+  lastAction           String?
+  lastActionAt         DateTime?
+  upmindClientId       String?
+  upmindRetryNeeded    Boolean   @default(false)
+  metadata             Json      @default("{}")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  sessions Session[]
+
+  @@index([phone])
+  @@index([username])
+}
+
+model Session {
+  id           String   @id           // UUID v4 ("sid")
+  userId       String
+  refreshHash  String
+  createdAt    DateTime @default(now())
+  lastActivity DateTime @default(now())
+  expiresAt    DateTime
+  revoked      Boolean  @default(false)
+  deviceInfo   String?
+  ip           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
