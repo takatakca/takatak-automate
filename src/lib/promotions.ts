@@ -157,3 +157,62 @@ export function onPromoStateChange(cb: (s: PromoState) => void) {
   // also poll once for same-tab updates
   return () => window.removeEventListener("storage", handler);
 }
+
+// ---------------------------------------------------------------------------
+// Backend-first API (with local fallback)
+// ---------------------------------------------------------------------------
+
+import { apiGet, apiPost } from "./api-client";
+
+export interface BackendPromotion {
+  id: string;
+  code: string;
+  status: "available" | "claimed" | "applied" | "redeemed" | "expired" | "cancelled";
+  percentOff: number;
+  claimedAt?: string | null;
+  appliedAt?: string | null;
+  redeemedAt?: string | null;
+  orderId?: string | null;
+}
+
+export interface PromoApplyPreview {
+  code: string;
+  promotionId: string;
+  subtotalCents: number;
+  discountCents: number;
+  totalCents: number;
+}
+
+export async function fetchMyPromotions(): Promise<{ promotions: BackendPromotion[]; available: Array<{ code: string; percentOff: number; status: "available" }> } | null> {
+  try {
+    return await apiGet("/promotions/me");
+  } catch {
+    return null;
+  }
+}
+
+/** Backend-first claim. Falls back to local state when the API is unavailable. */
+export async function claimPromoBackend(code = PROMO_CODE): Promise<{ promotion: BackendPromotion } | { fallback: true; state: PromoState }> {
+  try {
+    const r = await apiPost<{ promotion: BackendPromotion }>("/promotions/claim", { code });
+    // Mirror to local state so existing UI keeps working.
+    write(KEY, { code, percentOff: PROMO_PERCENT, status: "claimed", claimedAt: new Date().toISOString() } satisfies PromoState);
+    return r;
+  } catch {
+    return { fallback: true, state: claimPromo() };
+  }
+}
+
+/** Preview discount for a given subtotal and/or order. Returns null when backend is unreachable. */
+export async function previewPromoBackend(input: { code?: string; subtotalCents?: number; orderId?: string }): Promise<PromoApplyPreview | null> {
+  const code = (input.code ?? PROMO_CODE).toUpperCase();
+  try {
+    return await apiPost<PromoApplyPreview>("/promotions/apply", {
+      code,
+      orderId: input.orderId,
+      subtotalCents: input.subtotalCents,
+    });
+  } catch {
+    return null;
+  }
+}
