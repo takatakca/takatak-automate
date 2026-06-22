@@ -21,6 +21,7 @@ import { searchRouter } from "./routes/search.js";
 import { projectsRouter } from "./routes/projects.js";
 import { freelancersRouter } from "./routes/freelancers.js";
 import { notificationsRouter } from "./routes/notifications.js";
+import { promotionsRouter } from "./routes/promotions.js";
 
 initSentry();
 
@@ -85,6 +86,7 @@ app.use(searchRouter);
 app.use(projectsRouter);
 app.use(freelancersRouter);
 app.use(notificationsRouter);
+app.use(promotionsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
