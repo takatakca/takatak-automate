@@ -324,7 +324,10 @@ function Page() {
               {selectedAddons.length > 0 && <><span>·</span><span>+{selectedAddons.length} add-on{selectedAddons.length === 1 ? "" : "s"}</span></>}
             </div>
             <div className="mt-3">
-              <CheckoutPromoInput subtotalCents={total} />
+              <CheckoutPromoInput
+                subtotalCents={total}
+                onChange={(applied, c) => setPromoCode(applied ? c ?? null : null)}
+              />
             </div>
             <button
               onClick={continueCheckout}
