@@ -9,6 +9,15 @@ import { UPMIND_CURRENCY, UPMIND_ORDER_CONFIG_URL } from "@/lib/upmind";
 export function UpmindDac({ clientId }: { clientId?: string | null }) {
   const ref = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  // If the scripts never become ready (e.g. blocked by network / adblock),
+  // surface a friendly fallback after 8s instead of leaving a blank section.
+  useEffect(() => {
+    if (ready) return;
+    const t = setTimeout(() => { if (!ready) setFailed(true); }, 8000);
+    return () => clearTimeout(t);
+  }, [ready]);
 
   // Re-create the element when clientId changes so the widget picks it up.
   useEffect(() => {
@@ -24,11 +33,24 @@ export function UpmindDac({ clientId }: { clientId?: string | null }) {
 
   return (
     <>
-      <UpmindScripts onReady={() => setReady(true)} />
+      <UpmindScripts
+        onReady={() => { setReady(true); setFailed(false); }}
+        onError={() => setFailed(true)}
+      />
       <div ref={ref} className="w-full" />
-      {!ready && (
+      {!ready && !failed && (
         <div className="text-center text-sm text-muted-foreground py-12">
           Loading TAKATAK domain search…
+        </div>
+      )}
+      {failed && (
+        <div className="text-center text-sm text-muted-foreground py-12">
+          Domain search is temporarily unavailable. Please refresh the page
+          or{" "}
+          <a href="mailto:support@takatak.ca" className="underline">
+            contact TAKATAK support
+          </a>
+          .
         </div>
       )}
     </>
