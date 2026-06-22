@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { useAuth } from "@/lib/auth-context";
 import { getVerifyContext } from "@/lib/auth-store";
-import { claimPromo, getPromoState, trackPromo } from "@/lib/promotions";
+import { claimPromo, claimPromoBackend, getPromoState, trackPromo } from "@/lib/promotions";
 
 export const Route = createFileRoute("/otp")({
   head: () => ({ meta: [{ title: "Verify — TAKATAK" }] }),
@@ -27,7 +27,8 @@ function OtpPage() {
       const pre = getPromoState();
       const hadPromo = pre.status === "pending" || pre.status === "none";
       if (hadPromo) {
-        claimPromo();
+        // Claim server-side (idempotent); falls back to local state on failure.
+        await claimPromoBackend().catch(() => claimPromo());
         trackPromo("signup_completed_with_promo", { stage: "otp" });
       }
       nav({ to: "/dashboard" });
