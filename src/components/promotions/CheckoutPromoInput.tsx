@@ -4,57 +4,72 @@ import {
   PROMO_CODE,
   getPromoState,
   previewDiscount,
+  previewPromoBackend,
   trackPromo,
 } from "@/lib/promotions";
 
 interface Props {
   subtotalCents: number;
-  onChange?: (applied: boolean) => void;
+  onChange?: (applied: boolean, code?: string | null) => void;
 }
 
 export function CheckoutPromoInput({ subtotalCents, onChange }: Props) {
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [serverPreview, setServerPreview] = useState<{ discountCents: number; totalCents: number } | null>(null);
 
   useEffect(() => {
     const s = getPromoState();
     if (s.status === "claimed") {
       setCode(PROMO_CODE);
       setApplied(true);
-      onChange?.(true);
+      onChange?.(true, PROMO_CODE);
       trackPromo("promo_applied_to_checkout", { auto: true });
     }
   }, [onChange]);
 
-  const apply = () => {
+  // Refresh server preview whenever subtotal changes and a promo is applied.
+  useEffect(() => {
+    if (!applied) { setServerPreview(null); return; }
+    let cancelled = false;
+    void previewPromoBackend({ code: PROMO_CODE, subtotalCents }).then((r) => {
+      if (cancelled) return;
+      if (r) setServerPreview({ discountCents: r.discountCents, totalCents: r.totalCents });
+    });
+    return () => { cancelled = true; };
+  }, [applied, subtotalCents]);
+
+  const apply = async () => {
     const c = code.trim().toUpperCase();
     const s = getPromoState();
     if (c !== PROMO_CODE) {
       setMsg("That code isn't recognized.");
       setApplied(false);
-      onChange?.(false);
+      onChange?.(false, null);
       return;
     }
     if (s.status === "used") {
       setMsg("This offer has already been used on a previous order.");
       setApplied(false);
-      onChange?.(false);
+      onChange?.(false, null);
       return;
     }
     if (s.status !== "claimed") {
       setMsg("Sign in and verify your account to activate this offer.");
       setApplied(false);
-      onChange?.(false);
+      onChange?.(false, null);
       return;
     }
     setApplied(true);
     setMsg(null);
-    onChange?.(true);
+    onChange?.(true, PROMO_CODE);
     trackPromo("promo_applied_to_checkout", { auto: false });
   };
 
-  const { discountCents, totalCents } = previewDiscount(subtotalCents);
+  const local = previewDiscount(subtotalCents);
+  const discountCents = serverPreview?.discountCents ?? local.discountCents;
+  const totalCents = serverPreview?.totalCents ?? local.totalCents;
   const fmt = (c: number) => `$${(c / 100).toFixed(2)}`;
 
   return (
