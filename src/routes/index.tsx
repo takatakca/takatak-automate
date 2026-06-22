@@ -128,11 +128,11 @@ function Index() {
       <section className="max-w-7xl mx-auto px-4 pb-16">
         <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">TAKATAK business solutions</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Beyond freelance work — managed services to run your business.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Business services built to launch, manage, and grow online</h2>
+            <p className="mt-1 text-sm text-muted-foreground max-w-2xl">TAKATAK combines domains, hosting, websites, marketing, local visibility, lead generation, communications, and managed project delivery in one connected platform.</p>
           </div>
           <Link to="/services/marketplace" className="text-sm text-primary inline-flex items-center gap-1">
-            See marketplace <ArrowRight size={14} />
+            Explore TAKATAK services <ArrowRight size={14} />
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
