@@ -8,6 +8,10 @@ import {
   verifyPaymentWebhook,
   mapPaymentEventToOrderState,
 } from "../services/payments.js";
+import {
+  redeemPromotionForOrder,
+  releasePromotionForOrder,
+} from "../services/promotions.js";
 
 export const webhooksRouter = Router();
 
@@ -196,6 +200,15 @@ webhooksRouter.post(
         } as object,
       },
     });
+
+    // Promotion lifecycle: redeem on paid, release on failure/cancel.
+    if (next === "paid_to_takatak") {
+      await redeemPromotionForOrder(order.id).catch(() => undefined);
+    } else if (next === "failed") {
+      await releasePromotionForOrder(order.id, "claimed").catch(() => undefined);
+    } else if (next === "cancelled") {
+      await releasePromotionForOrder(order.id, "claimed").catch(() => undefined);
+    }
 
     // Update service instance + project state when applicable.
     if (order.serviceInstanceId && next === "paid_to_takatak") {
