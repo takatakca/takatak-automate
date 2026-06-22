@@ -57,7 +57,8 @@ export function UpmindDac({ clientId }: { clientId?: string | null }) {
     const scanForBlankWidget = () => {
       const box = el.getBoundingClientRect();
       const text = ref.current?.innerText?.trim() ?? "";
-      if (!text && box.height < 80) {
+      const controls = el.shadowRoot?.querySelectorAll("input,button,select").length ?? 0;
+      if ((!text && box.height < 80) || controls === 0) {
         setWidgetError("upmind_widget_blank_after_oauth_failure");
         setFailed(true);
       }
