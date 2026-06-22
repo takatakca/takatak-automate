@@ -74,7 +74,7 @@ export function UpmindDac({ clientId }: { clientId?: string | null }) {
   return (
     <>
       <UpmindScripts
-        onReady={() => { setReady(true); setFailed(false); }}
+        onReady={() => { setReady(true); }}
         onError={() => setFailed(true)}
       />
       {!failed && <div ref={ref} className="w-full" />}
