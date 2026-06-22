@@ -48,20 +48,26 @@ packages=$(public_request /marketplace/packages); package_id=$(printf '%s' "$pac
 
 project=$(request POST /marketplace/projects "$CLIENT_JWT" '{"title":"Demo flow quote project","brief":"Real endpoint walkthrough project.","category":"website_design","budgetCents":54900}')
 project_id=$(printf '%s' "$project" | json_get 'project.id'); test -n "$project_id"; pass "create project $project_id"
+request GET /marketplace/projects "$CLIENT_JWT" >/dev/null; pass "list client projects"
+demo_project=$(request GET /marketplace/projects/demo "$CLIENT_JWT")
+demo_project_id=$(printf '%s' "$demo_project" | json_get 'project.id'); test -n "$demo_project_id"; pass "seeded demo project $demo_project_id"
 
 checkout=$(request POST "/marketplace/packages/$package_id/checkout" "$CLIENT_JWT" '{"title":"Starter business website","category":"website_design","tier":{"name":"Standard","priceCents":54900,"deliveryDays":10},"addons":[],"quantity":1,"currency":"CAD"}')
 reason=$(printf '%s' "$checkout" | json_get 'reason'); pass "package checkout fallback ${reason:-configured}"
 request GET /orders "$CLIENT_JWT" >/dev/null; pass "list orders"
 
-assign=$(request POST "/admin/projects/$project_id/assign" "$ADMIN_JWT" "{\"freelancerId\":\"$FREELANCER_ID\",\"amountCents\":40000,\"currency\":\"CAD\",\"note\":\"Demo flow assignment\"}")
+assign=$(request POST "/admin/projects/$demo_project_id/assign" "$ADMIN_JWT" "{\"freelancerId\":\"$FREELANCER_ID\",\"amountCents\":40000,\"currency\":\"CAD\",\"note\":\"Demo flow assignment\"}")
 contract_id=$(printf '%s' "$assign" | json_get 'contract.id'); test -n "$contract_id"; pass "admin assign project"
 request POST "/freelancers/contracts/$contract_id/accept" "$FREELANCER_JWT" '{}' >/dev/null; pass "freelancer accept contract"
 request POST "/freelancers/contracts/$contract_id/deliveries" "$FREELANCER_JWT" '{"note":"Demo delivery submitted to TAKATAK review."}' >/dev/null; pass "freelancer submit delivery"
-request POST "/marketplace/projects/$project_id/request-revision" "$CLIENT_JWT" '{"note":"Please refine the homepage section."}' >/dev/null; pass "client request revision"
+request POST "/marketplace/projects/$demo_project_id/request-revision" "$CLIENT_JWT" '{"note":"Please refine the homepage section."}' >/dev/null; pass "client request revision"
 request POST "/freelancers/contracts/$contract_id/deliveries" "$FREELANCER_JWT" '{"note":"Revision completed and resubmitted."}' >/dev/null; pass "freelancer resubmit delivery"
-request POST "/marketplace/projects/$project_id/approve" "$CLIENT_JWT" '{}' >/dev/null; pass "client approve delivery + grace"
-request POST "/admin/projects/$project_id/start-grace-period" "$ADMIN_JWT" '{}' >/dev/null; pass "admin start grace period"
-sweep=$(request POST /admin/payouts/sweep "$ADMIN_JWT" '{}'); pass "payout sweep provider-missing safe path"
+request POST "/marketplace/projects/$demo_project_id/approve" "$CLIENT_JWT" '{}' >/dev/null; pass "client approve delivery + grace"
+request POST "/admin/projects/$demo_project_id/start-grace-period" "$ADMIN_JWT" '{}' >/dev/null; pass "admin start grace period"
+release=$(request POST "/admin/projects/$demo_project_id/release-payment" "$ADMIN_JWT" '{"force":true}')
+provider=$(printf '%s' "$release" | json_get 'provider'); test "$provider" = "none"; pass "release-ready provider safety"
+admin_project=$(request GET "/admin/projects/$demo_project_id" "$ADMIN_JWT")
+final_state=$(printf '%s' "$admin_project" | json_get 'project.paymentState'); test "$final_state" = "release_ready"; pass "final payout state release_ready"
 request GET /notifications "$FREELANCER_JWT" >/dev/null; pass "notifications list"
 
 echo "✅ demo flow script passed"
