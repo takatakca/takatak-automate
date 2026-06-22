@@ -1,22 +1,43 @@
+const env = (import.meta as unknown as { env: Record<string, string | undefined> }).env;
+
 /**
  * TAKATAK Upmind integration config.
  *
- * Re-exports the core Upmind URLs / currency from `src/lib/upmind.ts` and
- * adds the production hosting-plan IDs ported from the legacy Next.js site.
- * All public — these are Upmind product IDs, not secrets.
- *
- * Env overrides (optional):
- *   VITE_UPMIND_PLAN_PORTFOLIO, VITE_UPMIND_PLAN_BRONZE,
- *   VITE_UPMIND_PLAN_SILVER, VITE_UPMIND_PLAN_GOLD
+ * Centralizes every public widget/config value used by domain, hosting and
+ * checkout. These are public widget URLs / product IDs only — not secrets.
  */
-export {
-  UPMIND_ORDER_CONFIG_URL,
-  UPMIND_WIDGET_SCRIPT_URL,
-  UPMIND_DAC_SCRIPT_URL,
-  UPMIND_CURRENCY,
-} from "./upmind";
+export const UPMIND_ORDER_CONFIG_URL =
+  env.VITE_UPMIND_ORDER_CONFIG_URL ??
+  "https://fimjpyw0mnzy.upmind.app/order/product";
 
-const env = (import.meta as unknown as { env: Record<string, string | undefined> }).env;
+export const UPMIND_WIDGET_SCRIPT_URL =
+  env.VITE_UPMIND_WIDGET_SCRIPT_URL ?? "https://embed.upmind.app/upm-widget.js";
+
+export const UPMIND_DAC_SCRIPT_URL =
+  env.VITE_UPMIND_DAC_SCRIPT_URL ??
+  "https://widgets.upmind.app/dac/upm-dac.min.js";
+
+export const UPMIND_BRAND_ID = env.VITE_UPMIND_BRAND_ID ?? "";
+export const UPMIND_ACCOUNT_ID = env.VITE_UPMIND_ACCOUNT_ID ?? "";
+export const UPMIND_CURRENCY = env.VITE_UPMIND_CURRENCY ?? "CAD";
+export const UPMIND_DOMAIN_SEARCH_MODE = env.VITE_UPMIND_DOMAIN_SEARCH_MODE ?? "register";
+export const SUPPORTED_DOMAIN_TLDS = ["ca", "com", "net", "org"] as const;
+
+export type SupportedDomainTld = (typeof SUPPORTED_DOMAIN_TLDS)[number];
+
+export function getDomainOrderUrl(domain: string): string {
+  const url = new URL(UPMIND_ORDER_CONFIG_URL);
+  url.searchParams.set("domain", domain);
+  url.searchParams.set("currency", UPMIND_CURRENCY);
+  return url.toString();
+}
+
+export function getHostingOrderUrl(productId: string): string {
+  const url = new URL(UPMIND_ORDER_CONFIG_URL);
+  url.searchParams.set("product", productId);
+  url.searchParams.set("currency", UPMIND_CURRENCY);
+  return url.toString();
+}
 
 export interface UpmindHostingPlan {
   key: "portfolio" | "bronze" | "silver" | "gold";
