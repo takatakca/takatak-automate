@@ -40,7 +40,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "domains",
     title: "Domain Names",
-    shortDescription: "Search, register, and manage domains with instant provisioning.",
+    shortDescription: "Find and secure the right domain for your business, then connect it to your website, hosting, or email setup.",
     longDescription:
       "Register .com, .ca, and 300+ TLDs. Auto-DNS, free privacy, instant activation through TAKATAK's provisioning engine.",
     category: "infrastructure",
@@ -59,7 +59,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "hosting",
     title: "Web Hosting",
-    shortDescription: "Managed cPanel + WordPress hosting with one-click deploys.",
+    shortDescription: "Reliable hosting for business websites, WordPress, landing pages, and client projects, with upgrade-ready plans.",
     longDescription:
       "Litespeed-powered hosting with free migrations, daily backups, AI security monitoring, and 24/7 expert support.",
     category: "infrastructure",
@@ -78,7 +78,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "websites",
     title: "Website Creation",
-    shortDescription: "AI-assisted website builds — brief in, live site out.",
+    shortDescription: "Custom websites built around your brand, offer, content, and conversion goals — not generic templates.",
     longDescription:
       "Tell TAKATAK AI about your business. We assemble copy, design, structure, and launch your site on managed hosting.",
     category: "build",
@@ -97,7 +97,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "mobile_apps",
     title: "Mobile App Creation",
-    shortDescription: "iOS and Android apps built from a guided AI brief.",
+    shortDescription: "Plan and launch mobile app projects with a structured brief, clear scope, and managed delivery process.",
     longDescription:
       "From idea to App Store. Our AI intake captures features, screens, and integrations; TAKATAK builds and ships.",
     category: "build",
@@ -116,7 +116,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "online_marketing",
     title: "Online Marketing",
-    shortDescription: "AI-planned campaigns across Google, Meta, and more.",
+    shortDescription: "Campaign planning, ad setup, tracking, and optimization for businesses that need measurable growth.",
     longDescription:
       "Automated audience research, ad creative, landing pages, and reporting. Powered by TAKATAK AI workflows.",
     category: "growth",
@@ -136,7 +136,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "social_media",
     title: "Social Media Automation",
-    shortDescription: "Schedule, publish, and analyze across all your channels.",
+    shortDescription: "Content planning, publishing workflows, and channel organization for consistent online presence.",
     longDescription:
       "Connect your social accounts, generate posts with AI, queue campaigns, and track results — from one TAKATAK portal.",
     category: "growth",
@@ -156,7 +156,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "local_listings",
     title: "Local Listing Visibility",
-    shortDescription: "Be found on Google, Apple, Bing, and 50+ directories.",
+    shortDescription: "Improve how your business appears across Google, Apple, Bing, maps, directories, and local search platforms.",
     longDescription:
       "Sync your business info everywhere it matters. Monitor reviews and rank locally with TAKATAK's listing automation.",
     category: "growth",
@@ -177,7 +177,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "lead_generation",
     title: "Lead Generation",
-    shortDescription: "Qualified, exclusive leads delivered to your dashboard.",
+    shortDescription: "Build a lead acquisition system with intake, routing, tracking, and follow-up workflows.",
     longDescription:
       "Tell us who you sell to. TAKATAK AI sources, qualifies, and routes leads into your CRM or dashboard inbox.",
     category: "growth",
@@ -198,7 +198,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "voip_phone",
     title: "VoIP Business Phone",
-    shortDescription: "Cloud phone numbers, call routing, and AI transcription.",
+    shortDescription: "Business phone numbers, routing, voicemail, call handling, and communication tools connected to your operations.",
     longDescription:
       "Get a Canadian or US business number, IVR menus, voicemail-to-text, and AI call summaries — fully managed.",
     category: "communication",
@@ -218,7 +218,7 @@ export const services: ServiceDefinition[] = [
   {
     key: "ai_business_tools",
     title: "AI-Assisted Business Tools",
-    shortDescription: "Custom AI workflows for your operations.",
+    shortDescription: "Practical automation tools that help reduce manual work, organize data, and support day-to-day operations.",
     longDescription:
       "Customer support agents, document parsing, internal copilots — TAKATAK builds AI that runs your back office.",
     category: "build",
@@ -238,7 +238,7 @@ export const services: ServiceDefinition[] = [
     key: "freelancer_marketplace",
     title: "TAKATAK Service Marketplace",
     shortDescription:
-      "Find vetted freelancers and TAKATAK service partners for logos, websites, apps, design, data entry, and online business tasks.",
+      "Request logos, websites, apps, content, data entry, design, automation, and online business tasks through TAKATAK's managed service marketplace.",
     longDescription:
       "Browse gigs or post a project. Get proposals, milestones, deliveries, and revisions — all inside the TAKATAK dashboard.",
     category: "marketplace",
