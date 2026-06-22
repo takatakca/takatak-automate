@@ -43,7 +43,10 @@ function saveLocalRequest(input: DomainRequestInput): StoredDomainRequest {
 
 export async function createDomainRequest(input: DomainRequestInput): Promise<StoredDomainRequest> {
   try {
-    const res = await apiPost<{ request: StoredDomainRequest }>("/domain-requests", input);
+    const res = await Promise.race([
+      apiPost<{ request: StoredDomainRequest }>("/domain-requests", input),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error("domain_request_timeout")), 3500)),
+    ]);
     return res.request;
   } catch {
     return saveLocalRequest(input);
