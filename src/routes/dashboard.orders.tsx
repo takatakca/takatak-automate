@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listOrders, type OrderRecord } from "@/lib/orders";
 import { OrderStatusBadge, orderNextAction } from "@/components/marketplace/OrderStatusBadge";
 import { Loader2 } from "lucide-react";
+import { DashboardPromoCard } from "@/components/promotions/DashboardPromoCard";
 
 export const Route = createFileRoute("/dashboard/orders")({
   head: () => ({
@@ -26,6 +27,7 @@ function Page() {
     <DashboardShell>
       <h1 className="text-3xl font-bold">Orders</h1>
       <p className="text-muted-foreground mt-1">Service orders and provisioning status.</p>
+      <div className="mt-6"><DashboardPromoCard /></div>
       <div className="mt-8">
         {isLoading ? (
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
