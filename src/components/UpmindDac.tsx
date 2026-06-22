@@ -51,10 +51,19 @@ export function UpmindDac({ clientId }: { clientId?: string | null }) {
         setFailed(true);
       }
     };
+    const scanForBlankWidget = () => {
+      const box = el.getBoundingClientRect();
+      const text = ref.current?.innerText?.trim() ?? "";
+      if (!text && box.height < 80) {
+        setWidgetError("upmind_widget_blank_after_oauth_failure");
+        setFailed(true);
+      }
+    };
     observer = new MutationObserver(scanForWidgetFailure);
     observer.observe(ref.current, { childList: true, subtree: true, characterData: true });
     const t = setTimeout(scanForWidgetFailure, 1500);
-    return () => { observer?.disconnect(); clearTimeout(t); };
+    const blankTimer = setTimeout(scanForBlankWidget, 5000);
+    return () => { observer?.disconnect(); clearTimeout(t); clearTimeout(blankTimer); };
   }, [ready, clientId]);
 
   return (
