@@ -65,8 +65,9 @@ export function UpmindDac({ clientId }: { clientId?: string | null }) {
     observer = new MutationObserver(scanForWidgetFailure);
     observer.observe(ref.current, { childList: true, subtree: true, characterData: true });
     const t = setTimeout(scanForWidgetFailure, 1500);
+    const poll = setInterval(scanForWidgetFailure, 500);
     const blankTimer = setTimeout(scanForBlankWidget, 5000);
-    return () => { observer?.disconnect(); clearTimeout(t); clearTimeout(blankTimer); };
+    return () => { observer?.disconnect(); clearTimeout(t); clearInterval(poll); clearTimeout(blankTimer); };
   }, [ready, clientId]);
 
   return (
