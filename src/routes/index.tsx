@@ -1,20 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import {
-  Globe, Server, Sparkles, Megaphone, Share2, MapPin, PhoneCall, Users,
-  Bot, Store, ArrowRight, ShieldCheck, Search,
-} from "lucide-react";
+import { ArrowRight, ShieldCheck, Search } from "lucide-react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { services } from "@/lib/services";
 import { brand } from "@/lib/brand";
 import { PopularServicesGrid } from "@/components/marketplace/PopularServicesGrid";
 import { FeaturedServicesStrip } from "@/components/marketplace/FeaturedServicesStrip";
-import { HowItWorks } from "@/components/marketplace/HowItWorks";
 import { TrustBlock } from "@/components/marketplace/TrustBlock";
 import { PromoMarquee } from "@/components/promotions/PromoMarquee";
 import { UpmindDomainSearch } from "@/components/upmind/UpmindDomainSearch";
+import { PremiumProcessSection } from "@/components/home/PremiumProcessSection";
+import { BusinessEcosystemSection } from "@/components/home/BusinessEcosystemSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,20 +22,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const serviceIcons: Record<string, typeof Globe> = {
-  domains: Globe,
-  hosting: Server,
-  websites: Sparkles,
-  mobile_apps: Sparkles,
-  online_marketing: Megaphone,
-  social_media: Share2,
-  local_listings: MapPin,
-  lead_generation: Users,
-  voip_phone: PhoneCall,
-  ai_business_tools: Bot,
-  freelancer_marketplace: Store,
-};
 
 const POPULAR = ["Website design", "Logo design", "Hosting", "Local SEO", "Social media", "Data entry"];
 
