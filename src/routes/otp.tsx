@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { useAuth } from "@/lib/auth-context";
 import { getVerifyContext } from "@/lib/auth-store";
+import { claimPromo, getPromoState, trackPromo } from "@/lib/promotions";
 
 export const Route = createFileRoute("/otp")({
   head: () => ({ meta: [{ title: "Verify — TAKATAK" }] }),
@@ -23,6 +24,12 @@ function OtpPage() {
     setErr(null);
     try {
       await verifyOtp({ otp: code, email: ctx.email, phone: ctx.phone });
+      const pre = getPromoState();
+      const hadPromo = pre.status === "pending" || pre.status === "none";
+      if (hadPromo) {
+        claimPromo();
+        trackPromo("signup_completed_with_promo", { stage: "otp" });
+      }
       nav({ to: "/dashboard" });
     } catch (e) { setErr((e as Error).message); }
   };

@@ -4,6 +4,7 @@ import { ShieldCheck, Briefcase, Inbox, FileCheck2, Save, AlertTriangle, Plus } 
 import { useQuery } from "@tanstack/react-query";
 import { listProjects, paymentReleaseLabel, type ClientProject } from "@/lib/marketplace";
 import { PaymentReleaseStatus } from "@/components/marketplace/PaymentReleaseStatus";
+import { DashboardPromoCard } from "@/components/promotions/DashboardPromoCard";
 
 export const Route = createFileRoute("/dashboard/marketplace/")({
   head: () => ({ meta: [{ title: "Marketplace — TAKATAK" }] }),
@@ -56,6 +57,7 @@ function Page() {
       <div className="mt-6 inline-flex items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs text-primary">
         <ShieldCheck size={13} /> TAKATAK holds your payments in escrow and releases them only after you approve the delivery.
       </div>
+      <div className="mt-4"><DashboardPromoCard /></div>
 
       <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {summary.map((s) => {
