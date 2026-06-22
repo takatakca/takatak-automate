@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../lib/env.js";
+import { verifyAccessToken } from "../lib/tokens.js";
 
 export interface AuthedRequest extends Request {
   userId?: string;
@@ -37,15 +38,17 @@ export function requireAuth(req: AuthedRequest, res: Response, next: NextFunctio
   const header = req.header("authorization") ?? "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
   if (!token) return res.status(401).json({ error: "missing_bearer_token" });
-  if (!env.AUTH_JWT_SECRET) return res.status(500).json({ error: "auth_not_configured" });
   try {
-    const claims = jwt.verify(token, env.AUTH_JWT_SECRET) as jwt.JwtPayload;
+    const claims = verifyAccessToken(token) as jwt.JwtPayload;
     const userId = extractUserId(claims);
     if (!userId) return res.status(401).json({ error: "invalid_token_subject" });
     req.userId = userId;
     req.claims = claims;
     next();
-  } catch {
+  } catch (e) {
+    if ((e as Error).message === "auth_not_configured") {
+      return res.status(500).json({ error: "auth_not_configured" });
+    }
     return res.status(401).json({ error: "invalid_token" });
   }
 }
