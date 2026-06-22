@@ -20,6 +20,14 @@ function notify(next: Status) {
   for (const sub of subscribers) sub(next);
 }
 
+function isElDefined(tag: string): boolean {
+  try {
+    return typeof customElements !== "undefined" && Boolean(customElements.get(tag));
+  } catch {
+    return false;
+  }
+}
+
 function injectScript(src: string, isModule = false): Promise<void> {
   return new Promise((resolve, reject) => {
     // Dedupe by URL — survives HMR and SPA navigation.
@@ -45,12 +53,38 @@ function injectScript(src: string, isModule = false): Promise<void> {
 
 function ensureLoaded(): Promise<void> {
   if (status === "ready") return Promise.resolve();
+  // If both custom elements are already defined (e.g. Upmind's widget
+  // bundle has bootstrapped <upm-dac> itself, or HMR reset our module
+  // state after scripts already loaded), short-circuit.
+  if (isElDefined("upm-dac") && isElDefined("upm-widget")) {
+    notify("ready");
+    return Promise.resolve();
+  }
   if (loadPromise) return loadPromise;
   notify("loading");
-  loadPromise = Promise.all([
-    injectScript(UPMIND_WIDGET_SCRIPT_URL, true),
-    injectScript(UPMIND_DAC_SCRIPT_URL, false),
-  ])
+  // Only inject scripts whose custom element is NOT already defined.
+  // Upmind's modern widget bundle registers <upm-dac> itself, so injecting
+  // both scripts unconditionally causes:
+  //   NotSupportedError: the name "upm-dac" has already been used
+  const tasks: Promise<void>[] = [];
+  if (!isElDefined("upm-widget")) {
+    tasks.push(injectScript(UPMIND_WIDGET_SCRIPT_URL, true));
+  }
+  if (!isElDefined("upm-dac")) {
+    tasks.push(injectScript(UPMIND_DAC_SCRIPT_URL, false));
+  }
+  loadPromise = Promise.all(tasks)
+    // After the widget bundle evaluates it may define upm-dac on its own.
+    // Poll briefly so the readiness signal waits for both elements.
+    .then(() => new Promise<void>((resolve) => {
+      const start = Date.now();
+      const tick = () => {
+        if (isElDefined("upm-dac") && isElDefined("upm-widget")) return resolve();
+        if (Date.now() - start > 5000) return resolve();
+        setTimeout(tick, 100);
+      };
+      tick();
+    }))
     .then(() => { notify("ready"); })
     .catch((err) => {
       notify("error");
