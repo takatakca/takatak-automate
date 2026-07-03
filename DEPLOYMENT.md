@@ -17,6 +17,12 @@ root):
 - **Frontend service** — Build: `npm install && npm run build` · Start: `node start.mjs` · Root: repo root
 - **Backend service**  — Build: `npm install && npx prisma generate && npm run build && npx prisma migrate deploy` · Start: `node dist/server.js` · Root: `backend`
 
+> Render must deploy from the **root `render.yaml`**. A legacy `backend/render.yaml`
+> used older commands (`npm start`, missing auth/CORS env vars) and has been
+> removed. If Render logs ever show `node index.js`, `MONGO_URI`, or MongoDB
+> DNS errors, the wrong legacy service is still attached — recreate the
+> Blueprint from the root `render.yaml`.
+
 Both run on Node 20+. The backend uses Prisma / Postgres (`DATABASE_URL`); do
 not set `MONGO_URI` — it is unused and ignored.
 
@@ -128,7 +134,7 @@ Never put server secrets behind a `VITE_` prefix — they would ship to the brow
 
 ## Not deployed by this entry
 
-- The Express backend in `backend/` deploys separately (`backend/render.yaml`, `backend/DEPLOYMENT.md`).
+- The Express backend in `backend/` is provisioned by the root `render.yaml` (see `backend/DEPLOYMENT.md` for backend-specific notes). The legacy `backend/render.yaml` has been removed.
 - `start.mjs` only serves the marketing/marketplace/dashboard frontend.
 
 ## Render Blueprint (one-shot)
