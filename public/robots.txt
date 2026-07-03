@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /checkout
+Disallow: /otp
+Disallow: /login
+Disallow: /signup
+
+Sitemap: https://takatakca.lovable.app/sitemap.xml
