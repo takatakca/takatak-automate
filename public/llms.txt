@@ -1,0 +1,29 @@
+# TAKATAK
+
+> Managed online business services for growing businesses — domains, hosting, websites, marketing, social media, VoIP, lead generation, and a vetted freelancer marketplace.
+
+## Pages
+
+- [Home](/): Overview of TAKATAK services and platform.
+- [Domain search](/domain): Search and register .ca / .com / .net / .org domains.
+- [Hosting plans](/hosting): Managed WordPress and website hosting plans (Portfolio, Bronze, Silver, Gold).
+- [Marketplace](/marketplace): Vetted freelancer packages for websites, design, marketing, and SEO.
+- [Search](/search): Search TAKATAK services and marketplace packages.
+- [Deals](/deals): Current promotions and bundle offers.
+
+## Services
+
+- [Websites](/services/websites): Managed business website builds.
+- [Marketing](/services/marketing): Managed digital marketing campaigns.
+- [Social media](/services/social-media): Social content and growth management.
+- [Local listings](/services/local-listings): Google Business Profile and local SEO listings.
+- [Lead generation](/services/lead-generation): FLEXS lead-generation campaigns.
+- [VoIP](/services/voip): Business VoIP phone service.
+- [Mobile apps](/services/mobile-apps): Custom mobile app builds.
+- [AI business tools](/services/ai-business-tools): AI assistants and automations for small businesses.
+- [Marketplace overview](/services/marketplace): How the TAKATAK freelancer marketplace works.
+
+## Optional
+
+- [Post a project](/marketplace/post-project): Post a custom project brief to the marketplace.
+- [Privacy manager](/privacy-manager): Manage cookie and privacy preferences.
