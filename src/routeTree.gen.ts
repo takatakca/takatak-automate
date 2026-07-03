@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as PrivacyManagerRouteImport } from './routes/privacy-manager'
@@ -70,6 +71,11 @@ import { Route as DashboardFreelancerContractsIndexRouteImport } from './routes/
 import { Route as DashboardFreelancerContractsContractIdRouteImport } from './routes/dashboard.freelancer.contracts.$contractId'
 import { Route as DashboardAdminProjectsIdRouteImport } from './routes/dashboard.admin.projects.$id'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -396,6 +402,7 @@ export interface FileRoutesByFullPath {
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
   '/dashboard/domains': typeof DashboardDomainsRoute
@@ -456,6 +463,7 @@ export interface FileRoutesByTo {
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
   '/dashboard/domains': typeof DashboardDomainsRoute
@@ -517,6 +525,7 @@ export interface FileRoutesById {
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
   '/dashboard/domains': typeof DashboardDomainsRoute
@@ -581,6 +590,7 @@ export interface FileRouteTypes {
     | '/privacy-manager'
     | '/search'
     | '/signup'
+    | '/sitemap.xml'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
     | '/dashboard/domains'
@@ -641,6 +651,7 @@ export interface FileRouteTypes {
     | '/privacy-manager'
     | '/search'
     | '/signup'
+    | '/sitemap.xml'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
     | '/dashboard/domains'
@@ -701,6 +712,7 @@ export interface FileRouteTypes {
     | '/privacy-manager'
     | '/search'
     | '/signup'
+    | '/sitemap.xml'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
     | '/dashboard/domains'
@@ -764,6 +776,7 @@ export interface RootRouteChildren {
   PrivacyManagerRoute: typeof PrivacyManagerRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ServicesAiBusinessToolsRoute: typeof ServicesAiBusinessToolsRoute
   ServicesLeadGenerationRoute: typeof ServicesLeadGenerationRoute
   ServicesLocalListingsRoute: typeof ServicesLocalListingsRoute
@@ -777,6 +790,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -1343,6 +1363,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyManagerRoute: PrivacyManagerRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ServicesAiBusinessToolsRoute: ServicesAiBusinessToolsRoute,
   ServicesLeadGenerationRoute: ServicesLeadGenerationRoute,
   ServicesLocalListingsRoute: ServicesLocalListingsRoute,
