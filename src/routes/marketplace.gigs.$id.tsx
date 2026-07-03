@@ -10,7 +10,52 @@ import { CatalogSourceIndicator } from "@/components/dev/CatalogSourceIndicator"
 import { CheckoutPromoInput } from "@/components/promotions/CheckoutPromoInput";
 
 export const Route = createFileRoute("/marketplace/gigs/$id")({
-  head: () => ({ meta: [{ title: "Service — TAKATAK Marketplace" }] }),
+  head: ({ params }) => {
+    const pkg = getPackage(params.id);
+    const title = pkg ? `${pkg.title} — TAKATAK Marketplace` : "Service — TAKATAK Marketplace";
+    const description = pkg?.description ?? "Vetted freelancer packages on the TAKATAK marketplace.";
+    const url = `https://takatakca.lovable.app/marketplace/gigs/${params.id}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: pkg
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                name: pkg.title,
+                description: pkg.description,
+                category: pkg.categoryName,
+                brand: { "@type": "Brand", name: "TAKATAK" },
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: pkg.rating,
+                  reviewCount: pkg.reviews,
+                },
+                offers: {
+                  "@type": "Offer",
+                  priceCurrency: "CAD",
+                  price: (pkg.tiers[0].priceCents / 100).toFixed(2),
+                  availability: "https://schema.org/InStock",
+                  url,
+                },
+              }),
+            },
+          ]
+        : undefined,
+    };
+  },
   component: Page,
 });
 
