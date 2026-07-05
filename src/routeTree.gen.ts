@@ -14,6 +14,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as PrivacyManagerRouteImport } from './routes/privacy-manager'
 import { Route as OtpRouteImport } from './routes/otp'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HostingRouteImport } from './routes/hosting'
@@ -54,6 +55,8 @@ import { Route as DashboardFreelancerRouteImport } from './routes/dashboard.free
 import { Route as DashboardDomainsRouteImport } from './routes/dashboard.domains'
 import { Route as DashboardAiToolsRouteImport } from './routes/dashboard.ai-tools'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as DashboardMarketplaceIndexRouteImport } from './routes/dashboard.marketplace.index'
 import { Route as DashboardFreelancerIndexRouteImport } from './routes/dashboard.freelancer.index'
 import { Route as MarketplaceGigsIdRouteImport } from './routes/marketplace.gigs.$id'
@@ -67,6 +70,7 @@ import { Route as DashboardFreelancerDeliveriesRouteImport } from './routes/dash
 import { Route as DashboardAdminProjectsRouteImport } from './routes/dashboard.admin.projects'
 import { Route as DashboardAdminPayoutsRouteImport } from './routes/dashboard.admin.payouts'
 import { Route as DashboardAdminExceptionsRouteImport } from './routes/dashboard.admin.exceptions'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DashboardFreelancerContractsIndexRouteImport } from './routes/dashboard.freelancer.contracts.index'
 import { Route as DashboardFreelancerContractsContractIdRouteImport } from './routes/dashboard.freelancer.contracts.$contractId'
 import { Route as DashboardAdminProjectsIdRouteImport } from './routes/dashboard.admin.projects.$id'
@@ -94,6 +98,11 @@ const PrivacyManagerRoute = PrivacyManagerRouteImport.update({
 const OtpRoute = OtpRouteImport.update({
   id: '/otp',
   path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceRoute = MarketplaceRouteImport.update({
@@ -296,6 +305,18 @@ const DashboardAccountRoute = DashboardAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => DashboardRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DashboardMarketplaceIndexRoute =
   DashboardMarketplaceIndexRouteImport.update({
     id: '/',
@@ -370,6 +391,12 @@ const DashboardAdminExceptionsRoute =
     path: '/admin/exceptions',
     getParentRoute: () => DashboardRoute,
   } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DashboardFreelancerContractsIndexRoute =
   DashboardFreelancerContractsIndexRouteImport.update({
     id: '/contracts/',
@@ -398,11 +425,14 @@ export interface FileRoutesByFullPath {
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
+  '/mcp': typeof McpRoute
   '/otp': typeof OtpRoute
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
   '/dashboard/domains': typeof DashboardDomainsRoute
@@ -435,6 +465,7 @@ export interface FileRoutesByFullPath {
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
   '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
   '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
@@ -459,11 +490,14 @@ export interface FileRoutesByTo {
   '/domain': typeof DomainRoute
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/otp': typeof OtpRoute
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
   '/dashboard/domains': typeof DashboardDomainsRoute
@@ -494,6 +528,7 @@ export interface FileRoutesByTo {
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard': typeof DashboardIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
   '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
   '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
@@ -521,11 +556,14 @@ export interface FileRoutesById {
   '/hosting': typeof HostingRoute
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
+  '/mcp': typeof McpRoute
   '/otp': typeof OtpRoute
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/ai-tools': typeof DashboardAiToolsRoute
   '/dashboard/domains': typeof DashboardDomainsRoute
@@ -558,6 +596,7 @@ export interface FileRoutesById {
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
   '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
   '/dashboard/admin/projects': typeof DashboardAdminProjectsRouteWithChildren
@@ -586,11 +625,14 @@ export interface FileRouteTypes {
     | '/hosting'
     | '/login'
     | '/marketplace'
+    | '/mcp'
     | '/otp'
     | '/privacy-manager'
     | '/search'
     | '/signup'
     | '/sitemap.xml'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
     | '/dashboard/domains'
@@ -623,6 +665,7 @@ export interface FileRouteTypes {
     | '/services/websites'
     | '/dashboard/'
     | '/marketplace/'
+    | '/.mcp/invoke-tool/$tool'
     | '/dashboard/admin/exceptions'
     | '/dashboard/admin/payouts'
     | '/dashboard/admin/projects'
@@ -647,11 +690,14 @@ export interface FileRouteTypes {
     | '/domain'
     | '/hosting'
     | '/login'
+    | '/mcp'
     | '/otp'
     | '/privacy-manager'
     | '/search'
     | '/signup'
     | '/sitemap.xml'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
     | '/dashboard/domains'
@@ -682,6 +728,7 @@ export interface FileRouteTypes {
     | '/services/websites'
     | '/dashboard'
     | '/marketplace'
+    | '/.mcp/invoke-tool/$tool'
     | '/dashboard/admin/exceptions'
     | '/dashboard/admin/payouts'
     | '/dashboard/admin/projects'
@@ -708,11 +755,14 @@ export interface FileRouteTypes {
     | '/hosting'
     | '/login'
     | '/marketplace'
+    | '/mcp'
     | '/otp'
     | '/privacy-manager'
     | '/search'
     | '/signup'
     | '/sitemap.xml'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/dashboard/account'
     | '/dashboard/ai-tools'
     | '/dashboard/domains'
@@ -745,6 +795,7 @@ export interface FileRouteTypes {
     | '/services/websites'
     | '/dashboard/'
     | '/marketplace/'
+    | '/.mcp/invoke-tool/$tool'
     | '/dashboard/admin/exceptions'
     | '/dashboard/admin/payouts'
     | '/dashboard/admin/projects'
@@ -772,11 +823,14 @@ export interface RootRouteChildren {
   HostingRoute: typeof HostingRoute
   LoginRoute: typeof LoginRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
+  McpRoute: typeof McpRoute
   OtpRoute: typeof OtpRoute
   PrivacyManagerRoute: typeof PrivacyManagerRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ServicesAiBusinessToolsRoute: typeof ServicesAiBusinessToolsRoute
   ServicesLeadGenerationRoute: typeof ServicesLeadGenerationRoute
   ServicesLocalListingsRoute: typeof ServicesLocalListingsRoute
@@ -786,6 +840,7 @@ export interface RootRouteChildren {
   ServicesSocialMediaRoute: typeof ServicesSocialMediaRoute
   ServicesVoipRoute: typeof ServicesVoipRoute
   ServicesWebsitesRoute: typeof ServicesWebsitesRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -823,6 +878,13 @@ declare module '@tanstack/react-router' {
       path: '/otp'
       fullPath: '/otp'
       preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace': {
@@ -1105,6 +1167,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAccountRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/marketplace/': {
       id: '/dashboard/marketplace/'
       path: '/'
@@ -1195,6 +1271,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/admin/exceptions'
       preLoaderRoute: typeof DashboardAdminExceptionsRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/freelancer/contracts/': {
       id: '/dashboard/freelancer/contracts/'
@@ -1359,11 +1442,15 @@ const rootRouteChildren: RootRouteChildren = {
   HostingRoute: HostingRoute,
   LoginRoute: LoginRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
+  McpRoute: McpRoute,
   OtpRoute: OtpRoute,
   PrivacyManagerRoute: PrivacyManagerRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ServicesAiBusinessToolsRoute: ServicesAiBusinessToolsRoute,
   ServicesLeadGenerationRoute: ServicesLeadGenerationRoute,
   ServicesLocalListingsRoute: ServicesLocalListingsRoute,
@@ -1373,7 +1460,18 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesSocialMediaRoute: ServicesSocialMediaRoute,
   ServicesVoipRoute: ServicesVoipRoute,
   ServicesWebsitesRoute: ServicesWebsitesRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

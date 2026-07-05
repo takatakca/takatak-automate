@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "takatak-mcp",
+      "version": "0.1.0",
+      "title": "TAKATAK"
+    },
+    "tools": [
+      {
+        "name": "list_services",
+        "title": "List TAKATAK services",
+        "description": "List all TAKATAK services (domains, hosting, websites, marketing, VoIP, etc.) with status, category, and public URL.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "category": {
+              "description": "Optional filter: only return services in this category.",
+              "type": "string",
+              "enum": [
+                "infrastructure",
+                "build",
+                "growth",
+                "communication",
+                "marketplace"
+              ]
+            },
+            "status": {
+              "description": "Optional filter: only return services with this status.",
+              "type": "string",
+              "enum": [
+                "live",
+                "beta",
+                "coming_soon"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_marketplace_categories",
+        "title": "List marketplace categories",
+        "description": "List all TAKATAK marketplace categories (slug + display name) available for search filtering.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_marketplace",
+        "title": "Search TAKATAK marketplace",
+        "description": "Search TAKATAK marketplace packages (websites, logos, SEO, mobile apps, etc.) by keyword and optional category slug.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Search text (title, tags, category)."
+            },
+            "category": {
+              "description": "Optional category slug filter.",
+              "type": "string"
+            },
+            "limit": {
+              "default": 10,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 25
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_marketplace_package",
+        "title": "Get marketplace package",
+        "description": "Get full details for a single TAKATAK marketplace package (tiers, add-ons, FAQ, deliverables) by id or slug.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Package id or slug."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
