@@ -1,108 +1,76 @@
-# TAKATAK Real Marketplace Operation Phase — Plan
+# Premium Homepage Revamp + CAD Pricing
 
-This is a large, multi-area change. I'll execute it in 6 ordered passes, each leaving the project build-green before moving on. No fake paid states, no fake payouts, no copyrighted assets.
+## Scope
+Full rebuild of the TAKATAK homepage into a premium 2026 SaaS landing page, plus a centralized pricing config in CAD used across the home page, hosting, domain, and service pages. No changes to auth, marketplace order flow, Upmind scripts, MCP, backend, or Render deploy.
 
-## Pass 1 — Backend endpoint completeness audit
+## 1. Centralized pricing config
+Create `src/lib/pricing.ts` as the single source of truth (CAD).
 
-Audit existing routes and add only what's missing. Expected gaps based on current files:
+```text
+pricing = {
+  domain:    { register: 19.99/yr, transfer: 19.99 },
+  hosting:   [portfolio 9.99, bronze 19.99, silver 39.99, gold 79.99] /mo,
+  websites:  [starter 499, business 1499, premium 2999, ecommerce 3999],
+  apps:      [prototype 1999, mvp 7500, custom 15000+],
+  branding:  [logo 149, kit 499, identity 1499],
+  marketing: [setup 299, monthly 499/mo, growth 1500/mo + ad spend],
+  social:    [starter 149, business 399, pro 799] /mo,
+  local:     [setup 99, mgmt 199/mo, multi 499/mo],
+  leads:     [setup 299, perLead 25, managed 750/mo],
+  voip:      [starter 19.99, business 49.99, ai 99] /mo,
+  ai:        [workflow 399, assistant 999, ops 2500+],
+  admin:     [entry 99, cleanup 149, workflow 399],
+  design:    [flyer 99, menu 199, campaign 499],
+}
+```
+Helpers: `formatCAD(amount)`, `startingAt(amount, cadence?)`.
 
-- `POST /marketplace/packages/:id/checkout` — create order in `unpaid` / `checkout_not_configured` state, link to package + tier + add-ons. No fake `paid_to_takatak`.
-- `POST /marketplace/projects/:id/files` — wraps existing `/files/sign` + records metadata row.
-- `GET /orders`, `GET /orders/:id`, `GET /orders/:id/status` — verify present in `routes/orders.ts`, add if missing.
-- Freelancer: `POST /freelancers/apply`, `GET /freelancers/me`, `GET /freelancers/contracts`, `GET/POST contracts/:id`, `accept`, `decline`, `messages`, `deliveries`, `GET /freelancers/payouts`.
-- Admin: `GET /admin/projects`, `GET /admin/projects/:id`, `approve-delivery`, `request-revision`, `start-grace-period`, `release-payment` (gated → `release_ready` when provider missing), `dispute`, `GET /admin/exceptions`, `GET /admin/payouts`.
-- Notifications: verify `GET /notifications`, `POST /:id/read`, `POST /read-all`.
+## 2. Homepage rebuild (`src/routes/index.tsx`)
+Sections in order:
 
-Reuse existing services (`payouts.ts`, `payoutProvider.ts`, `stateMachine.ts`). No schema changes unless strictly required; if a field is needed (e.g. `order.tier`, `order.addOns`), add via Prisma migration with GRANTs.
+1. **PremiumHero** — dark full-bleed hero, headline "Launch, manage, and grow your business online with TAKATAK", subhead, primary CTA "Explore services" → `/marketplace`, secondary CTA "Start a project" → `/marketplace/post-project`, quick links row (search domains, hosting plans, build a website, browse marketplace), trust badges strip, dashboard/marketplace mockup collage on the right.
+2. **BusinessInfrastructureSection** — ecosystem map (SVG connected nodes) with Domains, Hosting, Website, Marketing, Local, Leads, VoIP, AI, Marketplace.
+3. **FeaturedPricingSection** — 12 "starting at" cards driven by pricing.ts, category chips, CTA per card. Footer disclaimer.
+4. **HostingSpotlight** — 4 hosting plan compare cards (portfolio/bronze/silver/gold) with real prices, features, "View hosting plans" → `/hosting`.
+5. **DomainSpotlight** — search-bar mockup, TLD chips (.ca .com .net .org), managed setup / DNS + email chips, embeds the existing `UpmindDomainSearch`, price badge "from $19.99/year".
+6. **MarketplacePreviewSection** — reuse existing `PopularServicesGrid` + `FeaturedServicesStrip`.
+7. **PremiumProcessSection** — keep existing.
+8. **WhyTakatakSection** — new: managed delivery, human review, secure dashboard, Canadian focus, scalable, real support.
+9. **TrustBlock** — keep.
+10. **Final dark CTA** — "Ready to build your online business system?".
 
-## Pass 2 — Dev-only demo seed
+## 3. Component files (new)
+- `src/lib/pricing.ts`
+- `src/components/home/PremiumHero.tsx`
+- `src/components/home/BusinessInfrastructureMap.tsx` (replaces map-only content of existing ecosystem section on home)
+- `src/components/home/FeaturedPricingSection.tsx`
+- `src/components/home/HostingSpotlight.tsx`
+- `src/components/home/DomainSpotlight.tsx`
+- `src/components/home/WhyTakatakSection.tsx`
+- `src/components/home/FinalCtaSection.tsx`
 
-Add `backend/prisma/seed.demo.ts` guarded by `SEED_DEMO_MARKETPLACE=true` AND `NODE_ENV!=='production'`. Seeds: demo client, demo freelancer, demo project, assigned contract, messages, milestones, delivery, notification. Wired via new npm script `prisma:seed:demo`. Production-safe (early-exit otherwise).
+Reuse existing: `PremiumProcessSection`, `BusinessEcosystemSection` (keep available but home uses new map), `PopularServicesGrid`, `FeaturedServicesStrip`, `TrustBlock`, `UpmindDomainSearch`, `PromoMarquee`.
 
-## Pass 3 — Realistic visual asset system
+## 4. Pricing surfaced on service pages (light touch)
+Only where trivial: hosting page badges and domain page badge pull from `pricing.ts`. No behavior changes.
 
-New files:
+## 5. Visual constraints
+- Uses existing brand tokens (`brand-dark`, `--gradient-hero`, cyan/violet accents). No new palette.
+- No hardcoded `text-white`/`bg-black`.
+- Mobile-first: all sections scroll cleanly at 375px, CTAs above the fold, no horizontal overflow.
+- No AI-blob art, no generic gradients, no emoji icons — Lucide + custom mockups only.
 
-- `src/lib/serviceVisuals.ts` — map `serviceKey` → `{ cover, gallery[], category, altText, fallbackBg }`.
-- `src/components/marketplace/ServiceImage.tsx` — large responsive image with realistic SVG/CSS mockup fallback (browser chrome, app frame, dashboard frame), professional alt text, lazy load.
-- `src/components/marketplace/ServiceGallery.tsx` — thumbnail strip + large preview, keyboard accessible.
-- `src/components/marketplace/visuals/` — pure CSS/SVG mockup components (BrowserMockup, PhoneMockup, DashboardMockup, LogoBoardMockup, SocialGridMockup, CRMMockup, MenuFlyerMockup, WorkflowMockup, AIToolsMockup, VoIPMockup, SpreadsheetMockup, EcomMockup). All hand-built SVG — no external image hotlinks, no Fiverr assets.
+## 6. Verification
+- `bun run build`
+- Playwright screenshot at 1280 and 375 to confirm layout, then view screenshots.
+- Curl `/`, `/hosting`, `/domain`, `/marketplace` for 200s.
+- Skip backend typecheck (out of scope, no backend files change).
 
-Replace `ServiceThumbnail` usage on:
-- `MarketplacePackageCard`, `PackageResultCard`, `GigCard`, `FeaturedServicesStrip`
-- `marketplace.gigs.$id.tsx` — gallery strip + large preview
-- `marketplace.category.$slug.tsx` — bigger image area
+## 7. Non-goals
+- No changes to auth, checkout, MCP, Upmind, marketplace routing, RLS/DB, or backend routes.
+- No new dependencies.
 
-Mobile: aspect-ratio + `object-cover`, no fixed widths.
-
-## Pass 4 — Operational buyer/quote/workroom flows
-
-### Buyer package flow
-- `marketplace.gigs.$id.tsx`: add Basic/Standard/Premium tier picker (from package or synthetic tiers), add-on checkboxes, total CAD, "Continue" → calls `POST /marketplace/packages/:id/checkout`.
-- On success: route to `/dashboard/orders` showing the order. If provider missing, order persists with state `checkout_not_configured` and message "Saved — checkout not configured yet."
-- Never display `paid_to_takatak` unless backend returned it from a verified webhook.
-
-### Buyer quote flow
-- "Request Quote" CTA → `/marketplace/post-project?packageId=&category=` prefilled.
-- Submit → `POST /marketplace/projects` → redirect to `/dashboard/projects/:projectId`.
-
-### Workroom — `/dashboard/projects/:projectId`
-Audit existing route and ensure it renders:
-brief, tier, payment status badge, mediator status, milestones, messages, files, delivery list, revision form, approve button, dispute button, audit timeline, "Next action" call-out. Wire to existing endpoints.
-
-### Admin
-Verify `dashboard.admin.projects.tsx`, `…$id.tsx`, `exceptions`, `payouts` show real data and expose: assign freelancer modal, approve, request revision, start grace, release-payment (which calls `release_ready` when provider unset), dispute.
-
-### Freelancer
-Verify routes show assigned contracts only, accept/decline, message, upload delivery, payouts list. Hide client billing fields server-side and in UI.
-
-## Pass 5 — Frontend data fetch with fallback
-
-For each listed page:
-- try backend (`apiGet`) first
-- public catalog pages fall back to static `marketplacePackages` / `marketplaceCategories`
-- dashboard / workroom / admin / freelancer pages show empty/error states — NEVER fall back to fake data
-
-Add a tiny `useApiWithFallback` helper where useful, otherwise inline in each loader.
-
-## Pass 6 — Verification
-
-Run in order:
-1. `cd backend && npx prisma generate`
-2. `cd backend && npm run typecheck`
-3. `cd backend && npm run build`
-4. `bun run build` (frontend)
-5. Smoke script syntax check.
-6. Manual route walk-through via `code--view` of each affected route confirming wiring.
-
-Cannot execute live end-to-end clicks without a running deployed backend; will document each acceptance test's code-level evidence (which handler is called, which state is set) rather than fabricate "live PASS" results.
-
-## Technical details
-
-- **No schema changes** unless `Order` lacks `tier` / `addOns` fields. If needed: add `tier String?` and `addOns String[]` with migration + GRANTs already covered by existing table grants.
-- **Checkout endpoint** returns `{ order, paymentRequired: boolean, providerConfigured: boolean }`. Frontend uses these flags — never invents `paid_to_takatak`.
-- **Release-payment endpoint** delegates to `payoutProvider.release()`; if provider unconfigured, sets contract.paymentState=`release_ready` and writes audit log — never `released`.
-- **Visuals**: all SVG/CSS components live in `src/components/marketplace/visuals/`. No network image fetches. Each mockup ~80–150 lines of hand-rolled SVG simulating product UI (browser frame with site, dashboard with charts, etc.).
-- **Seed safety**: `seed.demo.ts` guards with `if (process.env.NODE_ENV === 'production' || process.env.SEED_DEMO_MARKETPLACE !== 'true') { console.log('skip'); process.exit(0); }`.
-
-## Files (estimated)
-
-Created (~20): checkout route, freelancer routes (if missing), admin route gaps, `seed.demo.ts`, `serviceVisuals.ts`, `ServiceImage.tsx`, `ServiceGallery.tsx`, 12 mockup components, dev seed script entry.
-
-Modified (~15): existing marketplace routes/components to use new visuals, `marketplace.gigs.$id.tsx` (tier/add-on/Continue), `marketplace.post-project.tsx` (prefill), workroom enhancements, dashboard pages to fetch backend with fallback.
-
-## Out of scope (explicit)
-
-- Real Stripe checkout completion — still requires live Stripe config.
-- Real payout release — still requires live payout provider config.
-- Live deployed smoke run — requires user to provide Render URL.
-- Any UI refactor outside marketplace surfaces.
-- Brand/copy redesign.
-
-## Estimated risk
-
-Medium-high — touches many surfaces. Mitigated by doing each pass with a build check before the next. If any pass breaks the build, I stop and fix before continuing.
-
----
-
-Please confirm to proceed, or tell me which passes to skip / reorder.
+## Technical notes
+- `pricing.ts` exports typed objects; components import named tiers, never inline numbers.
+- Ecosystem map is inline SVG + tailwind, no external libs.
+- Hero right-side mockup is composed with existing `ServiceThumbnail` + tailwind cards to avoid new image assets.
