@@ -1,4 +1,4 @@
-import { ShieldCheck, Users, Lock, Leaf, LayersIcon, HeadphonesIcon } from "lucide-react";
+import { ShieldCheck, Users, Lock, Leaf, Layers, Headphones } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const pillars: readonly { icon: LucideIcon; title: string; desc: string }[] = [
@@ -6,8 +6,8 @@ const pillars: readonly { icon: LucideIcon; title: string; desc: string }[] = [
   { icon: Users,            title: "Human review",       desc: "TAKATAK reviews milestones and approvals before funds are released, so quality never rides on a single review." },
   { icon: Lock,             title: "Secure dashboard",   desc: "Encrypted account, protected checkout, secure file exchange, and access controls on every project." },
   { icon: Leaf,             title: "Canadian focus",     desc: "Local support, CAD billing, and Canadian business context built into intake, hosting, and marketing services." },
-  { icon: LayersIcon,       title: "Scalable services",  desc: "Start with a domain or a logo, then add hosting, apps, marketing, and automation from the same dashboard." },
-  { icon: HeadphonesIcon,   title: "Real support",       desc: "Human account support for exceptions, escalations, and hand-offs — not just a chatbot on a marketing page." },
+  { icon: Layers,           title: "Scalable services",  desc: "Start with a domain or a logo, then add hosting, apps, marketing, and automation from the same dashboard." },
+  { icon: Headphones,       title: "Real support",       desc: "Human account support for exceptions, escalations, and hand-offs — not just a chatbot on a marketing page." },
 ];
 
 export function WhyTakatakSection() {
