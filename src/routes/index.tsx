@@ -1,9 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldCheck, Search } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SiteShell } from "@/components/layout/SiteShell";
-import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { PopularServicesGrid } from "@/components/marketplace/PopularServicesGrid";
 import { FeaturedServicesStrip } from "@/components/marketplace/FeaturedServicesStrip";
@@ -12,6 +10,11 @@ import { PromoMarquee } from "@/components/promotions/PromoMarquee";
 import { UpmindDomainSearch } from "@/components/upmind/UpmindDomainSearch";
 import { PremiumProcessSection } from "@/components/home/PremiumProcessSection";
 import { BusinessEcosystemSection } from "@/components/home/BusinessEcosystemSection";
+import { PremiumHero } from "@/components/home/PremiumHero";
+import { FeaturedPricingSection } from "@/components/home/FeaturedPricingSection";
+import { HostingSpotlight } from "@/components/home/HostingSpotlight";
+import { WhyTakatakSection } from "@/components/home/WhyTakatakSection";
+import { FinalCtaSection } from "@/components/home/FinalCtaSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,81 +26,27 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const POPULAR = ["Website design", "Logo design", "Hosting", "Local SEO", "Social media", "Data entry"];
-
 function Index() {
-  const [q, setQ] = useState("");
-  const navigate = useNavigate();
-  const go = (term: string = q) => {
-    if (!term.trim()) return;
-    void navigate({ to: "/marketplace/search", search: { q: term } as never });
-  };
   return (
     <SiteShell>
-      {/* Marketplace-style hero */}
-      <section className="brand-dark border-b border-border relative overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute inset-x-0 top-0 h-px"
-          style={{ background: "linear-gradient(90deg, transparent, var(--brand-accent-cyan), var(--brand-accent-violet), transparent)" }}
-        />
-        <div className="max-w-7xl mx-auto px-4 py-14 md:py-20 text-center relative">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold tracking-tight leading-[1.05] text-foreground max-w-3xl mx-auto">
-            Find the right business service for your next project
-          </h1>
-          <p className="mt-5 text-muted-foreground max-w-2xl mx-auto text-base md:text-lg">
-            Websites, domains, hosting, marketing, local visibility, AI tools, and managed project delivery through TAKATAK.
-          </p>
-          <div className="mt-8 max-w-2xl mx-auto">
-            <div className="flex items-stretch rounded-lg border border-white/15 bg-white overflow-hidden focus-within:border-primary transition-colors shadow-[0_12px_40px_-20px_rgba(0,0,0,0.5)]">
-              <div className="flex items-center pl-4 text-neutral-500">
-                <Search size={18} />
-              </div>
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") go(); }}
-                placeholder="What service are you looking for today?"
-                className="flex-1 bg-transparent outline-none px-3 py-3.5 text-[15px] min-w-0 text-neutral-900 placeholder:text-neutral-500"
-              />
-              <button
-                onClick={() => go()}
-                className="px-6 text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90 transition-opacity"
-              >
-                Search
-              </button>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2 items-center justify-center text-xs">
-              <span className="text-muted-foreground">Popular:</span>
-              {POPULAR.map((p) => (
-                <button
-                  key={p}
-                  onClick={() => { setQ(p); go(p); }}
-                  className="px-2.5 py-1 rounded-full border border-white/15 bg-white/5 text-foreground/90 hover:border-white/30 hover:bg-white/10 transition-colors"
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="mt-6 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-            <ShieldCheck size={14} className="text-primary" />
-            Escrow protection on every order — released only when you approve.
-          </div>
-        </div>
-      </section>
+      <PremiumHero />
 
       <PromoMarquee />
 
+      <BusinessEcosystemSection />
+
+      <FeaturedPricingSection />
+
+      <HostingSpotlight />
+
       {/* Domain search — same Upmind DAC widget as /domain */}
-      <section className="max-w-5xl mx-auto px-4 pt-14">
+      <section className="max-w-5xl mx-auto px-4 pt-16">
         <div className="text-center max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
             Find your perfect domain
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Instant availability search, registration, and DNS — fully managed
-            through TAKATAK.
+            Instant availability search, registration, and DNS — fully managed through TAKATAK. From $19.99/year in CAD.
           </p>
         </div>
         <div className="mt-6 rounded-2xl border border-border bg-card p-4 sm:p-6">
@@ -125,27 +74,13 @@ function Index() {
 
       <PremiumProcessSection />
 
-      <BusinessEcosystemSection />
+      <WhyTakatakSection />
 
       <div className="max-w-7xl mx-auto px-4 py-16 pb-24 md:pb-28">
         <TrustBlock />
       </div>
 
-      {/* Final CTA */}
-      <section className="brand-dark border-t border-border">
-        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-          <h3 className="text-2xl md:text-3xl font-bold text-foreground">Ready to start your next project?</h3>
-          <p className="mt-2 text-muted-foreground max-w-xl mx-auto text-sm">{brand.tagline}</p>
-          <div className="mt-6 flex items-center justify-center gap-2 flex-wrap">
-            <Link to="/marketplace/post-project" className="px-5 py-2.5 rounded-md text-sm font-semibold text-primary-foreground bg-primary inline-flex items-center gap-2">
-              Post a custom project <ArrowRight size={14} />
-            </Link>
-            <Link to="/dashboard" className="px-5 py-2.5 rounded-md text-sm font-medium border border-white/15 text-foreground hover:bg-white/5">
-              Open dashboard
-            </Link>
-          </div>
-        </div>
-      </section>
+      <FinalCtaSection />
     </SiteShell>
   );
 }
