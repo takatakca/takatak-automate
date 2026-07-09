@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { brand } from "@/lib/brand";
-void brand;
 import { PopularServicesGrid } from "@/components/marketplace/PopularServicesGrid";
 import { FeaturedServicesStrip } from "@/components/marketplace/FeaturedServicesStrip";
 import { TrustBlock } from "@/components/marketplace/TrustBlock";
