@@ -43,6 +43,11 @@ export interface ServicePage {
 
 const bi = (en: string, fr: string): Bi => ({ en, fr });
 
+function suffixOf(entry: unknown): string | undefined {
+  const s = (entry as { suffix?: unknown }).suffix;
+  return typeof s === "string" ? s : undefined;
+}
+
 function pack(
   key: string,
   en: string,
@@ -265,7 +270,7 @@ export const servicePages: readonly ServicePage[] = [
       bi("Analytics and crash reporting configured", "Analytique et rapports d'erreurs configurés"),
       bi("Maintenance and update plans available", "Forfaits d'entretien et de mises à jour offerts"),
     ],
-    packages: pricing.apps.map((a) => pack(a.key, a.name, a.name, a.amount, a.cadence as Cadence, a.suffix)),
+    packages: pricing.apps.map((a) => pack(a.key, a.name, a.name, a.amount, a.cadence as Cadence, suffixOf(a))),
     faq: [
       {
         q: bi("Do I need a developer account?", "Ai-je besoin d'un compte développeur ?"),
@@ -310,7 +315,7 @@ export const servicePages: readonly ServicePage[] = [
       bi("Ad spend stays in your own account", "Le budget publicitaire reste dans votre compte"),
       bi("No long-term lock-in", "Aucun engagement à long terme"),
     ],
-    packages: pricing.marketing.map((m) => pack(m.key, m.name, m.name, m.amount, m.cadence as Cadence, m.suffix)),
+    packages: pricing.marketing.map((m) => pack(m.key, m.name, m.name, m.amount, m.cadence as Cadence, suffixOf(m))),
     faq: [
       {
         q: bi("Is ad spend included?", "Le budget publicitaire est-il inclus ?"),
@@ -530,7 +535,7 @@ export const servicePages: readonly ServicePage[] = [
       bi("Documented workflows you own", "Flux documentés qui vous appartiennent"),
       bi("Scales from one task to full operations", "Évolue d'une tâche à des opérations complètes"),
     ],
-    packages: pricing.ai.map((a) => pack(a.key, a.name, a.name, a.amount, a.cadence as Cadence, a.suffix)),
+    packages: pricing.ai.map((a) => pack(a.key, a.name, a.name, a.amount, a.cadence as Cadence, suffixOf(a))),
     faq: [
       {
         q: bi("What can be automated first?", "Que peut-on automatiser en premier ?"),
@@ -574,7 +579,7 @@ export const servicePages: readonly ServicePage[] = [
       bi("Usage and quality reporting", "Rapports d'utilisation et de qualité"),
       bi("No customer data resold", "Aucune revente de données clients"),
     ],
-    packages: pricing.ai.map((a) => pack(a.key, a.name, a.name, a.amount, a.cadence as Cadence, a.suffix)),
+    packages: pricing.ai.map((a) => pack(a.key, a.name, a.name, a.amount, a.cadence as Cadence, suffixOf(a))),
     faq: [
       {
         q: bi("Will it answer wrong?", "Peut-il répondre incorrectement ?"),
