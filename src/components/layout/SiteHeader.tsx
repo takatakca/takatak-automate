@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, Search, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/hooks/useLanguage";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import {
   TrendingUp, Palette, Code2, Megaphone, PenLine, Video,
   Briefcase, Bot, MapPin, Database,
@@ -45,6 +47,7 @@ export function SiteHeader() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [q, setQ] = useState("");
   const { isAuthenticated, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const submitSearch = () => {
     if (!q.trim()) return;
@@ -64,9 +67,9 @@ export function SiteHeader() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") submitSearch(); }}
-              placeholder="What service are you looking for today?"
+              placeholder={t("search.placeholder")}
               className="flex-1 bg-transparent outline-none px-3.5 text-sm min-w-0 text-foreground placeholder:text-muted-foreground"
-              aria-label="Search marketplace"
+              aria-label={t("search.aria")}
             />
             <button
               onClick={submitSearch}
@@ -121,19 +124,20 @@ export function SiteHeader() {
           </li>
         </ul>
         <div className="hidden lg:flex items-center gap-1 ml-2 shrink-0">
+          <LanguageSwitcher className="mr-1" />
           {isAuthenticated ? (
             <>
               <Link
                 to="/dashboard"
                 className="px-3 py-2 text-[13px] font-medium rounded-md hover:bg-secondary whitespace-nowrap"
               >
-                Dashboard
+                {t("nav.dashboard")}
               </Link>
               <button
                 onClick={() => void logout()}
                 className="px-3 py-2 text-[13px] font-medium rounded-md border border-border hover:bg-secondary whitespace-nowrap"
               >
-                Sign out
+                {t("nav.signout")}
               </button>
             </>
           ) : (
@@ -142,13 +146,13 @@ export function SiteHeader() {
                 to="/login"
                 className="px-3 py-2 text-[13px] font-medium text-foreground/80 hover:text-foreground rounded-md whitespace-nowrap"
               >
-                Sign in
+                {t("nav.signin")}
               </Link>
               <Link
                 to="/signup"
                 className="px-3.5 py-2 text-[13px] font-semibold rounded-md text-primary-foreground bg-primary hover:opacity-90 whitespace-nowrap"
               >
-                Get started
+                {t("nav.getStarted")}
               </Link>
             </>
           )}
@@ -213,6 +217,9 @@ export function SiteHeader() {
               {n.label}
             </Link>
           ))}
+          <div className="pt-2">
+            <LanguageSwitcher />
+          </div>
           <div className="pt-2 mt-2 border-t border-border flex gap-2">
             {isAuthenticated ? (
               <>
