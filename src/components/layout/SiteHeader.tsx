@@ -5,42 +5,51 @@ import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/hooks/useLanguage";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import {
-  TrendingUp, Palette, Code2, Megaphone, PenLine, Video,
-  Briefcase, Bot, MapPin, Database,
+  TrendingUp, Code2, Megaphone, Video, Server, Globe2,
+  Smartphone, PhoneCall, Workflow, Bot, MapPin, Database,
 } from "lucide-react";
 
 const primaryNav = [
   { to: "/marketplace", label: "Marketplace" },
-  { to: "/domain", label: "Domains" },
-  { to: "/hosting", label: "Hosting" },
-  { to: "/services/local-listings", label: "QMAPS" },
-  { to: "/services/lead-generation", label: "FLEXS" },
-  { to: "/services/ai-business-tools", label: "AI Tools" },
+  { to: "/pricing", label: "Pricing" },
+  { to: "/deals", label: "Deals" },
 ] as const;
 
-const moreNav = [
-  { to: "/deals", label: "Today's Deals" },
-  { to: "/services/websites", label: "Websites" },
-  { to: "/services/mobile-apps", label: "Mobile Apps" },
-  { to: "/services/voip", label: "VoIP" },
-  { to: "/services/marketing", label: "Marketing" },
-  { to: "/services/social-media", label: "Social Media" },
+/** Services mega-menu — grouped so the top bar stays clean. */
+const MEGA_MENU = [
+  {
+    heading: "Launch",
+    items: [
+      { to: "/services/websites", label: "Websites", icon: Code2 },
+      { to: "/domain", label: "Domains", icon: Globe2 },
+      { to: "/hosting", label: "Hosting", icon: Server },
+      { to: "/services/mobile-apps", label: "Mobile Apps", icon: Smartphone },
+    ],
+  },
+  {
+    heading: "Grow",
+    items: [
+      { to: "/services/marketing", label: "Marketing", icon: Megaphone },
+      { to: "/services/social-media", label: "Social Media", icon: Video },
+      { to: "/services/local-listings", label: "Local Visibility", icon: MapPin },
+      { to: "/services/lead-generation", label: "Lead Generation", icon: TrendingUp },
+    ],
+  },
+  {
+    heading: "Operate",
+    items: [
+      { to: "/services/voip", label: "VoIP", icon: PhoneCall },
+      { to: "/services/ai-business-tools", label: "AI Tools", icon: Bot },
+      { to: "/services/automation", label: "Automation", icon: Workflow },
+      { to: "/services/data-admin", label: "Data & Admin", icon: Database },
+    ],
+  },
 ] as const;
 
-const allNav = [...primaryNav, ...moreNav];
-
-const CATEGORY_BAR = [
-  { icon: TrendingUp, label: "Trending", slug: "logo_design" },
-  { icon: Palette, label: "Graphics & Design", slug: "logo_design" },
-  { icon: Code2, label: "Programming & Tech", slug: "website_design" },
-  { icon: Megaphone, label: "Digital Marketing", slug: "online_advertising" },
-  { icon: PenLine, label: "Writing & Translation", slug: "content_writing" },
-  { icon: Video, label: "Video & Animation", slug: "social_media_content" },
-  { icon: Briefcase, label: "Business", slug: "virtual_assistance" },
-  { icon: Bot, label: "AI Services", slug: "ai_tool_setup" },
-  { icon: MapPin, label: "Local Visibility", slug: "seo_local_visibility" },
-  { icon: Database, label: "Data", slug: "data_entry" },
-];
+const allNav = [
+  ...primaryNav,
+  ...MEGA_MENU.flatMap((g) => g.items.map((i) => ({ to: i.to, label: i.label }))),
+] as const;
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -55,7 +64,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background border-b border-border">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/65">
       <nav className="max-w-7xl mx-auto flex items-center px-4 h-16 gap-5">
         <Link to="/" className="flex items-center gap-1.5 shrink-0" aria-label="TAKATAK home">
           <span className="text-[22px] font-extrabold tracking-tight text-foreground">TAKATAK</span>
@@ -103,20 +112,33 @@ export function SiteHeader() {
               onClick={() => setMoreOpen((v) => !v)}
               aria-expanded={moreOpen}
             >
-              More <ChevronDown size={13} />
+              {t("nav.services")} <ChevronDown size={13} />
             </button>
             {moreOpen && (
-              <div className="absolute right-0 top-full pt-2 w-56">
-                <div className="rounded-lg border border-border bg-popover shadow-lg p-1">
-                  {moreNav.map((n) => (
-                    <Link
-                      key={n.to}
-                      to={n.to}
-                      onClick={() => setMoreOpen(false)}
-                      className="block px-3 py-2 rounded-md text-sm text-foreground/80 hover:text-foreground hover:bg-secondary"
-                    >
-                      {n.label}
-                    </Link>
+              <div className="absolute right-0 top-full pt-2">
+                <div className="grid w-[620px] grid-cols-3 gap-5 rounded-xl border border-border bg-popover p-5 shadow-xl">
+                  {MEGA_MENU.map((group) => (
+                    <div key={group.heading}>
+                      <p className="px-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {group.heading}
+                      </p>
+                      <div className="mt-2 space-y-0.5">
+                        {group.items.map((item) => {
+                          const Icon = item.icon;
+                          return (
+                            <Link
+                              key={item.to}
+                              to={item.to}
+                              onClick={() => setMoreOpen(false)}
+                              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/80 hover:bg-secondary hover:text-foreground"
+                            >
+                              <Icon size={14} className="text-primary" />
+                              {item.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -165,28 +187,6 @@ export function SiteHeader() {
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </nav>
-      {/* Secondary category bar (desktop) */}
-      <div className="hidden md:block border-t border-border bg-background">
-        <div className="max-w-7xl mx-auto px-4">
-          <ul className="flex gap-1 overflow-x-auto py-1.5 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-            {CATEGORY_BAR.map((c) => {
-              const Icon = c.icon;
-              return (
-                <li key={c.label} className="shrink-0">
-                  <Link
-                    to="/marketplace/category/$slug"
-                    params={{ slug: c.slug }}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12.5px] text-foreground/70 hover:text-foreground hover:bg-secondary whitespace-nowrap transition-colors"
-                  >
-                    <Icon size={13} className="text-primary" />
-                    {c.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </div>
       {open && (
         <div className="lg:hidden border-t border-border bg-background px-4 py-3 space-y-1">
           <div className="pb-3 mb-2 border-b border-border">
