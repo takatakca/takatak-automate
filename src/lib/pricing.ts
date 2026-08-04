@@ -136,3 +136,42 @@ export const featuredPrices: readonly FeaturedPrice[] = [
   { key: "logo",      category: "Logo & Branding",  headline: "Brand identity & logo systems",      from: pricing.branding[0].amount,     cadence: "one-time", cta: "Start branding",         href: "/marketplace/search" },
   { key: "design",    category: "Menus & Flyers",   headline: "Flyers, menus & print design",       from: pricing.design[0].amount,       cadence: "one-time", cta: "Start design project",   href: "/marketplace/search" },
 ] as const;
+// Starting price (CAD) per service key from src/lib/services.ts.
+export const serviceStartingPrice: Record<string, { amount: number; cadence: Cadence; suffix?: string }> = {
+  domains: { amount: pricing.domain.register.amount, cadence: "yearly" },
+  hosting: { amount: pricing.hosting[0].amount, cadence: "monthly" },
+  websites: { amount: pricing.websites[0].amount, cadence: "one-time" },
+  mobile_apps: { amount: pricing.apps[0].amount, cadence: "one-time" },
+  online_marketing: { amount: pricing.marketing[0].amount, cadence: "one-time" },
+  social_media: { amount: pricing.social[0].amount, cadence: "monthly" },
+  local_listings: { amount: pricing.local[0].amount, cadence: "one-time" },
+  lead_generation: { amount: pricing.leads[0].amount, cadence: "one-time" },
+  voip_phone: { amount: pricing.voip[0].amount, cadence: "monthly" },
+  ai_business_tools: { amount: pricing.ai[0].amount, cadence: "one-time" },
+  freelancer_marketplace: { amount: pricing.admin[0].amount, cadence: "one-time" },
+};
+
+// Full pricing table used by /pricing.
+export interface PricingGroup {
+  key: string;
+  title: string;
+  blurb: string;
+  href: string;
+  tiers: readonly { key: string; name: string; amount: number; cadence: Cadence; suffix?: string; description?: string }[];
+}
+
+export const pricingGroups: readonly PricingGroup[] = [
+  { key: "domains", title: "Domain Names", blurb: "Registration, transfer, DNS and renewals in CAD.", href: "/domain", tiers: [pricing.domain.register, pricing.domain.transfer] },
+  { key: "hosting", title: "Web Hosting", blurb: "Managed hosting with SSL, backups and support.", href: "/hosting", tiers: pricing.hosting },
+  { key: "websites", title: "Websites", blurb: "Designed, built and launched by our team.", href: "/services/websites", tiers: pricing.websites },
+  { key: "apps", title: "Mobile Apps", blurb: "Prototype to production app delivery.", href: "/services/mobile-apps", tiers: pricing.apps },
+  { key: "branding", title: "Logo & Branding", blurb: "Identity systems and brand assets.", href: "/marketplace", tiers: pricing.branding },
+  { key: "marketing", title: "Marketing", blurb: "Campaign setup and ongoing growth.", href: "/services/marketing", tiers: pricing.marketing },
+  { key: "social", title: "Social Media", blurb: "Content planning and publishing.", href: "/services/social-media", tiers: pricing.social },
+  { key: "local", title: "Local Visibility", blurb: "Maps, directories and local search.", href: "/services/local-listings", tiers: pricing.local },
+  { key: "leads", title: "Lead Generation", blurb: "Qualified leads and managed campaigns.", href: "/services/lead-generation", tiers: pricing.leads },
+  { key: "voip", title: "Business VoIP", blurb: "Numbers, IVR and call routing.", href: "/services/voip", tiers: pricing.voip },
+  { key: "ai", title: "Automation & AI Tools", blurb: "Workflow automation and assistants.", href: "/services/ai-business-tools", tiers: pricing.ai },
+  { key: "admin", title: "Admin Support", blurb: "Data, spreadsheets and back-office tasks.", href: "/marketplace", tiers: pricing.admin },
+  { key: "design", title: "Print & Design", blurb: "Flyers, menus and campaign collateral.", href: "/marketplace", tiers: pricing.design },
+];

@@ -1,12 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldCheck, Sparkles, Star, Zap, Globe2, Server, Rocket, Store } from "lucide-react";
-
-const quickLinks = [
-  { label: "Search domains",   to: "/domain",       icon: Globe2 },
-  { label: "Hosting plans",     to: "/hosting",      icon: Server },
-  { label: "Build a website",   to: "/services/websites", icon: Rocket },
-  { label: "Browse marketplace",to: "/marketplace",  icon: Store },
-] as const;
+import { ShieldCheck, Sparkles, Star, Zap, Server, Rocket } from "lucide-react";
+import { AiServiceSearch } from "./AiServiceSearch";
 
 export function PremiumHero() {
   return (
@@ -40,58 +33,29 @@ export function PremiumHero() {
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/85 backdrop-blur">
             <Sparkles size={12} className="text-primary" />
-            The Canadian business operating platform
+            Canadian business platform
           </span>
           <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-[58px]">
-            Launch, manage, and grow your business online with{" "}
+            Everything your business needs to run{" "}
             <span
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: "linear-gradient(90deg, var(--brand-accent-cyan), var(--brand-accent-violet))" }}
             >
-              TAKATAK
+              online
             </span>
           </h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground md:text-lg">
-            Domains, hosting, websites, apps, marketing, automation, VoIP, lead generation, and managed service delivery — connected in one professional platform.
+          <p className="mt-4 max-w-lg text-base leading-7 text-muted-foreground">
+            Tell us what you need — we handle the rest.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              to="/marketplace"
-              className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[0_18px_50px_-18px_color-mix(in_oklab,var(--brand-accent-cyan)_60%,transparent)]"
-              style={{ backgroundImage: "var(--gradient-hero)" }}
-            >
-              Explore services <ArrowRight size={16} />
-            </Link>
-            <Link
-              to="/marketplace/post-project"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-foreground hover:bg-white/10 transition-colors"
-            >
-              Start a project
-            </Link>
+          <div className="mt-7">
+            <AiServiceSearch />
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
-            {quickLinks.map((q) => {
-              const Icon = q.icon;
-              return (
-                <Link
-                  key={q.label}
-                  to={q.to}
-                  className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-foreground/85 hover:border-white/25 hover:bg-white/10 transition-colors"
-                >
-                  <Icon size={13} className="text-primary" />
-                  {q.label}
-                  <ArrowRight size={11} className="opacity-60 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck size={13} className="text-primary" /> Escrow on every order</span>
-            <span className="inline-flex items-center gap-1.5"><Star size={13} className="text-primary" /> Managed delivery & review</span>
-            <span className="inline-flex items-center gap-1.5"><Zap size={13} className="text-primary" /> CAD billing · Canadian support</span>
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck size={13} className="text-primary" /> Escrow protected</span>
+            <span className="inline-flex items-center gap-1.5"><Star size={13} className="text-primary" /> Managed delivery</span>
+            <span className="inline-flex items-center gap-1.5"><Zap size={13} className="text-primary" /> CAD billing</span>
           </div>
         </div>
 
