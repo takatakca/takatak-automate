@@ -7,9 +7,9 @@ import { Reveal } from "./Reveal";
 export function ConciergeSupportSection() {
   const { t } = useLanguage();
   const scrollToSearch = () => {
-    const el = document.querySelector<HTMLInputElement>('input[aria-label], #tk-hero-search input');
-    document.getElementById("tk-hero")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    window.setTimeout(() => el?.focus(), 550);
+    const hero = document.getElementById("tk-hero");
+    hero?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(() => hero?.querySelector<HTMLInputElement>("input")?.focus(), 550);
   };
 
   return (
