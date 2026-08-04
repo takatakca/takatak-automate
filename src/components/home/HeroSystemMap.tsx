@@ -37,8 +37,8 @@ export function HeroSystemMap({ className = "" }: { className?: string }) {
             x={n.x + 12}
             y={n.y - 12}
             fill="currentColor"
-            fillOpacity="0.55"
-            fontSize="11"
+            fillOpacity="0.4"
+            fontSize="5"
             fontWeight="600"
             letterSpacing="0.06em"
           >
