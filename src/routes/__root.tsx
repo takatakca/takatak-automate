@@ -12,7 +12,7 @@ import appCss from "../styles.css?url";
 import { AuthProvider } from "@/lib/auth-context";
 import { DemoModeBanner } from "@/components/dev/DemoModeBanner";
 import { PromoTopBar } from "@/components/promotions/PromoTopBar";
-import { PromoStickyCard } from "@/components/promotions/PromoStickyCard";
+import { AnimatedPromoInvite } from "@/components/promotions/AnimatedPromoInvite";
 import { SignupPromoModal } from "@/components/promotions/SignupPromoModal";
 import { LiveChatLauncher } from "@/components/support/LiveChatLauncher";
 import { LanguageProvider } from "@/hooks/useLanguage";
@@ -193,7 +193,7 @@ function RootComponent() {
           <DemoModeBanner />
           <PromoTopBar />
           <Outlet />
-          <PromoStickyCard />
+          <AnimatedPromoInvite />
           <SignupPromoModal />
           <LiveChatLauncher />
         </AuthProvider>
