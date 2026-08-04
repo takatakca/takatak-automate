@@ -105,7 +105,7 @@ export function SiteHeader() {
             </button>
             {megaOpen && (
               <div className="absolute left-0 top-full w-[min(78vw,940px)] pt-3">
-                <div className="tk-reveal rounded-2xl border border-border bg-popover/98 p-5 shadow-[0_40px_90px_-50px_rgba(0,0,0,0.95)] backdrop-blur-xl">
+                <div className="animate-fade-in rounded-2xl border border-border bg-popover/98 p-5 shadow-[0_40px_90px_-50px_rgba(0,0,0,0.95)] backdrop-blur-xl">
                   <div className="grid grid-cols-3 gap-5">
                     {serviceGroups.map((group) => (
                       <div key={group.key}>
