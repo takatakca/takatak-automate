@@ -36,7 +36,7 @@ export function PromoStickyCard() {
     <div
       role="complementary"
       aria-label="First service offer"
-      className="fixed z-40 left-3 right-3 bottom-3 sm:left-auto sm:right-5 sm:bottom-5 sm:w-[340px] rounded-xl border border-border bg-card shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] p-4"
+      className="fixed z-40 left-3 right-3 bottom-20 sm:left-auto sm:right-5 sm:bottom-24 sm:w-[340px] rounded-xl border border-border bg-card shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] p-4"
     >
       <button
         aria-label="Dismiss"
