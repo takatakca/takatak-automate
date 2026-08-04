@@ -8,6 +8,7 @@ import { PopularProjectsSection } from "@/components/home/PopularProjectsSection
 import { ServicesGridSection } from "@/components/home/ServicesGridSection";
 import { DomainHostingSpotlight } from "@/components/home/DomainHostingSpotlight";
 import { PricingHighlights } from "@/components/home/PricingHighlights";
+import { ServiceShowcaseSlider } from "@/components/home/ServiceShowcaseSlider";
 import { PremiumProcessSection } from "@/components/home/PremiumProcessSection";
 import { WhyTakatakSection } from "@/components/home/WhyTakatakSection";
 import { FinalCtaSection } from "@/components/home/FinalCtaSection";
@@ -32,6 +33,7 @@ function Index() {
       <PremiumHero />
       <PromoMarquee />
       <MarketplaceCategoryRail />
+      <ServiceShowcaseSlider />
       <PopularProjectsSection />
       <ServicesGridSection />
       <DomainHostingSpotlight />
