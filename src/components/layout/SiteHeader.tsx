@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, X, Search, ChevronDown } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/hooks/useLanguage";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { UniversalSearchPanel } from "@/components/search/UniversalSearchPanel";
+import { HeaderDomainSearch } from "@/components/domain/HeaderDomainSearch";
 import {
   TrendingUp, Code2, Megaphone, Video, Server, Globe2,
   Smartphone, PhoneCall, Workflow, Bot, MapPin, Database,
@@ -54,14 +56,8 @@ const allNav = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const [q, setQ] = useState("");
   const { isAuthenticated, logout } = useAuth();
   const { t } = useLanguage();
-  const navigate = useNavigate();
-  const submitSearch = () => {
-    if (!q.trim()) return;
-    void navigate({ to: "/marketplace/search", search: { q } as never });
-  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/65">
@@ -70,24 +66,9 @@ export function SiteHeader() {
           <span className="text-[22px] font-extrabold tracking-tight text-foreground">TAKATAK</span>
           <span className="w-1.5 h-1.5 rounded-full bg-primary mt-3" aria-hidden />
         </Link>
-        <div className="hidden md:flex flex-1 max-w-xl">
-          <div className="flex items-stretch w-full rounded-md border border-border bg-card overflow-hidden focus-within:border-foreground/60 transition-colors">
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") submitSearch(); }}
-              placeholder={t("search.placeholder")}
-              className="flex-1 bg-transparent outline-none px-3.5 text-sm min-w-0 text-foreground placeholder:text-muted-foreground"
-              aria-label={t("search.aria")}
-            />
-            <button
-              onClick={submitSearch}
-              className="px-3.5 bg-foreground text-background hover:opacity-90 transition-opacity flex items-center justify-center"
-              aria-label="Search"
-            >
-              <Search size={16} />
-            </button>
-          </div>
+        <div className="hidden md:flex flex-1 max-w-xl items-center gap-2">
+          <UniversalSearchPanel />
+          <HeaderDomainSearch />
         </div>
         <ul className="hidden lg:flex items-center gap-0.5 text-[13px] font-medium ml-auto">
           {primaryNav.map((n) => (
