@@ -43,8 +43,10 @@ export function PremiumHero() {
           maskImage: "radial-gradient(ellipse at center, black 45%, transparent 85%)",
         }}
       />
-      <div aria-hidden className="pointer-events-none absolute inset-0 text-foreground opacity-70">
-        <HeroSystemMap />
+      <div aria-hidden className="pointer-events-none absolute inset-0 hidden items-center justify-center text-foreground opacity-40 md:flex">
+        <div className="h-[300px] w-full max-w-6xl">
+          <HeroSystemMap />
+        </div>
       </div>
 
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
