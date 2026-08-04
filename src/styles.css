@@ -226,3 +226,73 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ---------- TAKATAK premium motion layer ---------- */
+
+/* Scroll reveal — element starts offset, `data-shown` flips it in. */
+.tk-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.tk-reveal[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Slowly drifting technical grid for dark bands. */
+@keyframes tk-grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 48px 48px, 48px 48px; }
+}
+.tk-grid-drift { animation: tk-grid-drift 22s linear infinite; }
+
+/* Animated gradient border used on premium CTAs. */
+@keyframes tk-glow-sweep {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+.tk-glow-cta {
+  position: relative;
+  isolation: isolate;
+}
+.tk-glow-cta::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  z-index: -1;
+  background: linear-gradient(
+    90deg,
+    var(--brand-accent-cyan),
+    var(--brand-accent-violet),
+    var(--brand-accent-cyan)
+  );
+  background-size: 200% 100%;
+  animation: tk-glow-sweep 6s linear infinite;
+  opacity: 0.85;
+}
+
+/* Soft light sheen that crosses a card on hover. */
+.tk-sheen { position: relative; overflow: hidden; }
+.tk-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -120% 0;
+  background: linear-gradient(105deg, transparent 35%, color-mix(in oklab, var(--primary) 12%, transparent) 50%, transparent 65%);
+  transition: translate 0.75s ease;
+  pointer-events: none;
+}
+.tk-sheen:hover::after { translate: 120% 0; }
+
+/* Live status dot. */
+@keyframes tk-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.tk-blink { animation: tk-blink 2.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-reveal { opacity: 1; transform: none; }
+  .tk-grid-drift, .tk-glow-cta::before, .tk-blink { animation: none; }
+  .tk-sheen::after { display: none; }
+}

@@ -31,10 +31,18 @@ export function AiServiceSearch() {
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const { t, lang } = useLanguage();
   const suggestions = lang === "fr" ? searchSuggestionsFr : searchSuggestions;
+  // Rotating example prompts keep the search bar feeling alive without motion noise.
+  const [exampleIdx, setExampleIdx] = useState(0);
+  const examples = [t("search.ex1"), t("search.ex2"), t("search.ex3"), t("search.ex4"), t("search.ex5")];
 
   useEffect(() => {
     setVoiceSupported(Boolean(getRecognitionCtor()));
     return () => recognitionRef.current?.stop();
+  }, []);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setExampleIdx((i) => (i + 1) % 5), 3800);
+    return () => window.clearInterval(id);
   }, []);
 
   function go(value: string) {
@@ -88,7 +96,7 @@ export function AiServiceSearch() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("search.placeholder")}
+          placeholder={query ? t("search.placeholder") : examples[exampleIdx]}
           aria-label={t("search.aria")}
           className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground"
         />

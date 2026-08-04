@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { pricing, formatCAD, cadenceKeys, type Cadence } from "@/lib/pricing";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { TranslationKey } from "@/lib/i18n";
+import { Reveal } from "./Reveal";
 
 const TILES: readonly { labelKey: TranslationKey; amount: number; cadence: Cadence; to: string }[] = [
   { labelKey: "cat.domains.title",    amount: pricing.domain.register.amount, cadence: "yearly",   to: "/domain" },
@@ -24,20 +25,22 @@ export function PricingHighlights() {
         </Link>
       </div>
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {TILES.map((tile) => (
-          <Link
-            key={tile.labelKey}
-            to={tile.to as never}
-            className="rounded-xl border border-border bg-card p-4 text-center transition-all hover:-translate-y-0.5 hover:border-primary/45"
-          >
-            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t(tile.labelKey)}</div>
-            <div className="mt-1.5 text-lg font-bold text-foreground">
-              {formatCAD(tile.amount)}
-              <span className="text-xs font-medium text-muted-foreground">{t(cadenceKeys[tile.cadence] as TranslationKey)}</span>
-            </div>
-          </Link>
+        {TILES.map((tile, i) => (
+          <Reveal key={tile.labelKey} delay={i * 50}>
+            <Link
+              to={tile.to as never}
+              className="tk-sheen block h-full rounded-xl border border-border bg-card p-4 text-center transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[var(--shadow-card)]"
+            >
+              <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t(tile.labelKey)}</div>
+              <div className="mt-1.5 text-lg font-bold text-foreground">
+                {formatCAD(tile.amount)}
+                <span className="text-xs font-medium text-muted-foreground">{t(cadenceKeys[tile.cadence] as TranslationKey)}</span>
+              </div>
+            </Link>
+          </Reveal>
         ))}
       </div>
+      <p className="mt-5 text-xs leading-5 text-muted-foreground">{t("home.prices.note")}</p>
     </section>
   );
 }

@@ -11,6 +11,7 @@ import { PricingHighlights } from "@/components/home/PricingHighlights";
 import { ServiceShowcaseSlider } from "@/components/home/ServiceShowcaseSlider";
 import { PremiumProcessSection } from "@/components/home/PremiumProcessSection";
 import { WhyTakatakSection } from "@/components/home/WhyTakatakSection";
+import { ConciergeSupportSection } from "@/components/home/ConciergeSupportSection";
 import { FinalCtaSection } from "@/components/home/FinalCtaSection";
 
 export const Route = createFileRoute("/")({
@@ -40,6 +41,7 @@ function Index() {
       <PricingHighlights />
       <PremiumProcessSection />
       <WhyTakatakSection />
+      <ConciergeSupportSection />
       <FinalCtaSection />
     </SiteShell>
   );
