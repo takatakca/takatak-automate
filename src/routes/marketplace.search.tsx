@@ -10,21 +10,32 @@ import {
 import { MARKETPLACE_CATEGORIES } from "@/lib/marketplaceCategories";
 import { getMarketplacePackages } from "@/lib/marketplaceCatalogApi";
 import { CatalogSourceIndicator } from "@/components/dev/CatalogSourceIndicator";
+import { getMarketplaceGroup, groupPackages } from "@/lib/marketplaceGroups";
 
 export const Route = createFileRoute("/marketplace/search")({
   validateSearch: (s: Record<string, unknown>) => ({
     q: typeof s.q === "string" ? s.q : "",
     category: typeof s.category === "string" ? s.category : "",
     sort: typeof s.sort === "string" ? s.sort : "recommended",
+    group: typeof s.group === "string" ? s.group : "",
   }),
   head: () => ({ meta: [{ title: "Search marketplace — TAKATAK" }] }),
   component: Page,
 });
 
 function Page() {
-  const { q, category, sort } = Route.useSearch();
+  const { q, category, sort, group } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const local = searchPackages(q, category || undefined);
+  const activeGroup = group ? getMarketplaceGroup(group) : undefined;
+  const local = activeGroup
+    ? groupPackages(activeGroup.slug).filter(
+        (p) =>
+          (!category || p.category === category) &&
+          (!q ||
+            p.title.toLowerCase().includes(q.toLowerCase()) ||
+            p.blurb.toLowerCase().includes(q.toLowerCase())),
+      )
+    : searchPackages(q, category || undefined);
   const { data: remote } = useQuery({
     queryKey: ["marketplace", "packages", { q, category, sort }],
     queryFn: () =>
@@ -34,6 +45,7 @@ function Page() {
         sort: sort === "recommended" || sort === "price_asc" || sort === "delivery_asc" || sort === "category" || sort === "newest" ? sort : undefined,
       }),
     staleTime: 30_000,
+    enabled: !activeGroup,
   });
   const raw = remote?.data ?? local;
   const source = remote?.source;
@@ -53,10 +65,18 @@ function Page() {
       <div className="flex flex-col gap-2">
         <Link to="/marketplace" className="text-xs text-muted-foreground hover:text-foreground">← Back to marketplace</Link>
         <h1 className="text-3xl font-bold">
-          {q ? `Marketplace results for "${q}"` : cat ? cat.name : "Browse marketplace packages"}
+          {activeGroup
+            ? activeGroup.label.en
+            : q
+              ? `Marketplace results for "${q}"`
+              : cat
+                ? cat.name
+                : "Browse marketplace packages"}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Every TAKATAK package is delivered by a vetted freelancer. Payment is held in escrow and released only after you approve the work.
+          {activeGroup
+            ? `${activeGroup.blurb.en} Every TAKATAK package is delivered by a vetted freelancer with escrowed payment.`
+            : "Every TAKATAK package is delivered by a vetted freelancer. Payment is held in escrow and released only after you approve the work."}
         </p>
       </div>
 
