@@ -1,16 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteShell } from "@/components/layout/SiteShell";
-import { services } from "@/lib/services";
-import { serviceStartingPrice, formatCAD, cadenceLabel } from "@/lib/pricing";
-
-const groups = [
-  { key: "infrastructure", title: "Infrastructure" },
-  { key: "build", title: "Build" },
-  { key: "growth", title: "Growth" },
-  { key: "communication", title: "Communication" },
-  { key: "marketplace", title: "Marketplace" },
-] as const;
+import { formatCAD, cadenceLabel } from "@/lib/pricing";
+import { servicePages } from "@/lib/servicePages";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export const Route = createFileRoute("/services/")({
   head: () => ({
@@ -27,43 +20,57 @@ export const Route = createFileRoute("/services/")({
 });
 
 function ServicesIndex() {
+  const { t, tx, lang } = useLanguage();
+  const groups = Array.from(new Set(servicePages.map((p) => p.eyebrow.en)));
+
   return (
     <SiteShell>
       <div className="mx-auto max-w-7xl px-4 py-14 md:py-20">
-        <h1 className="text-3xl font-bold text-foreground md:text-4xl">All services</h1>
+        <h1 className="text-3xl font-bold text-foreground md:text-4xl">
+          {lang === "fr" ? "Tous les services" : "All services"}
+        </h1>
         <p className="mt-3 max-w-2xl text-base text-muted-foreground">
-          Every service TAKATAK delivers, with managed setup and Canadian support. Prices in CAD.
+          {lang === "fr"
+            ? "Tous les services livrés par TAKATAK, avec configuration gérée et soutien canadien. Prix en CAD."
+            : "Every service TAKATAK delivers, with managed setup and Canadian support. Prices in CAD."}
         </p>
         <Link to="/pricing" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
-          See full pricing <ArrowRight size={14} />
+          {t("common.viewPricing")} <ArrowRight size={14} />
         </Link>
 
         {groups.map((g) => {
-          const items = services.filter((s) => s.category === g.key);
+          const items = servicePages.filter((p) => p.eyebrow.en === g);
           if (!items.length) return null;
+          const groupLabel = tx(items[0]!.eyebrow);
           return (
-            <section key={g.key} className="mt-12">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{g.title}</h2>
+            <section key={g} className="mt-12">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{groupLabel}</h2>
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {items.map((s) => {
-                  const price = serviceStartingPrice[s.key];
+                  const amount = s.packages.reduce(
+                    (min, p) => (p.amount < min ? p.amount : min),
+                    s.packages[0]?.amount ?? 0,
+                  );
+                  const cadence = s.packages.find((p) => p.amount === amount)?.cadence;
                   return (
                     <Link
-                      key={s.key}
-                      to={s.publicRoute as never}
+                      key={s.slug}
+                      to={s.route as never}
                       className="group flex flex-col rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-all hover:-translate-y-0.5 hover:border-primary/45"
                     >
-                      <h3 className="text-base font-semibold text-foreground">{s.title}</h3>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.shortDescription}</p>
+                      <h3 className="text-base font-semibold text-foreground">{tx(s.title)}</h3>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{tx(s.tagline)}</p>
                       <div className="mt-auto flex items-center justify-between pt-5">
-                        {price && (
+                        {amount > 0 && (
                           <span className="text-sm font-bold text-foreground">
-                            from {formatCAD(price.amount)}
-                            <span className="text-xs font-medium text-muted-foreground">{cadenceLabel(price.cadence)}</span>
+                            {t("service.startingAt")} {formatCAD(amount)}
+                            <span className="text-xs font-medium text-muted-foreground">
+                              {cadence ? cadenceLabel(cadence) : ""}
+                            </span>
                           </span>
                         )}
                         <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                          {s.ctaLabel} <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                          {t("common.explore")} <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
                         </span>
                       </div>
                     </Link>
