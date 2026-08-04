@@ -3,20 +3,23 @@ import { Link } from "@tanstack/react-router";
 import { AiServiceSearch } from "./AiServiceSearch";
 import { HeroSystemMap } from "./HeroSystemMap";
 import { openLiveChat } from "@/lib/chatProvider";
+import { useLanguage } from "@/hooks/useLanguage";
+import type { TranslationKey } from "@/lib/i18n";
 
-const CHIPS = [
-  { label: "Website", to: "/services/websites" },
-  { label: "Logo", to: "/marketplace/category/logo_design" },
-  { label: "Domain", to: "/domain" },
-  { label: "Hosting", to: "/hosting" },
-  { label: "Marketing", to: "/services/marketing" },
-  { label: "Local visibility", to: "/services/local-listings" },
-  { label: "Leads", to: "/services/lead-generation" },
-  { label: "VoIP", to: "/services/voip" },
-  { label: "Automation", to: "/services/ai-business-tools" },
+const CHIPS: readonly { key: TranslationKey; to: string }[] = [
+  { key: "cat.websites.title",   to: "/services/websites" },
+  { key: "cat.branding.title",   to: "/marketplace/category/logo_design" },
+  { key: "cat.domains.title",    to: "/domain" },
+  { key: "cat.hosting.title",    to: "/hosting" },
+  { key: "cat.marketing.title",  to: "/services/marketing" },
+  { key: "home.chip.local",      to: "/services/local-listings" },
+  { key: "home.chip.leads",      to: "/services/lead-generation" },
+  { key: "cat.voip.title",       to: "/services/voip" },
+  { key: "cat.automation.title", to: "/services/ai-business-tools" },
 ];
 
 export function PremiumHero() {
+  const { t } = useLanguage();
   return (
     <section className="brand-dark relative overflow-hidden border-b border-border">
       {/* Ambient gradient wash */}
@@ -53,31 +56,30 @@ export function PremiumHero() {
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/85 backdrop-blur">
             <Globe size={12} className="text-primary" />
-            Canadian business platform
+            {t("home.hero.badge")}
           </span>
           <h1 className="mt-5 text-3xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[46px]">
-            Tell TAKATAK what you want to build.
+            {t("home.hero.title")}
           </h1>
           <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">
-            Search, speak, or browse. TAKATAK connects you to domains, hosting, websites, apps,
-            marketing, automation, and managed service delivery.
+            {t("home.hero.subtitle")}
           </p>
 
           <div className="mt-7">
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Tell TAKATAK what you need
+              {t("home.hero.searchLabel")}
             </p>
             <AiServiceSearch />
           </div>
 
           <ul className="mt-5 flex flex-wrap gap-2">
             {CHIPS.map((c) => (
-              <li key={c.label}>
+              <li key={c.key}>
                 <Link
                   to={c.to as never}
                   className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-foreground/85 hover:bg-white/10"
                 >
-                  {c.label}
+                  {t(c.key)}
                 </Link>
               </li>
             ))}
@@ -88,27 +90,27 @@ export function PremiumHero() {
               to="/marketplace"
               className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
             >
-              Browse marketplace <ArrowRight size={15} />
+              {t("home.hero.ctaMarketplace")} <ArrowRight size={15} />
             </Link>
             <Link
               to="/domain"
               className="inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground hover:bg-white/10"
             >
-              Search domains
+              {t("home.hero.ctaDomains")}
             </Link>
             <button
               type="button"
               onClick={() => openLiveChat({ page: "/" })}
               className="inline-flex items-center gap-2 rounded-md px-4 py-3 text-sm font-semibold text-foreground/85 underline-offset-4 hover:text-foreground hover:underline"
             >
-              <Headset size={15} className="text-primary" /> Talk to TAKATAK
+              <Headset size={15} className="text-primary" /> {t("home.hero.ctaChat")}
             </button>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck size={13} className="text-primary" /> Escrow protected</span>
-            <span className="inline-flex items-center gap-1.5"><Star size={13} className="text-primary" /> Managed delivery</span>
-            <span className="inline-flex items-center gap-1.5"><Zap size={13} className="text-primary" /> CAD billing</span>
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck size={13} className="text-primary" /> {t("home.hero.trust.escrow")}</span>
+            <span className="inline-flex items-center gap-1.5"><Star size={13} className="text-primary" /> {t("home.hero.trust.managed")}</span>
+            <span className="inline-flex items-center gap-1.5"><Zap size={13} className="text-primary" /> {t("home.hero.trust.cad")}</span>
           </div>
         </div>
 
@@ -130,8 +132,8 @@ export function PremiumHero() {
               </div>
               <div className="mt-4 grid grid-cols-3 gap-3">
                 {[
-                  { label: "Active services", value: "12" },
-                  { label: "Open projects",   value: "4" },
+                  { label: t("home.hero.mock.services"), value: "12" },
+                  { label: t("home.hero.mock.projects"),  value: "4" },
                   { label: "MRR",              value: "$2,847" },
                 ].map((s) => (
                   <div key={s.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
@@ -142,15 +144,15 @@ export function PremiumHero() {
               </div>
               <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-3">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-semibold text-foreground">Delivery pipeline</div>
-                  <div className="text-[10px] text-muted-foreground">This week</div>
+                  <div className="text-xs font-semibold text-foreground">{t("home.hero.mock.pipeline")}</div>
+                  <div className="text-[10px] text-muted-foreground">{t("home.hero.mock.week")}</div>
                 </div>
                 <div className="mt-3 space-y-2">
                   {[
-                    { name: "yourbrand.ca — DNS live",     pct: 100, tone: "cyan"   },
-                    { name: "Silver hosting provisioned",  pct: 82,  tone: "violet" },
-                    { name: "Business website — design",   pct: 54,  tone: "cyan"   },
-                    { name: "Local listings — Maps",       pct: 32,  tone: "violet" },
+                    { name: t("home.hero.mock.row1"), pct: 100, tone: "cyan"   },
+                    { name: t("home.hero.mock.row2"), pct: 82,  tone: "violet" },
+                    { name: t("home.hero.mock.row3"), pct: 54,  tone: "cyan"   },
+                    { name: t("home.hero.mock.row4"), pct: 32,  tone: "violet" },
                   ].map((row) => (
                     <div key={row.name} className="grid grid-cols-[1fr_auto] items-center gap-2 text-[11px]">
                       <div className="min-w-0">
@@ -180,8 +182,8 @@ export function PremiumHero() {
               <div className="flex items-center gap-2">
                 <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary/15 text-primary"><Server size={16} /></div>
                 <div className="min-w-0">
-                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Silver hosting</div>
-                  <div className="truncate text-sm font-bold text-foreground">$39.99<span className="text-xs font-medium text-muted-foreground">/mo</span></div>
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{t("home.hero.mock.hosting")}</div>
+                  <div className="truncate text-sm font-bold text-foreground">$39.99<span className="text-xs font-medium text-muted-foreground">{t("cadence.monthly")}</span></div>
                 </div>
               </div>
             </div>
@@ -191,8 +193,8 @@ export function PremiumHero() {
               <div className="flex items-center gap-2">
                 <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary/15 text-primary"><Rocket size={16} /></div>
                 <div className="min-w-0">
-                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Business Website</div>
-                  <div className="truncate text-sm font-bold text-foreground">from $1,499 <span className="text-xs font-medium text-muted-foreground">CAD</span></div>
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{t("home.hero.mock.website")}</div>
+                  <div className="truncate text-sm font-bold text-foreground">{t("price.from")} $1,499 <span className="text-xs font-medium text-muted-foreground">CAD</span></div>
                 </div>
               </div>
             </div>

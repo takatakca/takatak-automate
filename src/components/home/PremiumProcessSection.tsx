@@ -1,36 +1,35 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, ClipboardCheck, FileText, MessageSquare, Search, ShieldCheck } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
+import type { TranslationKey } from "@/lib/i18n";
 
 const steps = [
-  { n: "01", icon: Search, title: "Start with a service or custom request", desc: "Choose a ready-made package or describe exactly what your business needs." },
-  { n: "02", icon: FileText, title: "Scope becomes a clear project plan", desc: "We define deliverables, pricing, timeline, files, milestones, and approval checkpoints." },
-  { n: "03", icon: MessageSquare, title: "Work happens inside your dashboard", desc: "Messages, uploads, revisions, progress, and delivery updates stay organized in one workspace." },
-  { n: "04", icon: ShieldCheck, title: "Review before completion", desc: "TAKATAK manages quality control, approval, and release rules before the project closes." },
+  { n: "01", icon: Search, k: "s1" },
+  { n: "02", icon: FileText, k: "s2" },
+  { n: "03", icon: MessageSquare, k: "s3" },
+  { n: "04", icon: ShieldCheck, k: "s4" },
 ];
 
-const workspace = ["Brief received", "Scope confirmed", "Milestone in progress", "Delivery review", "Payment protected"];
+const workspace = ["w1", "w2", "w3", "w4", "w5"];
 
 export function PremiumProcessSection() {
+  const { t } = useLanguage();
   return (
     <section className="brand-dark relative overflow-hidden border-y border-border">
       <div aria-hidden className="absolute inset-0 opacity-35" style={{ backgroundImage: "linear-gradient(var(--brand-dark-border) 1px, transparent 1px), linear-gradient(90deg, var(--brand-dark-border) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-16 md:py-20 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/35 px-3 py-1 text-xs font-semibold text-muted-foreground">
-            <ClipboardCheck size={14} className="text-primary" /> Managed delivery system
+            <ClipboardCheck size={14} className="text-primary" /> {t("home.process.badge")}
           </div>
-          <h2 className="mt-5 max-w-xl text-3xl font-bold leading-tight text-foreground md:text-5xl">
-            From idea to delivered project — managed by TAKATAK
-          </h2>
-          <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground">
-            A clear delivery system for business owners who need professional execution, organized communication, and real accountability.
-          </p>
+          <h2 className="mt-5 max-w-xl text-3xl font-bold leading-tight text-foreground md:text-5xl">{t("home.process.title")}</h2>
+          <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground">{t("home.process.subtitle")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/marketplace/post-project" className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90">
-              Start a project <ArrowRight size={15} />
+              {t("home.process.cta1")} <ArrowRight size={15} />
             </Link>
             <Link to="/marketplace" className="inline-flex items-center gap-2 rounded-md border border-border bg-card/25 px-5 py-3 text-sm font-medium text-foreground hover:bg-card/45">
-              Explore services
+              {t("home.process.cta2")}
             </Link>
           </div>
         </div>
@@ -48,9 +47,9 @@ export function PremiumProcessSection() {
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-full border border-primary/35 bg-primary/10 px-2 py-0.5 font-mono text-xs text-primary">{step.n}</span>
-                        <h3 className="font-semibold text-foreground">{step.title}</h3>
+                        <h3 className="font-semibold text-foreground">{t(`home.process.${step.k}.title` as TranslationKey)}</h3>
                       </div>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.desc}</p>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{t(`home.process.${step.k}.desc` as TranslationKey)}</p>
                     </div>
                   </article>
                 );
@@ -61,8 +60,8 @@ export function PremiumProcessSection() {
             <div className="rounded-2xl border border-border bg-card p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Workspace</p>
-                  <h3 className="mt-1 text-lg font-semibold text-foreground">TAKATAK project workspace</h3>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{t("home.process.wsKicker")}</p>
+                  <h3 className="mt-1 text-lg font-semibold text-foreground">{t("home.process.wsTitle")}</h3>
                 </div>
                 <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">72%</span>
               </div>
@@ -74,9 +73,9 @@ export function PremiumProcessSection() {
                   <div key={item} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background px-3 py-3">
                     <span className="inline-flex min-w-0 items-center gap-2 text-sm text-foreground">
                       <CheckCircle2 size={15} className="shrink-0 text-primary" />
-                      <span className="truncate">{item}</span>
+                      <span className="truncate">{t(`home.process.${item}` as TranslationKey)}</span>
                     </span>
-                    <span className="shrink-0 rounded-full bg-secondary px-2 py-1 text-[11px] text-muted-foreground">{index < 3 ? "Active" : "Next"}</span>
+                    <span className="shrink-0 rounded-full bg-secondary px-2 py-1 text-[11px] text-muted-foreground">{index < 3 ? t("home.process.active") : t("home.process.next")}</span>
                   </div>
                 ))}
               </div>

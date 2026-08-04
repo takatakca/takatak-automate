@@ -96,6 +96,10 @@ export function formatCAD(amount: number): string {
 }
 
 export function cadenceLabel(cadence: Cadence): string {
+  return cadenceLabelEn(cadence);
+}
+
+function cadenceLabelEn(cadence: Cadence): string {
   switch (cadence) {
     case "monthly": return "/month";
     case "yearly": return "/year";
@@ -105,6 +109,15 @@ export function cadenceLabel(cadence: Cadence): string {
     default: return "";
   }
 }
+
+/** Translation keys for cadence suffixes, used with useLanguage().t(). */
+export const cadenceKeys: Record<Cadence, string> = {
+  monthly: "cadence.monthly",
+  yearly: "cadence.yearly",
+  "per-lead": "cadence.perLead",
+  "one-time": "cadence.oneTime",
+  custom: "cadence.custom",
+};
 
 export function startingAt(amount: number, cadence: Cadence = "one-time", suffix?: string): string {
   return `${formatCAD(amount)}${cadenceLabel(cadence)}${suffix ? ` ${suffix}` : ""}`;

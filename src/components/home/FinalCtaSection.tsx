@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function FinalCtaSection() {
+  const { t } = useLanguage();
   return (
     <section className="brand-dark relative overflow-hidden border-t border-border">
       <div
@@ -14,27 +16,23 @@ export function FinalCtaSection() {
       />
       <div className="relative mx-auto max-w-4xl px-4 py-20 text-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/85">
-          <Sparkles size={12} className="text-primary" /> TAKATAK operating platform
+          <Sparkles size={12} className="text-primary" /> {t("home.final.badge")}
         </span>
-        <h2 className="mt-5 text-3xl font-bold leading-tight text-foreground md:text-5xl">
-          Ready to build your online business system?
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-muted-foreground">
-          Bring your domain, hosting, website, marketing, and delivery workflows into one dashboard — with real humans behind every project.
-        </p>
+        <h2 className="mt-5 text-3xl font-bold leading-tight text-foreground md:text-5xl">{t("home.final.title")}</h2>
+        <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-muted-foreground">{t("home.final.subtitle")}</p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
             to="/marketplace"
             className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold text-primary-foreground"
             style={{ backgroundImage: "var(--gradient-hero)" }}
           >
-            Explore services <ArrowRight size={16} />
+            {t("home.final.cta1")} <ArrowRight size={16} />
           </Link>
           <Link
             to="/marketplace/post-project"
             className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-foreground hover:bg-white/10"
           >
-            Start a project
+            {t("home.final.cta2")}
           </Link>
         </div>
       </div>
