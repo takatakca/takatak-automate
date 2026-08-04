@@ -10,6 +10,7 @@ const searchSchema = z.object({
   promo: z.string().optional(),
   next: z.string().optional(),
   domain: z.string().optional(),
+  email: z.string().optional(),
 });
 
 export const Route = createFileRoute("/signup")({
