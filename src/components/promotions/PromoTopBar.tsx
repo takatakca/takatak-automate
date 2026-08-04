@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { X, Sparkles } from "lucide-react";
 import {
@@ -8,10 +8,12 @@ import {
   trackPromo,
 } from "@/lib/promotions";
 import { useLanguage } from "@/hooks/useLanguage";
+import { WelcomeOfferFlow } from "@/components/promotions/WelcomeOfferFlow";
 
 export function PromoTopBar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [hidden, setHidden] = useState(true);
+  const [flowOpen, setFlowOpen] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -39,14 +41,16 @@ export function PromoTopBar() {
           <span className="font-medium">{t("promo.bar.title")}</span>
           <span className="text-white/70">{t("promo.bar.body")}</span>
         </p>
-        <Link
-          to="/signup"
-          search={{ promo: "FIRST10" } as never}
-          onClick={() => trackPromo("promo_banner_clicked", { surface: "top_bar" })}
+        <button
+          type="button"
+          onClick={() => {
+            trackPromo("promo_banner_clicked", { surface: "top_bar" });
+            setFlowOpen(true);
+          }}
           className="hidden sm:inline-flex items-center rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:opacity-90"
         >
           {t("promo.bar.cta")}
-        </Link>
+        </button>
         <button
           aria-label={t("promo.bar.dismiss")}
           onClick={() => {
@@ -58,6 +62,7 @@ export function PromoTopBar() {
           <X size={16} />
         </button>
       </div>
+      {flowOpen && <WelcomeOfferFlow onClose={() => setFlowOpen(false)} />}
     </div>
   );
 }
