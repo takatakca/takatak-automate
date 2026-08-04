@@ -127,6 +127,10 @@ export function AiServiceSearch() {
         ))}
       </div>
 
+      {result && (
+        <GuidedAssistantPanel query={result.query} match={result.match} onDismiss={() => setResult(null)} />
+      )}
+
       {hint && <p className="mt-2 text-xs text-muted-foreground" aria-live="polite">{hint}</p>}
     </div>
   );
