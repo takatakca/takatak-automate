@@ -160,13 +160,18 @@ export function SiteHeader() {
             </>
           )}
         </div>
-        <button
-          onClick={() => setOpen(!open)}
-          className="lg:hidden p-2 rounded-md hover:bg-secondary ml-auto"
-          aria-label="Menu"
-        >
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <div className="lg:hidden ml-auto flex items-center gap-1">
+          <div className="md:hidden">
+            <HeaderDomainSearch compact />
+          </div>
+          <button
+            onClick={() => setOpen(!open)}
+            className="p-2 rounded-md hover:bg-secondary"
+            aria-label="Menu"
+          >
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </nav>
       {open && (
         <div className="lg:hidden border-t border-border bg-background px-4 py-3 space-y-1">
