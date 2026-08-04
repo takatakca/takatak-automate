@@ -1,5 +1,18 @@
-import { ShieldCheck, Sparkles, Star, Zap, Server, Rocket } from "lucide-react";
+import { ArrowRight, ShieldCheck, Sparkles, Star, Zap, Server, Rocket } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { AiServiceSearch } from "./AiServiceSearch";
+
+const CHIPS = [
+  { label: "Website", to: "/services/websites" },
+  { label: "Logo", to: "/marketplace/category/logo_design" },
+  { label: "Domain", to: "/domain" },
+  { label: "Hosting", to: "/hosting" },
+  { label: "Marketing", to: "/services/marketing" },
+  { label: "Local visibility", to: "/services/local-listings" },
+  { label: "Leads", to: "/services/lead-generation" },
+  { label: "VoIP", to: "/services/voip" },
+  { label: "Automation", to: "/services/ai-business-tools" },
+];
 
 export function PremiumHero() {
   return (
@@ -35,21 +48,53 @@ export function PremiumHero() {
             <Sparkles size={12} className="text-primary" />
             Canadian business platform
           </span>
-          <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-[58px]">
-            Everything your business needs to run{" "}
+          <h1 className="mt-5 text-3xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[46px]">
+            Business services, websites, domains, hosting, and digital growth —{" "}
             <span
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: "linear-gradient(90deg, var(--brand-accent-cyan), var(--brand-accent-violet))" }}
             >
-              online
+              all in one TAKATAK platform
             </span>
           </h1>
-          <p className="mt-4 max-w-lg text-base leading-7 text-muted-foreground">
-            Tell us what you need — we handle the rest.
+          <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">
+            Find the right service, launch a project, manage delivery, and grow your business with
+            professional support and smart tools.
           </p>
 
           <div className="mt-7">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Tell TAKATAK what you need
+            </p>
             <AiServiceSearch />
+          </div>
+
+          <ul className="mt-5 flex flex-wrap gap-2">
+            {CHIPS.map((c) => (
+              <li key={c.label}>
+                <Link
+                  to={c.to as never}
+                  className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-foreground/85 hover:bg-white/10"
+                >
+                  {c.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link
+              to="/marketplace"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
+            >
+              Browse marketplace <ArrowRight size={15} />
+            </Link>
+            <Link
+              to="/domain"
+              className="inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground hover:bg-white/10"
+            >
+              Search domains
+            </Link>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
