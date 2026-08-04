@@ -22,7 +22,7 @@ export function HeroSystemMap({ className = "" }: { className?: string }) {
       aria-hidden
       viewBox="0 0 680 300"
       className={`pointer-events-none h-full w-full ${className}`}
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio="xMidYMid meet"
     >
       <g stroke="var(--brand-accent-cyan)" strokeOpacity="0.28" strokeWidth="1">
         {LINKS.map(([a, b]) => (
