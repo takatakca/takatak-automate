@@ -14,6 +14,7 @@ import { DemoModeBanner } from "@/components/dev/DemoModeBanner";
 import { PromoTopBar } from "@/components/promotions/PromoTopBar";
 import { PromoStickyCard } from "@/components/promotions/PromoStickyCard";
 import { SignupPromoModal } from "@/components/promotions/SignupPromoModal";
+import { LiveChatLauncher } from "@/components/support/LiveChatLauncher";
 
 function NotFoundComponent() {
   return (
@@ -192,6 +193,7 @@ function RootComponent() {
         <Outlet />
         <PromoStickyCard />
         <SignupPromoModal />
+        <LiveChatLauncher />
       </AuthProvider>
     </QueryClientProvider>
   );
