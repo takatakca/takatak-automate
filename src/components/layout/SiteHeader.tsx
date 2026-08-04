@@ -170,23 +170,9 @@ export function SiteHeader() {
       </nav>
       {open && (
         <div className="lg:hidden border-t border-border bg-background px-4 py-3 space-y-1">
-          <div className="pb-3 mb-2 border-b border-border">
-            <div className="flex items-stretch w-full rounded-md border border-border bg-card overflow-hidden">
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") { setOpen(false); submitSearch(); } }}
-                placeholder="Search services…"
-                className="flex-1 bg-transparent outline-none px-3 py-2.5 text-sm min-w-0"
-              />
-              <button
-                onClick={() => { setOpen(false); submitSearch(); }}
-                className="px-3 bg-foreground text-background"
-                aria-label="Search"
-              >
-                <Search size={16} />
-              </button>
-            </div>
+          <div className="pb-3 mb-2 border-b border-border space-y-2">
+            <UniversalSearchPanel compact />
+            <HeaderDomainSearch />
           </div>
           {allNav.map((n) => (
             <Link
