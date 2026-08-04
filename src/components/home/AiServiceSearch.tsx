@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Mic, MicOff, Search } from "lucide-react";
-import { resolveIntent, searchSuggestions, trackEvent } from "@/lib/serviceIntent";
+import { resolveIntent, searchSuggestions, trackEvent, type IntentMatch } from "@/lib/serviceIntent";
+import { GuidedAssistantPanel } from "./GuidedAssistantPanel";
 
 type SpeechRecognitionLike = {
   lang: string;
@@ -21,11 +21,11 @@ function getRecognitionCtor(): (new () => SpeechRecognitionLike) | null {
 }
 
 export function AiServiceSearch() {
-  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [listening, setListening] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
+  const [result, setResult] = useState<{ query: string; match: IntentMatch } | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   useEffect(() => {
@@ -38,8 +38,8 @@ export function AiServiceSearch() {
     if (!text) return;
     const match = resolveIntent(text);
     trackEvent("home_ai_search", { query: text, intent: match.intent, destination: match.to });
-    setHint(match.label);
-    navigate({ to: match.to as never });
+    setHint(null);
+    setResult({ query: text, match });
   }
 
   function toggleVoice() {
@@ -126,6 +126,10 @@ export function AiServiceSearch() {
           </button>
         ))}
       </div>
+
+      {result && (
+        <GuidedAssistantPanel query={result.query} match={result.match} onDismiss={() => setResult(null)} />
+      )}
 
       {hint && <p className="mt-2 text-xs text-muted-foreground" aria-live="polite">{hint}</p>}
     </div>
