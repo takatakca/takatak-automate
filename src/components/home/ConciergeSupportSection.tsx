@@ -35,7 +35,7 @@ export function ConciergeSupportSection() {
           <div className="mt-7 flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={() => openLiveChat({ page: "/", section: "concierge" })}
+              onClick={() => openLiveChat({ page: "/" })}
               className="tk-glow-cta inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-primary-foreground"
               style={{ backgroundImage: "var(--gradient-hero)" }}
             >
