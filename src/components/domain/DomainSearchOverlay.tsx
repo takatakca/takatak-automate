@@ -18,6 +18,12 @@ import {
 
 type Phase = "idle" | "checking" | "results" | "fallback";
 
+const ERROR_KEYS = {
+  empty: "domainPanel.error.empty",
+  tooShort: "domainPanel.error.tooShort",
+  invalid: "domainPanel.error.invalid",
+} as const;
+
 /**
  * TAKATAK Domain Search panel. Uses the managed TAKATAK domain layer when it
  * is available and switches to the TAKATAK request fallback whenever the
@@ -53,7 +59,7 @@ export function DomainSearchOverlay({ onClose }: { onClose: () => void }) {
     e?.preventDefault();
     const invalid = validateLabel(raw);
     if (invalid) {
-      setError(t(`domainPanel.error.${invalid}` as never));
+      setError(t(ERROR_KEYS[invalid]));
       return;
     }
     setError(null);
