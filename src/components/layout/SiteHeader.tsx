@@ -6,6 +6,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { UniversalSearchPanel } from "@/components/search/UniversalSearchPanel";
 import { HeaderDomainSearch } from "@/components/domain/HeaderDomainSearch";
+import { MarketplaceCategoryRail } from "@/components/marketplace/MarketplaceCategoryRail";
+import { MARKETPLACE_GROUPS } from "@/lib/marketplaceGroups";
 import {
   TrendingUp, Code2, Megaphone, Video, Server, Globe2,
   Smartphone, PhoneCall, Workflow, Bot, MapPin, Database,
@@ -57,7 +59,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
-  const { t } = useLanguage();
+  const { t, tx } = useLanguage();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/65">
@@ -173,6 +175,7 @@ export function SiteHeader() {
           </button>
         </div>
       </nav>
+      <MarketplaceCategoryRail />
       {open && (
         <div className="lg:hidden border-t border-border bg-background px-4 py-3 space-y-1">
           <div className="pb-3 mb-2 border-b border-border space-y-2">
@@ -189,6 +192,22 @@ export function SiteHeader() {
               {n.label}
             </Link>
           ))}
+          <div className="pt-2 mt-1 border-t border-border">
+            <p className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("nav.marketplace")}
+            </p>
+            {MARKETPLACE_GROUPS.map((g) => (
+              <Link
+                key={g.slug}
+                to="/marketplace/search"
+                search={{ q: "", category: "", sort: "recommended", group: g.slug }}
+                onClick={() => setOpen(false)}
+                className="block px-3 py-2 rounded-md text-sm hover:bg-secondary"
+              >
+                {tx(g.label)}
+              </Link>
+            ))}
+          </div>
           <div className="pt-2">
             <LanguageSwitcher />
           </div>
