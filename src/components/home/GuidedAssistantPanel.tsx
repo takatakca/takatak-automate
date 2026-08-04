@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Headset, FileText, Target } from "lucide-react";
 import { openLiveChat } from "@/lib/chatProvider";
-import type { IntentMatch } from "@/lib/serviceIntent";
+import { intentLabel, type IntentMatch } from "@/lib/serviceIntent";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface Props {
   query: string;
@@ -12,6 +13,8 @@ interface Props {
 /** Shown after an AI/voice search so the user sees where they are going
  *  before navigating. No auto-redirect. */
 export function GuidedAssistantPanel({ query, match, onDismiss }: Props) {
+  const { t, lang } = useLanguage();
+  const label = intentLabel(match, lang);
   return (
     <div
       role="status"
@@ -22,10 +25,12 @@ export function GuidedAssistantPanel({ query, match, onDismiss }: Props) {
           <Target size={16} />
         </span>
         <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Best match</p>
-          <p className="text-sm font-semibold text-foreground">{match.label}</p>
+          <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+            {t("assistant.bestMatch")}
+          </p>
+          <p className="text-sm font-semibold text-foreground">{label}</p>
           <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-            Recommended next step: open {match.label.toLowerCase()} for “{query}”.
+            {t("assistant.next", { label: label.toLowerCase(), query })}
           </p>
         </div>
         <button
@@ -33,7 +38,7 @@ export function GuidedAssistantPanel({ query, match, onDismiss }: Props) {
           onClick={onDismiss}
           className="ml-auto shrink-0 text-xs font-medium text-muted-foreground hover:text-foreground"
         >
-          Dismiss
+          {t("assistant.dismiss")}
         </button>
       </div>
 
@@ -42,7 +47,7 @@ export function GuidedAssistantPanel({ query, match, onDismiss }: Props) {
           to={match.to as never}
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90"
         >
-          Open service <ArrowRight size={13} />
+          {t("assistant.open")} <ArrowRight size={13} />
         </Link>
         <button
           type="button"
@@ -55,13 +60,13 @@ export function GuidedAssistantPanel({ query, match, onDismiss }: Props) {
           }
           className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/60 px-3.5 py-2 text-xs font-semibold text-foreground hover:border-primary/45"
         >
-          <Headset size={13} /> Talk to support
+          <Headset size={13} /> {t("assistant.support")}
         </button>
         <Link
           to="/marketplace/post-project"
           className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/60 px-3.5 py-2 text-xs font-semibold text-foreground hover:border-primary/45"
         >
-          <FileText size={13} /> Request custom quote
+          <FileText size={13} /> {t("assistant.quote")}
         </Link>
       </div>
     </div>

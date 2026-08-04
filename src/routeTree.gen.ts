@@ -31,10 +31,16 @@ import { Route as ServicesWebsitesRouteImport } from './routes/services.websites
 import { Route as ServicesVoipRouteImport } from './routes/services.voip'
 import { Route as ServicesSocialMediaRouteImport } from './routes/services.social-media'
 import { Route as ServicesMobileAppsRouteImport } from './routes/services.mobile-apps'
+import { Route as ServicesMenuFlyerDesignRouteImport } from './routes/services.menu-flyer-design'
 import { Route as ServicesMarketplaceRouteImport } from './routes/services.marketplace'
 import { Route as ServicesMarketingRouteImport } from './routes/services.marketing'
+import { Route as ServicesLogoBrandingRouteImport } from './routes/services.logo-branding'
 import { Route as ServicesLocalListingsRouteImport } from './routes/services.local-listings'
 import { Route as ServicesLeadGenerationRouteImport } from './routes/services.lead-generation'
+import { Route as ServicesHostingRouteImport } from './routes/services.hosting'
+import { Route as ServicesDomainsRouteImport } from './routes/services.domains'
+import { Route as ServicesDataAdminRouteImport } from './routes/services.data-admin'
+import { Route as ServicesAutomationRouteImport } from './routes/services.automation'
 import { Route as ServicesAiBusinessToolsRouteImport } from './routes/services.ai-business-tools'
 import { Route as MarketplaceSearchRouteImport } from './routes/marketplace.search'
 import { Route as MarketplacePostProjectRouteImport } from './routes/marketplace.post-project'
@@ -187,6 +193,11 @@ const ServicesMobileAppsRoute = ServicesMobileAppsRouteImport.update({
   path: '/services/mobile-apps',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesMenuFlyerDesignRoute = ServicesMenuFlyerDesignRouteImport.update({
+  id: '/services/menu-flyer-design',
+  path: '/services/menu-flyer-design',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesMarketplaceRoute = ServicesMarketplaceRouteImport.update({
   id: '/services/marketplace',
   path: '/services/marketplace',
@@ -197,6 +208,11 @@ const ServicesMarketingRoute = ServicesMarketingRouteImport.update({
   path: '/services/marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesLogoBrandingRoute = ServicesLogoBrandingRouteImport.update({
+  id: '/services/logo-branding',
+  path: '/services/logo-branding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesLocalListingsRoute = ServicesLocalListingsRouteImport.update({
   id: '/services/local-listings',
   path: '/services/local-listings',
@@ -205,6 +221,26 @@ const ServicesLocalListingsRoute = ServicesLocalListingsRouteImport.update({
 const ServicesLeadGenerationRoute = ServicesLeadGenerationRouteImport.update({
   id: '/services/lead-generation',
   path: '/services/lead-generation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesHostingRoute = ServicesHostingRouteImport.update({
+  id: '/services/hosting',
+  path: '/services/hosting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesDomainsRoute = ServicesDomainsRouteImport.update({
+  id: '/services/domains',
+  path: '/services/domains',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesDataAdminRoute = ServicesDataAdminRouteImport.update({
+  id: '/services/data-admin',
+  path: '/services/data-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesAutomationRoute = ServicesAutomationRouteImport.update({
+  id: '/services/automation',
+  path: '/services/automation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesAiBusinessToolsRoute = ServicesAiBusinessToolsRouteImport.update({
@@ -468,10 +504,16 @@ export interface FileRoutesByFullPath {
   '/marketplace/post-project': typeof MarketplacePostProjectRoute
   '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
+  '/services/automation': typeof ServicesAutomationRoute
+  '/services/data-admin': typeof ServicesDataAdminRoute
+  '/services/domains': typeof ServicesDomainsRoute
+  '/services/hosting': typeof ServicesHostingRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
+  '/services/logo-branding': typeof ServicesLogoBrandingRoute
   '/services/marketing': typeof ServicesMarketingRoute
   '/services/marketplace': typeof ServicesMarketplaceRoute
+  '/services/menu-flyer-design': typeof ServicesMenuFlyerDesignRoute
   '/services/mobile-apps': typeof ServicesMobileAppsRoute
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
@@ -533,10 +575,16 @@ export interface FileRoutesByTo {
   '/marketplace/post-project': typeof MarketplacePostProjectRoute
   '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
+  '/services/automation': typeof ServicesAutomationRoute
+  '/services/data-admin': typeof ServicesDataAdminRoute
+  '/services/domains': typeof ServicesDomainsRoute
+  '/services/hosting': typeof ServicesHostingRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
+  '/services/logo-branding': typeof ServicesLogoBrandingRoute
   '/services/marketing': typeof ServicesMarketingRoute
   '/services/marketplace': typeof ServicesMarketplaceRoute
+  '/services/menu-flyer-design': typeof ServicesMenuFlyerDesignRoute
   '/services/mobile-apps': typeof ServicesMobileAppsRoute
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
@@ -603,10 +651,16 @@ export interface FileRoutesById {
   '/marketplace/post-project': typeof MarketplacePostProjectRoute
   '/marketplace/search': typeof MarketplaceSearchRoute
   '/services/ai-business-tools': typeof ServicesAiBusinessToolsRoute
+  '/services/automation': typeof ServicesAutomationRoute
+  '/services/data-admin': typeof ServicesDataAdminRoute
+  '/services/domains': typeof ServicesDomainsRoute
+  '/services/hosting': typeof ServicesHostingRoute
   '/services/lead-generation': typeof ServicesLeadGenerationRoute
   '/services/local-listings': typeof ServicesLocalListingsRoute
+  '/services/logo-branding': typeof ServicesLogoBrandingRoute
   '/services/marketing': typeof ServicesMarketingRoute
   '/services/marketplace': typeof ServicesMarketplaceRoute
+  '/services/menu-flyer-design': typeof ServicesMenuFlyerDesignRoute
   '/services/mobile-apps': typeof ServicesMobileAppsRoute
   '/services/social-media': typeof ServicesSocialMediaRoute
   '/services/voip': typeof ServicesVoipRoute
@@ -674,10 +728,16 @@ export interface FileRouteTypes {
     | '/marketplace/post-project'
     | '/marketplace/search'
     | '/services/ai-business-tools'
+    | '/services/automation'
+    | '/services/data-admin'
+    | '/services/domains'
+    | '/services/hosting'
     | '/services/lead-generation'
     | '/services/local-listings'
+    | '/services/logo-branding'
     | '/services/marketing'
     | '/services/marketplace'
+    | '/services/menu-flyer-design'
     | '/services/mobile-apps'
     | '/services/social-media'
     | '/services/voip'
@@ -739,10 +799,16 @@ export interface FileRouteTypes {
     | '/marketplace/post-project'
     | '/marketplace/search'
     | '/services/ai-business-tools'
+    | '/services/automation'
+    | '/services/data-admin'
+    | '/services/domains'
+    | '/services/hosting'
     | '/services/lead-generation'
     | '/services/local-listings'
+    | '/services/logo-branding'
     | '/services/marketing'
     | '/services/marketplace'
+    | '/services/menu-flyer-design'
     | '/services/mobile-apps'
     | '/services/social-media'
     | '/services/voip'
@@ -808,10 +874,16 @@ export interface FileRouteTypes {
     | '/marketplace/post-project'
     | '/marketplace/search'
     | '/services/ai-business-tools'
+    | '/services/automation'
+    | '/services/data-admin'
+    | '/services/domains'
+    | '/services/hosting'
     | '/services/lead-generation'
     | '/services/local-listings'
+    | '/services/logo-branding'
     | '/services/marketing'
     | '/services/marketplace'
+    | '/services/menu-flyer-design'
     | '/services/mobile-apps'
     | '/services/social-media'
     | '/services/voip'
@@ -857,10 +929,16 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ServicesAiBusinessToolsRoute: typeof ServicesAiBusinessToolsRoute
+  ServicesAutomationRoute: typeof ServicesAutomationRoute
+  ServicesDataAdminRoute: typeof ServicesDataAdminRoute
+  ServicesDomainsRoute: typeof ServicesDomainsRoute
+  ServicesHostingRoute: typeof ServicesHostingRoute
   ServicesLeadGenerationRoute: typeof ServicesLeadGenerationRoute
   ServicesLocalListingsRoute: typeof ServicesLocalListingsRoute
+  ServicesLogoBrandingRoute: typeof ServicesLogoBrandingRoute
   ServicesMarketingRoute: typeof ServicesMarketingRoute
   ServicesMarketplaceRoute: typeof ServicesMarketplaceRoute
+  ServicesMenuFlyerDesignRoute: typeof ServicesMenuFlyerDesignRoute
   ServicesMobileAppsRoute: typeof ServicesMobileAppsRoute
   ServicesSocialMediaRoute: typeof ServicesSocialMediaRoute
   ServicesVoipRoute: typeof ServicesVoipRoute
@@ -1025,6 +1103,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesMobileAppsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/menu-flyer-design': {
+      id: '/services/menu-flyer-design'
+      path: '/services/menu-flyer-design'
+      fullPath: '/services/menu-flyer-design'
+      preLoaderRoute: typeof ServicesMenuFlyerDesignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services/marketplace': {
       id: '/services/marketplace'
       path: '/services/marketplace'
@@ -1039,6 +1124,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesMarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/logo-branding': {
+      id: '/services/logo-branding'
+      path: '/services/logo-branding'
+      fullPath: '/services/logo-branding'
+      preLoaderRoute: typeof ServicesLogoBrandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services/local-listings': {
       id: '/services/local-listings'
       path: '/services/local-listings'
@@ -1051,6 +1143,34 @@ declare module '@tanstack/react-router' {
       path: '/services/lead-generation'
       fullPath: '/services/lead-generation'
       preLoaderRoute: typeof ServicesLeadGenerationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/hosting': {
+      id: '/services/hosting'
+      path: '/services/hosting'
+      fullPath: '/services/hosting'
+      preLoaderRoute: typeof ServicesHostingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/domains': {
+      id: '/services/domains'
+      path: '/services/domains'
+      fullPath: '/services/domains'
+      preLoaderRoute: typeof ServicesDomainsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/data-admin': {
+      id: '/services/data-admin'
+      path: '/services/data-admin'
+      fullPath: '/services/data-admin'
+      preLoaderRoute: typeof ServicesDataAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/automation': {
+      id: '/services/automation'
+      path: '/services/automation'
+      fullPath: '/services/automation'
+      preLoaderRoute: typeof ServicesAutomationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services/ai-business-tools': {
@@ -1493,10 +1613,16 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ServicesAiBusinessToolsRoute: ServicesAiBusinessToolsRoute,
+  ServicesAutomationRoute: ServicesAutomationRoute,
+  ServicesDataAdminRoute: ServicesDataAdminRoute,
+  ServicesDomainsRoute: ServicesDomainsRoute,
+  ServicesHostingRoute: ServicesHostingRoute,
   ServicesLeadGenerationRoute: ServicesLeadGenerationRoute,
   ServicesLocalListingsRoute: ServicesLocalListingsRoute,
+  ServicesLogoBrandingRoute: ServicesLogoBrandingRoute,
   ServicesMarketingRoute: ServicesMarketingRoute,
   ServicesMarketplaceRoute: ServicesMarketplaceRoute,
+  ServicesMenuFlyerDesignRoute: ServicesMenuFlyerDesignRoute,
   ServicesMobileAppsRoute: ServicesMobileAppsRoute,
   ServicesSocialMediaRoute: ServicesSocialMediaRoute,
   ServicesVoipRoute: ServicesVoipRoute,

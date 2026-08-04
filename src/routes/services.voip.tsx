@@ -1,17 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ServicePageTemplate } from "@/components/ServicePageTemplate";
-import { getService } from "@/lib/services";
+import { ServiceProductPage } from "@/components/services/ServiceProductPage";
+import { getServicePage } from "@/lib/servicePages";
 
-const service = getService("voip_phone")!;
+const page = getServicePage("voip")!;
 
 export const Route = createFileRoute("/services/voip")({
   head: () => ({
     meta: [
-      { title: `${service.title} — TAKATAK` },
-      { name: "description", content: service.shortDescription },
-      { property: "og:title", content: `${service.title} — TAKATAK` },
-      { property: "og:description", content: service.shortDescription },
+      { title: `${page.title.en} — TAKATAK` },
+      { name: "description", content: page.tagline.en },
+      { property: "og:title", content: `${page.title.en} — TAKATAK` },
+      { property: "og:description", content: page.tagline.en },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: () => <ServicePageTemplate service={service} />,
+  component: () => <ServiceProductPage page={page} />,
 });

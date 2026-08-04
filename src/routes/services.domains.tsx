@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ServiceProductPage } from "@/components/services/ServiceProductPage";
 import { getServicePage } from "@/lib/servicePages";
 
-const page = getServicePage("lead-generation")!;
+const page = getServicePage("domains")!;
 
-export const Route = createFileRoute("/services/lead-generation")({
+export const Route = createFileRoute("/services/domains")({
   head: () => ({
     meta: [
       { title: `${page.title.en} — TAKATAK` },

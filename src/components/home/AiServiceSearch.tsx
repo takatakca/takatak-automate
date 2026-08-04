@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Mic, MicOff, Search } from "lucide-react";
-import { resolveIntent, searchSuggestions, trackEvent, type IntentMatch } from "@/lib/serviceIntent";
+import { resolveIntent, searchSuggestions, searchSuggestionsFr, trackEvent, type IntentMatch } from "@/lib/serviceIntent";
+import { useLanguage } from "@/hooks/useLanguage";
+import { speechLocale } from "@/lib/i18n";
 import { GuidedAssistantPanel } from "./GuidedAssistantPanel";
 
 type SpeechRecognitionLike = {
@@ -27,6 +29,8 @@ export function AiServiceSearch() {
   const [hint, setHint] = useState<string | null>(null);
   const [result, setResult] = useState<{ query: string; match: IntentMatch } | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const { t, lang } = useLanguage();
+  const suggestions = lang === "fr" ? searchSuggestionsFr : searchSuggestions;
 
   useEffect(() => {
     setVoiceSupported(Boolean(getRecognitionCtor()));
@@ -52,7 +56,7 @@ export function AiServiceSearch() {
     }
     const recognition = new Ctor();
     recognitionRef.current = recognition;
-    recognition.lang = "en-CA";
+    recognition.lang = speechLocale[lang];
     recognition.interimResults = false;
     recognition.continuous = false;
     recognition.onresult = (e) => {
@@ -63,12 +67,12 @@ export function AiServiceSearch() {
     };
     recognition.onerror = () => {
       setListening(false);
-      setHint("Voice input didn't work — type your request instead.");
+      setHint(t("search.voiceError"));
     };
     recognition.onend = () => setListening(false);
     recognition.start();
     setListening(true);
-    setHint("Listening…");
+    setHint(t("search.listening"));
   }
 
   return (
@@ -84,15 +88,15 @@ export function AiServiceSearch() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="What do you need? e.g. restaurant website, hosting, more leads"
-          aria-label="Describe what you need"
+          placeholder={t("search.placeholder")}
+          aria-label={t("search.aria")}
           className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground"
         />
         {voiceSupported && (
           <button
             type="button"
             onClick={toggleVoice}
-            aria-label={listening ? "Stop voice input" : "Start voice input"}
+            aria-label={listening ? t("search.voiceStop") : t("search.voiceStart")}
             className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border transition-colors ${
               listening
                 ? "border-primary/60 bg-primary/15 text-primary animate-pulse"
@@ -107,12 +111,12 @@ export function AiServiceSearch() {
           className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl px-4 text-sm font-semibold text-primary-foreground"
           style={{ backgroundImage: "var(--gradient-hero)" }}
         >
-          Go <ArrowRight size={15} />
+          {t("search.go")} <ArrowRight size={15} />
         </button>
       </form>
 
       <div className="mt-3 flex flex-wrap gap-2">
-        {searchSuggestions.map((s) => (
+        {suggestions.map((s) => (
           <button
             key={s.label}
             type="button"
