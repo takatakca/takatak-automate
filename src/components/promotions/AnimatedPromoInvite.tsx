@@ -92,7 +92,7 @@ export function AnimatedPromoInvite() {
   };
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center px-4 pb-4 sm:justify-start sm:pb-6 sm:pl-6">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center px-4 pb-24 sm:justify-start sm:pb-6 sm:pl-6">
       <div className="tk-rise-in pointer-events-auto w-full max-w-sm overflow-hidden rounded-2xl border border-primary/40 bg-card shadow-[var(--shadow-glow)]">
         <div className="relative p-5">
           <button
