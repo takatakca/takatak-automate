@@ -451,4 +451,9 @@ export const fr: Record<TranslationKey, string> = {
   "home.support.b3": "Sans engagement",
   "home.final.cta3": "Parler à TAKATAK",
   "home.final.close": "Commencez avec un service. Évoluez vers une plateforme complète.",
+  "search.ex1": "Je veux un site web premium pour mon restaurant",
+  "search.ex2": "J'ai besoin d'un domaine et d'un hébergement",
+  "search.ex3": "Je veux plus de clients ce mois-ci",
+  "search.ex4": "Je veux automatiser mon entreprise",
+  "search.ex5": "J'ai besoin d'un logo et d'une présence en ligne",
 };

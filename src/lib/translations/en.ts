@@ -449,6 +449,11 @@ export const en = {
   "home.support.b3": "No obligation",
   "home.final.cta3": "Talk to TAKATAK",
   "home.final.close": "Start with one service. Grow into the full platform.",
+  "search.ex1": "I need a premium website for my restaurant",
+  "search.ex2": "I need hosting and a domain",
+  "search.ex3": "I need more customers this month",
+  "search.ex4": "I want to automate my business",
+  "search.ex5": "I need a logo and online presence",
 } as const;
 
 export type TranslationKey = keyof typeof en;
