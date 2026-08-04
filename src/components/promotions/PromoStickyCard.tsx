@@ -7,10 +7,12 @@ import {
   isStickyPromoDismissed,
   trackPromo,
 } from "@/lib/promotions";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function PromoStickyCard() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [show, setShow] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (isStickyPromoDismissed()) return;
@@ -35,11 +37,11 @@ export function PromoStickyCard() {
   return (
     <div
       role="complementary"
-      aria-label="First service offer"
+      aria-label={t("promo.card.aria")}
       className="fixed z-40 left-3 right-3 bottom-20 sm:left-auto sm:right-5 sm:bottom-24 sm:w-[340px] rounded-xl border border-border bg-card shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] p-4"
     >
       <button
-        aria-label="Dismiss"
+        aria-label={t("promo.card.dismiss")}
         onClick={dismiss}
         className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
       >
@@ -50,9 +52,9 @@ export function PromoStickyCard() {
           <Gift size={18} />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-foreground">New client offer</p>
+          <p className="text-sm font-semibold text-foreground">{t("promo.card.title")}</p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Create an account and your 10% first-service credit is saved in your TAKATAK dashboard.
+            {t("promo.card.body")}
           </p>
         </div>
       </div>
@@ -63,13 +65,13 @@ export function PromoStickyCard() {
           onClick={() => trackPromo("promo_banner_clicked", { surface: "sticky_card" })}
           className="flex-1 text-center px-3 py-2 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90"
         >
-          Create account and claim 10%
+          {t("promo.card.cta")}
         </Link>
         <button
           onClick={dismiss}
           className="text-xs text-muted-foreground hover:text-foreground"
         >
-          Not now
+          {t("promo.card.later")}
         </button>
       </div>
     </div>

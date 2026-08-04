@@ -1,25 +1,30 @@
-const ITEMS = [
-  "10% off your first TAKATAK service",
-  "Websites, logos, hosting, marketing and business tools",
-  "Managed delivery through TAKATAK",
-  "QMAPS local visibility",
-  "FLEXS lead generation",
-  "Secure project workspace",
-  "Human-managed quality control",
+import { useLanguage } from "@/hooks/useLanguage";
+import type { TranslationKey } from "@/lib/i18n";
+
+const KEYS: readonly TranslationKey[] = [
+  "promo.marquee.1",
+  "promo.marquee.2",
+  "promo.marquee.3",
+  "promo.marquee.4",
+  "promo.marquee.5",
+  "promo.marquee.6",
+  "promo.marquee.7",
 ];
 
 export function PromoMarquee() {
-  const loop = [...ITEMS, ...ITEMS];
+  const { t } = useLanguage();
+  const items = KEYS.map((k) => t(k));
+  const loop = [...items, ...items];
   return (
     <div className="border-y border-border bg-card/40 overflow-hidden">
       <div
         className="flex gap-12 py-3 whitespace-nowrap text-sm"
         style={{ animation: "promoMarquee 60s linear infinite" }}
       >
-        {loop.map((t, i) => (
+        {loop.map((label, i) => (
           <span key={i} className="inline-flex items-center gap-2 text-foreground/80">
             <span className="h-1.5 w-1.5 rounded-full bg-primary/70" />
-            {t}
+            {label}
           </span>
         ))}
       </div>

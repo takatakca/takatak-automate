@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { SiteShell } from "@/components/layout/SiteShell";
-import { pricingGroups, formatCAD, cadenceLabel } from "@/lib/pricing";
+import { pricingGroups, formatCAD, cadenceKeys } from "@/lib/pricing";
+import { useLanguage } from "@/hooks/useLanguage";
+import type { TranslationKey } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -18,27 +20,33 @@ export const Route = createFileRoute("/pricing")({
 });
 
 function PricingPage() {
+  const { t } = useLanguage();
+  /** Falls back to the source-of-truth English name when no key exists. */
+  const label = (key: string, fallback: string) => {
+    const value = t(key as TranslationKey);
+    return value === key ? fallback : value;
+  };
+
   return (
     <SiteShell>
       <div className="mx-auto max-w-7xl px-4 py-14 md:py-20">
-        <h1 className="text-3xl font-bold text-foreground md:text-4xl">Pricing</h1>
-        <p className="mt-3 max-w-2xl text-base text-muted-foreground">
-          Starting prices in Canadian dollars. Final pricing depends on scope, integrations and timeline.
-        </p>
+        <h1 className="text-3xl font-bold text-foreground md:text-4xl">{t("pricing.title")}</h1>
+        <p className="mt-3 max-w-2xl text-base text-muted-foreground">{t("pricing.intro")}</p>
 
         <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {pricingGroups.map((g) => (
             <div key={g.key} className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-              <h2 className="text-base font-semibold text-foreground">{g.title}</h2>
-              <p className="mt-1 text-sm text-muted-foreground">{g.blurb}</p>
+              <h2 className="text-base font-semibold text-foreground">{label(`pg.${g.key}.title`, g.title)}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{label(`pg.${g.key}.blurb`, g.blurb)}</p>
               <ul className="mt-4 space-y-2.5">
-                {g.tiers.map((t) => (
-                  <li key={t.key} className="flex items-baseline justify-between gap-3 border-b border-border/60 pb-2 last:border-0">
-                    <span className="text-sm text-muted-foreground">{t.name}</span>
+                {g.tiers.map((tier) => (
+                  <li key={tier.key} className="flex items-baseline justify-between gap-3 border-b border-border/60 pb-2 last:border-0">
+                    <span className="text-sm text-muted-foreground">{label(`tier.${g.key}.${tier.key}`, tier.name)}</span>
                     <span className="shrink-0 text-sm font-bold text-foreground">
-                      {formatCAD(t.amount)}
+                      {formatCAD(tier.amount)}
                       <span className="text-xs font-medium text-muted-foreground">
-                        {cadenceLabel(t.cadence)}{t.suffix ? ` ${t.suffix}` : ""}
+                        {t(cadenceKeys[tier.cadence] as TranslationKey)}
+                        {tier.suffix ? ` ${tier.suffix === "+ ad spend" ? t("suffix.adSpend") : tier.suffix}` : ""}
                       </span>
                     </span>
                   </li>
@@ -48,11 +56,13 @@ function PricingPage() {
                 to={g.href as never}
                 className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-primary hover:underline"
               >
-                Get started <ArrowRight size={14} />
+                {t("pricing.getStarted")} <ArrowRight size={14} />
               </Link>
             </div>
           ))}
         </div>
+
+        <p className="mt-10 text-sm text-muted-foreground">{t("pricing.note")}</p>
       </div>
     </SiteShell>
   );

@@ -7,10 +7,12 @@ import {
   isPromoBarDismissed,
   trackPromo,
 } from "@/lib/promotions";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function PromoTopBar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [hidden, setHidden] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (isPromoBarDismissed()) return;
@@ -34,8 +36,8 @@ export function PromoTopBar() {
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-3 text-[13px]">
         <Sparkles size={14} className="text-primary shrink-0" aria-hidden />
         <p className="flex-1 truncate">
-          <span className="font-medium">New client offer</span>
-          <span className="text-white/70"> — get 10% off your first TAKATAK service.</span>
+          <span className="font-medium">{t("promo.bar.title")}</span>
+          <span className="text-white/70">{t("promo.bar.body")}</span>
         </p>
         <Link
           to="/signup"
@@ -43,10 +45,10 @@ export function PromoTopBar() {
           onClick={() => trackPromo("promo_banner_clicked", { surface: "top_bar" })}
           className="hidden sm:inline-flex items-center rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:opacity-90"
         >
-          Claim offer
+          {t("promo.bar.cta")}
         </Link>
         <button
-          aria-label="Dismiss offer"
+          aria-label={t("promo.bar.dismiss")}
           onClick={() => {
             dismissPromoBar();
             setHidden(true);

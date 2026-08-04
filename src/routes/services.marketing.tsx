@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ServiceProductPage } from "@/components/services/ServiceProductPage";
 import { getServicePage } from "@/lib/servicePages";
 
-const page = getServicePage("marketing")!;
-
 export const Route = createFileRoute("/services/marketing")({
-  head: () => ({
+  head: () => {
+    const page = getServicePage("marketing")!;
+    return {
     meta: [
       { title: `${page.title.en} — TAKATAK` },
       { name: "description", content: page.tagline.en },
@@ -14,6 +14,7 @@ export const Route = createFileRoute("/services/marketing")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
-  }),
-  component: () => <ServiceProductPage page={page} />,
+    };
+  },
+  component: () => <ServiceProductPage page={getServicePage("marketing")!} />,
 });

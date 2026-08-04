@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { apiPost } from "@/lib/api-client";
 import type { UpmindHostingPlan } from "@/lib/upmindConfig";
+import { useLanguage } from "@/hooks/useLanguage";
 
 /**
  * Shown when Upmind returns 404 / unauthorized for a hosting product.
@@ -11,6 +12,7 @@ import type { UpmindHostingPlan } from "@/lib/upmindConfig";
  */
 export function HostingRequestFallback({ plan, diagnosticCode }: { plan: UpmindHostingPlan; diagnosticCode?: string }) {
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [name, setName] = useState(user?.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [phone, setPhone] = useState(user?.phone ?? "");
@@ -22,7 +24,7 @@ export function HostingRequestFallback({ plan, diagnosticCode }: { plan: UpmindH
     event.preventDefault();
     setError(null);
     if (!isAuthenticated && !email && !phone) {
-      setError("Add an email or phone so TAKATAK can contact you.");
+      setError(t("fallback.hosting.contactRequired"));
       return;
     }
     setStatus("submitting");
@@ -56,8 +58,8 @@ export function HostingRequestFallback({ plan, diagnosticCode }: { plan: UpmindH
         <div className="flex items-start gap-3">
           <CheckCircle2 className="text-primary mt-0.5" size={20} />
           <div>
-            <p className="font-semibold text-foreground">Hosting request received</p>
-            <p className="mt-1 text-sm text-muted-foreground">TAKATAK will reach out about your {plan.name} plan shortly.</p>
+            <p className="font-semibold text-foreground">{t("fallback.hosting.received")}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("fallback.hosting.receivedBody", { plan: plan.name })}</p>
           </div>
         </div>
       </div>
@@ -71,22 +73,22 @@ export function HostingRequestFallback({ plan, diagnosticCode }: { plan: UpmindH
           <AlertTriangle size={16} />
         </div>
         <div className="min-w-0">
-          <p className="font-semibold text-foreground">{plan.name} — request this plan</p>
-          <p className="mt-1 text-sm text-muted-foreground">Checkout is temporarily unavailable. TAKATAK can provision it for you.</p>
+          <p className="font-semibold text-foreground">{plan.name} — {t("fallback.hosting.planLabel")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("fallback.hosting.body")}</p>
         </div>
       </div>
       <form onSubmit={submit} className="mt-4 grid grid-cols-1 gap-3">
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("fallback.domain.nameLabel")} className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
         {!isAuthenticated && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("fallback.domain.emailLabel")} className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
+            <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t("fallback.domain.phoneLabel")} className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
           </div>
         )}
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Anything we should know? (optional)" rows={2} className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t("fallback.domain.notesLabel")} rows={2} className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
         {error && <p className="text-sm text-destructive">{error}</p>}
         <button disabled={status === "submitting"} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60">
-          {status === "submitting" ? "Sending…" : "Request this hosting plan"} <ArrowRight size={14} />
+          {status === "submitting" ? t("fallback.domain.sending") : t("fallback.hosting.submit")} <ArrowRight size={14} />
         </button>
       </form>
     </div>
