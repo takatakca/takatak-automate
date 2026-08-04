@@ -1,6 +1,8 @@
-import { ArrowRight, ShieldCheck, Sparkles, Star, Zap, Server, Rocket } from "lucide-react";
+import { ArrowRight, ShieldCheck, Headset, Star, Zap, Server, Rocket, Globe } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { AiServiceSearch } from "./AiServiceSearch";
+import { HeroSystemMap } from "./HeroSystemMap";
+import { openLiveChat } from "@/lib/chatProvider";
 
 const CHIPS = [
   { label: "Website", to: "/services/websites" },
@@ -41,25 +43,22 @@ export function PremiumHero() {
           maskImage: "radial-gradient(ellipse at center, black 45%, transparent 85%)",
         }}
       />
+      <div aria-hidden className="pointer-events-none absolute inset-0 text-foreground opacity-70">
+        <HeroSystemMap />
+      </div>
 
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/85 backdrop-blur">
-            <Sparkles size={12} className="text-primary" />
+            <Globe size={12} className="text-primary" />
             Canadian business platform
           </span>
           <h1 className="mt-5 text-3xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[46px]">
-            Business services, websites, domains, hosting, and digital growth —{" "}
-            <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(90deg, var(--brand-accent-cyan), var(--brand-accent-violet))" }}
-            >
-              all in one TAKATAK platform
-            </span>
+            Tell TAKATAK what you want to build.
           </h1>
           <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">
-            Find the right service, launch a project, manage delivery, and grow your business with
-            professional support and smart tools.
+            Search, speak, or browse. TAKATAK connects you to domains, hosting, websites, apps,
+            marketing, automation, and managed service delivery.
           </p>
 
           <div className="mt-7">
@@ -95,6 +94,13 @@ export function PremiumHero() {
             >
               Search domains
             </Link>
+            <button
+              type="button"
+              onClick={() => openLiveChat({ page: "/" })}
+              className="inline-flex items-center gap-2 rounded-md px-4 py-3 text-sm font-semibold text-foreground/85 underline-offset-4 hover:text-foreground hover:underline"
+            >
+              <Headset size={15} className="text-primary" /> Talk to TAKATAK
+            </button>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
