@@ -21,7 +21,7 @@ const CHIPS: readonly { key: TranslationKey; to: string }[] = [
 export function PremiumHero() {
   const { t } = useLanguage();
   return (
-    <section className="brand-dark relative overflow-hidden border-b border-border">
+    <section id="tk-hero" className="brand-dark relative overflow-hidden border-b border-border">
       {/* Ambient gradient wash */}
       <div
         aria-hidden
@@ -38,7 +38,7 @@ export function PremiumHero() {
       />
       <div
         aria-hidden
-        className="absolute inset-0 opacity-[0.18]"
+        className="tk-grid-drift absolute inset-0 opacity-[0.18]"
         style={{
           backgroundImage:
             "linear-gradient(var(--brand-dark-border) 1px, transparent 1px), linear-gradient(90deg, var(--brand-dark-border) 1px, transparent 1px)",
@@ -88,7 +88,7 @@ export function PremiumHero() {
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               to="/marketplace"
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
+              className="tk-glow-cta inline-flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               {t("home.hero.ctaMarketplace")} <ArrowRight size={15} />
             </Link>
@@ -128,7 +128,10 @@ export function PremiumHero() {
                   <div className="h-2.5 w-2.5 rounded-full bg-yellow-400/70" />
                   <div className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
                 </div>
-                <div className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-foreground/80">dashboard.takatak.ca</div>
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+                  <span className="tk-blink inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                  dashboard.takatak.ca
+                </div>
               </div>
               <div className="mt-4 grid grid-cols-3 gap-3">
                 {[
