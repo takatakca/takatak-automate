@@ -95,7 +95,8 @@ export function SiteHeader() {
             <button
               type="button"
               className="inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-2 text-foreground/75 transition-colors hover:text-foreground"
-              onClick={() => setMegaOpen((v) => !v)}
+              onClick={() => setMegaOpen(true)}
+              onFocus={() => setMegaOpen(true)}
               aria-expanded={megaOpen}
               aria-haspopup="true"
             >
