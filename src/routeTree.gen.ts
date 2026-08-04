@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as PrivacyManagerRouteImport } from './routes/privacy-manager'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as OtpRouteImport } from './routes/otp'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
@@ -23,6 +24,7 @@ import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ServicesWebsitesRouteImport } from './routes/services.websites'
@@ -95,6 +97,11 @@ const PrivacyManagerRoute = PrivacyManagerRouteImport.update({
   path: '/privacy-manager',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OtpRoute = OtpRouteImport.update({
   id: '/otp',
   path: '/otp',
@@ -143,6 +150,11 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesIndexRoute = ServicesIndexRouteImport.update({
+  id: '/services/',
+  path: '/services/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
@@ -427,6 +439,7 @@ export interface FileRoutesByFullPath {
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/mcp': typeof McpRoute
   '/otp': typeof OtpRoute
+  '/pricing': typeof PricingRoute
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -465,6 +478,7 @@ export interface FileRoutesByFullPath {
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/services/': typeof ServicesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
   '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
@@ -492,6 +506,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/otp': typeof OtpRoute
+  '/pricing': typeof PricingRoute
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -528,6 +543,7 @@ export interface FileRoutesByTo {
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard': typeof DashboardIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
+  '/services': typeof ServicesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
   '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
@@ -558,6 +574,7 @@ export interface FileRoutesById {
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/mcp': typeof McpRoute
   '/otp': typeof OtpRoute
+  '/pricing': typeof PricingRoute
   '/privacy-manager': typeof PrivacyManagerRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -596,6 +613,7 @@ export interface FileRoutesById {
   '/services/websites': typeof ServicesWebsitesRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/services/': typeof ServicesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/dashboard/admin/exceptions': typeof DashboardAdminExceptionsRoute
   '/dashboard/admin/payouts': typeof DashboardAdminPayoutsRoute
@@ -627,6 +645,7 @@ export interface FileRouteTypes {
     | '/marketplace'
     | '/mcp'
     | '/otp'
+    | '/pricing'
     | '/privacy-manager'
     | '/search'
     | '/signup'
@@ -665,6 +684,7 @@ export interface FileRouteTypes {
     | '/services/websites'
     | '/dashboard/'
     | '/marketplace/'
+    | '/services/'
     | '/.mcp/invoke-tool/$tool'
     | '/dashboard/admin/exceptions'
     | '/dashboard/admin/payouts'
@@ -692,6 +712,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mcp'
     | '/otp'
+    | '/pricing'
     | '/privacy-manager'
     | '/search'
     | '/signup'
@@ -728,6 +749,7 @@ export interface FileRouteTypes {
     | '/services/websites'
     | '/dashboard'
     | '/marketplace'
+    | '/services'
     | '/.mcp/invoke-tool/$tool'
     | '/dashboard/admin/exceptions'
     | '/dashboard/admin/payouts'
@@ -757,6 +779,7 @@ export interface FileRouteTypes {
     | '/marketplace'
     | '/mcp'
     | '/otp'
+    | '/pricing'
     | '/privacy-manager'
     | '/search'
     | '/signup'
@@ -795,6 +818,7 @@ export interface FileRouteTypes {
     | '/services/websites'
     | '/dashboard/'
     | '/marketplace/'
+    | '/services/'
     | '/.mcp/invoke-tool/$tool'
     | '/dashboard/admin/exceptions'
     | '/dashboard/admin/payouts'
@@ -825,6 +849,7 @@ export interface RootRouteChildren {
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   McpRoute: typeof McpRoute
   OtpRoute: typeof OtpRoute
+  PricingRoute: typeof PricingRoute
   PrivacyManagerRoute: typeof PrivacyManagerRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
@@ -840,6 +865,7 @@ export interface RootRouteChildren {
   ServicesSocialMediaRoute: typeof ServicesSocialMediaRoute
   ServicesVoipRoute: typeof ServicesVoipRoute
   ServicesWebsitesRoute: typeof ServicesWebsitesRoute
+  ServicesIndexRoute: typeof ServicesIndexRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
@@ -871,6 +897,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy-manager'
       fullPath: '/privacy-manager'
       preLoaderRoute: typeof PrivacyManagerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/otp': {
@@ -941,6 +974,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/': {
+      id: '/services/'
+      path: '/services'
+      fullPath: '/services/'
+      preLoaderRoute: typeof ServicesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace/': {
@@ -1444,6 +1484,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketplaceRoute: MarketplaceRouteWithChildren,
   McpRoute: McpRoute,
   OtpRoute: OtpRoute,
+  PricingRoute: PricingRoute,
   PrivacyManagerRoute: PrivacyManagerRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
@@ -1460,6 +1501,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesSocialMediaRoute: ServicesSocialMediaRoute,
   ServicesVoipRoute: ServicesVoipRoute,
   ServicesWebsitesRoute: ServicesWebsitesRoute,
+  ServicesIndexRoute: ServicesIndexRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
