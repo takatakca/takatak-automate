@@ -206,3 +206,23 @@
   background-color: var(--brand-dark);
   color: var(--brand-dark-foreground);
 }
+
+/* Decorative node pulse used by the hero infrastructure map. */
+@keyframes tk-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.9); }
+  50%      { opacity: 0.75; transform: scale(1.15); }
+}
+.tk-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tk-pulse 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-pulse { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
