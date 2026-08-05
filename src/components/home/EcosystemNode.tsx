@@ -34,7 +34,7 @@ export function EcosystemNode({ node, reached, current, selected, onEnter, onLea
       aria-label={`${tx(node.label)} — ${tx(node.explain)}`}
       data-state={selected ? "selected" : reached ? "reached" : "idle"}
       className={`tk-eco-node group block rounded-2xl border p-3 text-left backdrop-blur transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-        positioned ? "absolute w-[196px] -translate-x-1/2 -translate-y-1/2" : "w-full"
+        positioned ? "absolute w-[208px] -translate-x-1/2 -translate-y-1/2" : "w-full"
       } ${
         reached || selected
           ? "border-primary/45 bg-white/[0.09] shadow-[0_24px_60px_-30px_color-mix(in_oklab,var(--primary)_60%,transparent)]"
@@ -46,7 +46,7 @@ export function EcosystemNode({ node, reached, current, selected, onEnter, onLea
           <Icon size={15} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block truncate text-[13px] font-semibold text-foreground">{tx(node.label)}</span>
+          <span className="block text-[13px] leading-tight font-semibold text-foreground">{tx(node.label)}</span>
           <span className="block truncate text-[10.5px] text-muted-foreground">{tx(node.detail)}</span>
         </span>
       </span>
