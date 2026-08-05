@@ -340,3 +340,55 @@
   .tk-tilt, .tk-panel-3d { transform: none !important; }
   .tk-float, .tk-float-slow, .tk-rise-in { animation: none; }
 }
+
+/* ---------- TAKATAK signature hero / motion system ---------- */
+
+/* Reveal variants (shared Reveal component). */
+.tk-reveal[data-variant="fade-in"]     { transform: none; }
+.tk-reveal[data-variant="slide-left"]  { transform: translateX(24px); }
+.tk-reveal[data-variant="slide-right"] { transform: translateX(-24px); }
+.tk-reveal[data-variant="scale-in"]    { transform: scale(0.96); }
+.tk-reveal[data-shown="true"]          { transform: none; }
+
+/* Travelling pulse along an active FlowLine connection. */
+@keyframes tk-flow-dash {
+  from { stroke-dashoffset: 234; }
+  to   { stroke-dashoffset: 0; }
+}
+.tk-flow-dash { animation: tk-flow-dash 1.9s linear infinite; }
+
+/* Pointer-following ambient light on dark surfaces. */
+.tk-pointer-glow { position: relative; isolation: isolate; }
+.tk-pointer-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    320px circle at var(--tk-gx, 70%) var(--tk-gy, 20%),
+    color-mix(in oklab, var(--primary) 12%, transparent),
+    transparent 70%
+  );
+  transition: opacity 0.3s ease;
+}
+
+/* Clean angled edge between the light header and the dark hero. */
+.tk-section-edge {
+  height: 26px;
+  pointer-events: none;
+}
+.tk-section-edge[data-direction="to-dark"] {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--brand-dark) 0%, transparent), transparent);
+  border-top: 1px solid color-mix(in oklab, var(--primary) 25%, transparent);
+}
+
+/* Ecosystem node depth + selection lift. */
+.tk-eco-node { transform-origin: center; }
+.tk-eco-node[data-state="selected"] { z-index: 5; }
+.tk-eco-node:hover { border-color: color-mix(in oklab, var(--primary) 55%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-flow-dash { animation: none; }
+  .tk-pointer-glow::before { display: none; }
+}

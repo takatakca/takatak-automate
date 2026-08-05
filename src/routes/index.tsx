@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { brand } from "@/lib/brand";
 import { PromoMarquee } from "@/components/promotions/PromoMarquee";
-import { PremiumHero } from "@/components/home/PremiumHero";
+import { TakatakEcosystemHero } from "@/components/home/TakatakEcosystemHero";
 import { DiscoverySection } from "@/components/home/DiscoverySection";
 import { PopularUpgradesSection } from "@/components/home/PopularUpgradesSection";
 import { DomainHostingSpotlight } from "@/components/home/DomainHostingSpotlight";
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <SiteShell>
-      <PremiumHero />
+      <TakatakEcosystemHero />
       <PromoMarquee />
       <DiscoverySection />
       <ServiceShowcaseSlider />
