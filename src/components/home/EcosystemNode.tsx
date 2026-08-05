@@ -39,7 +39,7 @@ export function EcosystemNode({ node, reached, current, selected, onEnter, onLea
         reached || selected
           ? "border-primary/45 bg-white/[0.09] shadow-[0_24px_60px_-30px_color-mix(in_oklab,var(--primary)_60%,transparent)]"
           : "border-white/12 bg-white/[0.045]"
-      } ${selected ? "-translate-y-[calc(50%+6px)]" : ""}`}
+      } ${selected && positioned ? "-translate-y-[calc(50%+6px)]" : ""}`}
     >
       <span className="flex items-center gap-2">
         <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg transition-colors ${reached || selected ? "bg-primary/20 text-primary" : "bg-white/10 text-foreground/70"}`}>
