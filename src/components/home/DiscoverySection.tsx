@@ -35,8 +35,18 @@ const RAIL: readonly { icon: LucideIcon; k: string; to: string }[] = [
 export function DiscoverySection() {
   const { t } = useLanguage();
   return (
-    <section className="border-b border-border bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:py-24">
+    <section className="relative border-b border-border bg-secondary/25">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.5]"
+        style={{
+          backgroundImage:
+            "linear-gradient(color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
+          maskImage: "radial-gradient(ellipse at 50% 0%, black 20%, transparent 78%)",
+        }}
+      />
+      <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
         <Reveal>
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
             <div className="min-w-0">

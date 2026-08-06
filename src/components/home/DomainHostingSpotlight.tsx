@@ -6,8 +6,15 @@ import { useLanguage } from "@/hooks/useLanguage";
 export function DomainHostingSpotlight() {
   const { t } = useLanguage();
   return (
-    <section className="border-y border-border bg-secondary/30">
-      <div className="mx-auto max-w-7xl px-4 py-14 md:py-20">
+    <section className="relative overflow-hidden border-y border-border bg-secondary/30">
+      <svg aria-hidden viewBox="0 0 1200 400" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full text-primary opacity-[0.16]">
+        <path d="M 60 340 C 320 340, 320 90, 600 90 C 880 90, 880 320, 1140 320" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M 60 90 C 340 90, 340 300, 600 300 C 860 300, 860 120, 1140 120" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="6 10" />
+        {[60, 320, 600, 880, 1140].map((x) => (
+          <circle key={x} cx={x} cy={x === 600 ? 90 : 200} r="4" fill="currentColor" />
+        ))}
+      </svg>
+      <div className="relative mx-auto max-w-7xl px-4 py-14 md:py-20">
         <h2 className="text-2xl font-bold text-foreground md:text-3xl">{t("home.spot.title")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">{t("home.spot.subtitle")}</p>
 

@@ -392,3 +392,9 @@
   .tk-flow-dash { animation: none; }
   .tk-pointer-glow::before { display: none; }
 }
+
+/* Package 3 — homepage rhythm utilities */
+@utility tk-no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}

@@ -14,8 +14,16 @@ export function PopularUpgradesSection() {
   const packages = IDS.map((id) => getPackage(id)).filter(Boolean);
 
   return (
-    <section className="border-b border-border bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:py-24">
+    <section className="relative border-b border-border bg-background">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background:
+            "radial-gradient(700px 320px at 85% 10%, color-mix(in oklab, var(--primary) 8%, transparent), transparent 65%)",
+        }}
+      />
+      <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
         <Reveal>
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
             <h2 className="min-w-0 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
