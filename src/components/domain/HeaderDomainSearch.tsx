@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Globe2 } from "lucide-react";
 import { DomainSearchOverlay } from "./DomainSearchOverlay";
+import { HeaderProductButton } from "@/components/layout/HeaderProductAction";
 import { useLanguage } from "@/hooks/useLanguage";
 
 /**
@@ -26,21 +27,15 @@ export function HeaderDomainSearch({ compact = false }: { compact?: boolean }) {
 
   return (
     <>
-      <button
+      <HeaderProductButton
         ref={buttonRef}
-        type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-label={t("nav.domainOpen")}
-        className={
-          compact
-            ? "grid h-10 w-10 place-items-center rounded-md border border-border text-foreground hover:bg-secondary"
-            : "group inline-flex shrink-0 items-center gap-1.5 rounded-md border border-primary/45 bg-primary/5 px-3 py-2 text-[13px] font-semibold text-foreground transition-all hover:border-primary/70 hover:bg-primary/10 whitespace-nowrap"
-        }
-      >
-        <Globe2 size={15} className="text-primary transition-transform group-hover:scale-110" />
-        {!compact && t("nav.findDomain")}
-      </button>
+        expanded={open}
+        compact={compact}
+        label={t("nav.findDomain")}
+        tooltip={t("nav.domainDesc")}
+        icon={Globe2}
+      />
 
       {open && (
         <>
