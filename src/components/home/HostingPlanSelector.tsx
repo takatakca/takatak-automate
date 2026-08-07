@@ -91,7 +91,7 @@ export function HostingPlanSelector() {
 
         <Link
           to="/hosting"
-          search={{ plan: plan.key }}
+          hash={plan.key}
           className="mt-6 inline-flex w-fit items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
         >
           {t("hosting.selector.cta")} <ArrowRight size={14} />
