@@ -71,7 +71,7 @@ export function SiteHeader() {
           <span className="w-1.5 h-1.5 rounded-full bg-primary mt-3" aria-hidden />
         </Link>
         <div className="hidden md:flex flex-1 min-w-0 items-center gap-1.5">
-          <div className="min-w-0 flex-1 max-w-md">
+          <div className="min-w-[220px] flex-1 max-w-md">
             <UniversalSearchPanel />
           </div>
           <HeaderDomainSearch />
@@ -90,7 +90,7 @@ export function SiteHeader() {
             introClass="animate-fade-in"
           />
         </div>
-        <ul className="hidden lg:flex items-center gap-0.5 text-[13px] font-medium ml-auto">
+        <ul className="hidden lg:flex items-center gap-0 shrink-0 text-[13px] font-medium ml-auto">
           {primaryNav.map((n) => (
             <li key={n.to}>
               <Link
