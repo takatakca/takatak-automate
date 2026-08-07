@@ -75,7 +75,7 @@ export function SiteHeader() {
             <UniversalSearchPanel />
           </div>
           <HeaderDomainSearch />
-          <span className="hidden xl:contents">
+          <span className="hidden 2xl:contents">
             <HeaderProductLink
               to="/services/local-listings"
               label="QMAPS"
@@ -91,7 +91,7 @@ export function SiteHeader() {
               introClass="animate-fade-in"
             />
           </span>
-          <span className="contents xl:hidden">
+          <span className="contents 2xl:hidden">
             <HeaderProductLink
               to="/services/local-listings"
               label="QMAPS"
