@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Check, Search, Server } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import { pricing, formatCAD } from "@/lib/pricing";
+import { HostingPlanSelector } from "./HostingPlanSelector";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export function DomainHostingSpotlight() {
@@ -50,25 +51,9 @@ export function DomainHostingSpotlight() {
                 <span className="text-xs font-medium text-muted-foreground">{t("cadence.monthly")}</span>
               </span>
             </div>
-            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {pricing.hosting.map((p) => (
-                <div key={p.key} className="rounded-xl border border-border bg-background p-3 text-center">
-                  <div className="flex items-center justify-center gap-1.5 text-primary"><Server size={14} /></div>
-                  <div className="mt-1.5 text-xs font-semibold text-foreground">{p.name}</div>
-                  <div className="text-[11px] text-muted-foreground">{formatCAD(p.amount)}{t("cadence.monthly")}</div>
-                </div>
-              ))}
+            <div className="mt-5">
+              <HostingPlanSelector />
             </div>
-            <ul className="mt-4 grid gap-1.5">
-              {[t("home.spot.hostingF1"), t("home.spot.hostingF2"), t("home.spot.hostingF3")].map((f) => (
-                <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Check size={14} className="shrink-0 text-primary" /> {f}
-                </li>
-              ))}
-            </ul>
-            <Link to="/hosting" className="mt-auto inline-flex w-fit items-center gap-2 pt-6 text-sm font-semibold text-primary hover:underline">
-              {t("home.spot.hostingCta")} <ArrowRight size={14} />
-            </Link>
           </div>
         </div>
       </div>
