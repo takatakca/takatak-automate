@@ -37,7 +37,9 @@ function Inner({ label, icon: Icon, compact, introClass, showArrow }: CommonProp
 }
 
 /** Header product shortcut rendered as a route link (QMAPS, FLEXS). */
-export function HeaderProductLink({ to, ...props }: CommonProps & { to: string }) {
+export type ProductRoute = "/services/local-listings" | "/services/lead-generation";
+
+export function HeaderProductLink({ to, ...props }: CommonProps & { to: ProductRoute }) {
   return (
     <Link
       to={to}
