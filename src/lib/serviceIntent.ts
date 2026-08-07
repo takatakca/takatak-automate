@@ -46,17 +46,17 @@ const rules: readonly Rule[] = [
   },
   {
     intent: "local_visibility",
-    label: "Local visibility",
-    labelFr: "Visibilité locale",
+    label: "QMAPS — Local visibility",
+    labelFr: "QMAPS — Visibilité locale",
     to: "/services/local-listings",
-    keywords: ["local listing", "google maps", "maps", "qmaps", "directory", "directories", "google business", "local seo", "found locally", "être trouvé", "fiche google", "annuaire", "visibilité locale"],
+    keywords: ["local listing", "google maps", "maps", "qmaps", "directory", "directories", "google business", "local seo", "found locally", "être trouvé", "fiche google", "annuaire", "visibilité locale", "q maps", "qmap", "google listing", "fiche entreprise", "référencement local", "referencement local", "apparaître sur les cartes", "annuaires", "cartes"],
   },
   {
     intent: "leads",
-    label: "Lead generation",
-    labelFr: "Génération de clients",
+    label: "FLEXS — Lead generation",
+    labelFr: "FLEXS — Génération de prospects",
     to: "/services/lead-generation",
-    keywords: ["lead", "leads", "more customers", "new clients", "flexs", "prospect", "prospects", "sales pipeline", "plus de clients", "nouveaux clients", "clients potentiels"],
+    keywords: ["lead", "leads", "more customers", "new clients", "flexs", "prospect", "prospects", "sales pipeline", "plus de clients", "nouveaux clients", "clients potentiels", "flex", "customer opportunities", "opportunities", "génération de prospects", "generation de prospects", "trouver des clients", "occasions d'affaires", "pipeline"],
   },
   {
     intent: "social",

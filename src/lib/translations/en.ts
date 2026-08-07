@@ -563,6 +563,22 @@ export const en = {
   "offer.success.next": "After signup you land on",
   "offer.success.cta": "Create my TAKATAK account",
   "offer.success.secondary": "Explore pricing first",
+  "common.close": "Close",
+  "nav.tools": "TAKATAK tools",
+  "nav.toolsTitle": "TAKATAK tools",
+  "nav.domainDesc": "Search and secure your business name.",
+  "nav.qmaps": "QMAPS",
+  "nav.qmapsDesc": "Improve your local business visibility",
+  "nav.flexs": "FLEXS",
+  "nav.flexsDesc": "Generate and manage new business opportunities",
+  "hosting.selector.title": "Choose your hosting plan",
+  "hosting.selector.bestFor": "Best for",
+  "hosting.selector.cta": "Choose this plan",
+  "hosting.selector.selected": "Selected plan",
+  "hosting.plan.portfolio.desc": "Portfolio pages, personal sites and simple landing pages.",
+  "hosting.plan.bronze.desc": "Small business websites that need reliable everyday hosting.",
+  "hosting.plan.silver.desc": "Growing businesses and WordPress websites.",
+  "hosting.plan.gold.desc": "Ecommerce and higher-demand websites.",
 } as const;
 
 export type TranslationKey = keyof typeof en;
