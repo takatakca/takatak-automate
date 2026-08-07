@@ -71,24 +71,42 @@ export function SiteHeader() {
           <span className="w-1.5 h-1.5 rounded-full bg-primary mt-3" aria-hidden />
         </Link>
         <div className="hidden md:flex flex-1 min-w-0 items-center gap-1.5">
-          <div className="min-w-[220px] flex-1 max-w-md">
+          <div className="min-w-[170px] flex-1 max-w-md">
             <UniversalSearchPanel />
           </div>
           <HeaderDomainSearch />
-          <HeaderProductLink
-            to="/services/local-listings"
-            label="QMAPS"
-            tooltip={t("nav.qmapsDesc")}
-            icon={MapPin}
-            introClass="animate-scale-in"
-          />
-          <HeaderProductLink
-            to="/services/lead-generation"
-            label="FLEXS"
-            tooltip={t("nav.flexsDesc")}
-            icon={Target}
-            introClass="animate-fade-in"
-          />
+          <span className="hidden xl:contents">
+            <HeaderProductLink
+              to="/services/local-listings"
+              label="QMAPS"
+              tooltip={t("nav.qmapsDesc")}
+              icon={MapPin}
+              introClass="animate-scale-in"
+            />
+            <HeaderProductLink
+              to="/services/lead-generation"
+              label="FLEXS"
+              tooltip={t("nav.flexsDesc")}
+              icon={Target}
+              introClass="animate-fade-in"
+            />
+          </span>
+          <span className="contents xl:hidden">
+            <HeaderProductLink
+              to="/services/local-listings"
+              label="QMAPS"
+              tooltip={t("nav.qmapsDesc")}
+              icon={MapPin}
+              compact
+            />
+            <HeaderProductLink
+              to="/services/lead-generation"
+              label="FLEXS"
+              tooltip={t("nav.flexsDesc")}
+              icon={Target}
+              compact
+            />
+          </span>
         </div>
         <ul className="hidden lg:flex items-center gap-0 shrink-0 text-[13px] font-medium ml-auto">
           {primaryNav.map((n) => (
