@@ -6,11 +6,13 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { UniversalSearchPanel } from "@/components/search/UniversalSearchPanel";
 import { HeaderDomainSearch } from "@/components/domain/HeaderDomainSearch";
+import { HeaderProductLink } from "@/components/layout/HeaderProductAction";
+import { ProductLauncher } from "@/components/layout/ProductLauncher";
 import { MarketplaceCategoryRail } from "@/components/marketplace/MarketplaceCategoryRail";
 import { MARKETPLACE_GROUPS } from "@/lib/marketplaceGroups";
 import {
   TrendingUp, Code2, Megaphone, Video, Server, Globe2,
-  Smartphone, PhoneCall, Workflow, Bot, MapPin, Database,
+  Smartphone, PhoneCall, Workflow, Bot, MapPin, Database, Target,
 } from "lucide-react";
 
 const primaryNav = [
@@ -68,9 +70,25 @@ export function SiteHeader() {
           <span className="text-[22px] font-extrabold tracking-tight text-foreground">TAKATAK</span>
           <span className="w-1.5 h-1.5 rounded-full bg-primary mt-3" aria-hidden />
         </Link>
-        <div className="hidden md:flex flex-1 max-w-xl items-center gap-2">
-          <UniversalSearchPanel />
+        <div className="hidden md:flex flex-1 min-w-0 items-center gap-1.5">
+          <div className="min-w-0 flex-1 max-w-md">
+            <UniversalSearchPanel />
+          </div>
           <HeaderDomainSearch />
+          <HeaderProductLink
+            to="/services/local-listings"
+            label="QMAPS"
+            tooltip={t("nav.qmapsDesc")}
+            icon={MapPin}
+            introClass="animate-scale-in"
+          />
+          <HeaderProductLink
+            to="/services/lead-generation"
+            label="FLEXS"
+            tooltip={t("nav.flexsDesc")}
+            icon={Target}
+            introClass="animate-fade-in"
+          />
         </div>
         <ul className="hidden lg:flex items-center gap-0.5 text-[13px] font-medium ml-auto">
           {primaryNav.map((n) => (
@@ -164,7 +182,7 @@ export function SiteHeader() {
         </div>
         <div className="lg:hidden ml-auto flex items-center gap-1">
           <div className="md:hidden">
-            <HeaderDomainSearch compact />
+            <ProductLauncher />
           </div>
           <button
             onClick={() => setOpen(!open)}
