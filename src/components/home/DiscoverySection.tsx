@@ -1,25 +1,42 @@
+import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import {
-  ArrowRight, Rocket, Server, Megaphone, MapPin, PhoneCall, Workflow,
-  Palette, Smartphone, Share2, Target, Utensils, ClipboardList,
+  ArrowRight, Palette, Smartphone, Share2, Target, Utensils, ClipboardList,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { TranslationKey } from "@/lib/i18n";
 import { pricing, formatCAD, cadenceKeys, type Cadence } from "@/lib/pricing";
 import { Reveal } from "./Reveal";
-import { TiltCard } from "./TiltCard";
+import { PerspectiveCard } from "@/components/motion/PerspectiveCard";
+import { WebsiteDiscoveryVisual } from "./discovery/WebsiteDiscoveryVisual";
+import { DomainHostingDiscoveryVisual } from "./discovery/DomainHostingDiscoveryVisual";
+import { BrandingDiscoveryVisual } from "./discovery/BrandingDiscoveryVisual";
+import { MarketingDiscoveryVisual } from "./discovery/MarketingDiscoveryVisual";
+import { LocalGrowthDiscoveryVisual } from "./discovery/LocalGrowthDiscoveryVisual";
+import { OperationsDiscoveryVisual } from "./discovery/OperationsDiscoveryVisual";
+import { QmapsFlexsStory } from "./discovery/QmapsFlexsStory";
 
-interface Feature { icon: LucideIcon; k: string; to: string; amount: number; cadence: Cadence }
+interface Solution {
+  k: "websites" | "domains" | "branding" | "marketing" | "local" | "ops";
+  visual: ReactNode;
+  amount: number;
+  cadence: Cadence;
+  primary: string;
+  secondary: string;
+  /** Editorial span on large screens. */
+  span: "wide" | "narrow";
+  story?: boolean;
+}
 
-/** Six featured entry points. Everything else lives on /services. */
-const FEATURED: readonly Feature[] = [
-  { icon: Rocket,    k: "websites",   to: "/services/websites",          amount: pricing.websites[0].amount,     cadence: "one-time" },
-  { icon: Server,    k: "hosting",    to: "/hosting",                    amount: pricing.hosting[0].amount,      cadence: "monthly" },
-  { icon: Megaphone, k: "marketing",  to: "/services/marketing",         amount: pricing.marketing[0].amount,    cadence: "one-time" },
-  { icon: MapPin,    k: "local",      to: "/services/local-listings",    amount: pricing.local[0].amount,        cadence: "one-time" },
-  { icon: PhoneCall, k: "voip",       to: "/services/voip",              amount: pricing.voip[0].amount,         cadence: "monthly" },
-  { icon: Workflow,  k: "automation", to: "/services/ai-business-tools", amount: pricing.ai[0].amount,           cadence: "one-time" },
+/** Six art-directed solution groups. Everything else lives on /services. */
+const SOLUTIONS: readonly Solution[] = [
+  { k: "websites",  visual: <WebsiteDiscoveryVisual />,       amount: pricing.websites[0].amount, cadence: "one-time", primary: "/services/websites",       secondary: "/marketplace/category/website_design", span: "wide" },
+  { k: "domains",   visual: <DomainHostingDiscoveryVisual />, amount: pricing.domain.register.amount, cadence: "yearly", primary: "/domain",                secondary: "/hosting",                             span: "narrow" },
+  { k: "branding",  visual: <BrandingDiscoveryVisual />,      amount: pricing.branding[0].amount, cadence: "one-time", primary: "/services/logo-branding",  secondary: "/marketplace/category/logo_design",    span: "narrow" },
+  { k: "marketing", visual: <MarketingDiscoveryVisual />,     amount: pricing.marketing[0].amount, cadence: "one-time", primary: "/services/marketing",     secondary: "/services/social-media",               span: "wide" },
+  { k: "local",     visual: <LocalGrowthDiscoveryVisual />,   amount: pricing.local[0].amount,    cadence: "one-time", primary: "/services/local-listings", secondary: "/services/lead-generation",            span: "wide", story: true },
+  { k: "ops",       visual: <OperationsDiscoveryVisual />,    amount: pricing.voip[0].amount,     cadence: "monthly",  primary: "/services/voip",           secondary: "/services/automation",                 span: "narrow" },
 ];
 
 /** Compact secondary rail — quick access, no cards. */
