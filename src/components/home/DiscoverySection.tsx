@@ -1,25 +1,42 @@
+import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import {
-  ArrowRight, Rocket, Server, Megaphone, MapPin, PhoneCall, Workflow,
-  Palette, Smartphone, Share2, Target, Utensils, ClipboardList,
+  ArrowRight, Palette, Smartphone, Share2, Target, Utensils, ClipboardList,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { TranslationKey } from "@/lib/i18n";
 import { pricing, formatCAD, cadenceKeys, type Cadence } from "@/lib/pricing";
 import { Reveal } from "./Reveal";
-import { TiltCard } from "./TiltCard";
+import { PerspectiveCard } from "@/components/motion/PerspectiveCard";
+import { WebsiteDiscoveryVisual } from "./discovery/WebsiteDiscoveryVisual";
+import { DomainHostingDiscoveryVisual } from "./discovery/DomainHostingDiscoveryVisual";
+import { BrandingDiscoveryVisual } from "./discovery/BrandingDiscoveryVisual";
+import { MarketingDiscoveryVisual } from "./discovery/MarketingDiscoveryVisual";
+import { LocalGrowthDiscoveryVisual } from "./discovery/LocalGrowthDiscoveryVisual";
+import { OperationsDiscoveryVisual } from "./discovery/OperationsDiscoveryVisual";
+import { QmapsFlexsStory } from "./discovery/QmapsFlexsStory";
 
-interface Feature { icon: LucideIcon; k: string; to: string; amount: number; cadence: Cadence }
+interface Solution {
+  k: "websites" | "domains" | "branding" | "marketing" | "local" | "ops";
+  visual: ReactNode;
+  amount: number;
+  cadence: Cadence;
+  primary: string;
+  secondary: string;
+  /** Editorial span on large screens. */
+  span: "wide" | "narrow";
+  story?: boolean;
+}
 
-/** Six featured entry points. Everything else lives on /services. */
-const FEATURED: readonly Feature[] = [
-  { icon: Rocket,    k: "websites",   to: "/services/websites",          amount: pricing.websites[0].amount,     cadence: "one-time" },
-  { icon: Server,    k: "hosting",    to: "/hosting",                    amount: pricing.hosting[0].amount,      cadence: "monthly" },
-  { icon: Megaphone, k: "marketing",  to: "/services/marketing",         amount: pricing.marketing[0].amount,    cadence: "one-time" },
-  { icon: MapPin,    k: "local",      to: "/services/local-listings",    amount: pricing.local[0].amount,        cadence: "one-time" },
-  { icon: PhoneCall, k: "voip",       to: "/services/voip",              amount: pricing.voip[0].amount,         cadence: "monthly" },
-  { icon: Workflow,  k: "automation", to: "/services/ai-business-tools", amount: pricing.ai[0].amount,           cadence: "one-time" },
+/** Six art-directed solution groups. Everything else lives on /services. */
+const SOLUTIONS: readonly Solution[] = [
+  { k: "websites",  visual: <WebsiteDiscoveryVisual />,       amount: pricing.websites[0].amount, cadence: "one-time", primary: "/services/websites",       secondary: "/marketplace/category/website_design", span: "wide" },
+  { k: "domains",   visual: <DomainHostingDiscoveryVisual />, amount: pricing.domain.register.amount, cadence: "yearly", primary: "/domain",                secondary: "/hosting",                             span: "narrow" },
+  { k: "branding",  visual: <BrandingDiscoveryVisual />,      amount: pricing.branding[0].amount, cadence: "one-time", primary: "/services/logo-branding",  secondary: "/marketplace/category/logo_design",    span: "narrow" },
+  { k: "marketing", visual: <MarketingDiscoveryVisual />,     amount: pricing.marketing[0].amount, cadence: "one-time", primary: "/services/marketing",     secondary: "/services/social-media",               span: "wide" },
+  { k: "local",     visual: <LocalGrowthDiscoveryVisual />,   amount: pricing.local[0].amount,    cadence: "one-time", primary: "/services/local-listings", secondary: "/services/lead-generation",            span: "wide", story: true },
+  { k: "ops",       visual: <OperationsDiscoveryVisual />,    amount: pricing.voip[0].amount,     cadence: "monthly",  primary: "/services/voip",           secondary: "/services/automation",                 span: "narrow" },
 ];
 
 /** Compact secondary rail — quick access, no cards. */
@@ -59,36 +76,64 @@ export function DiscoverySection() {
           </div>
         </Reveal>
 
-        <ul className="mt-9 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURED.map((c, i) => {
-            const Icon = c.icon;
-            return (
-              <Reveal as="li" key={c.k} delay={Math.min(i, 5) * 60}>
-                <TiltCard>
-                  <Link
-                    to={c.to as never}
-                    className="tk-sheen group flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-colors duration-300 hover:border-primary/50 hover:shadow-[var(--shadow-glow)]"
-                  >
-                    <div className="tk-tilt-layer flex items-start justify-between gap-3">
-                      <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                        <Icon size={21} />
+        {/* Editorial composition: alternating wide / narrow rows on desktop,
+            a single readable column on mobile. */}
+        <ul className="mt-9 grid grid-cols-1 gap-4 lg:grid-cols-5">
+          {SOLUTIONS.map((s, i) => (
+            <Reveal
+              as="li"
+              key={s.k}
+              delay={Math.min(i, 5) * 60}
+              className={s.span === "wide" ? "lg:col-span-3" : "lg:col-span-2"}
+            >
+              <PerspectiveCard max={4}>
+                <article className="tk-sheen group flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition-colors duration-300 hover:border-primary/50 hover:shadow-[var(--shadow-glow)] md:p-6">
+                  {s.visual}
+
+                  <div className="mt-5 flex items-start justify-between gap-3">
+                    <h3 className="min-w-0 text-lg font-semibold leading-7 text-foreground md:text-xl">
+                      {t(`disc2.${s.k}.title` as TranslationKey)}
+                    </h3>
+                    <span className="shrink-0 rounded-full border border-border bg-secondary px-2.5 py-1 text-[11px] font-semibold text-foreground">
+                      {t("price.from")} {formatCAD(s.amount)}
+                      <span className="font-medium text-muted-foreground">
+                        {t(cadenceKeys[s.cadence] as TranslationKey)}
                       </span>
-                      <span className="shrink-0 rounded-full border border-border bg-secondary px-2.5 py-1 text-[11px] font-semibold text-foreground">
-                        {t("price.from")} {formatCAD(c.amount)}
-                        <span className="font-medium text-muted-foreground">{t(cadenceKeys[c.cadence] as TranslationKey)}</span>
-                      </span>
-                    </div>
-                    <h3 className="mt-5 text-lg font-semibold text-foreground">{t(`cat.${c.k}.title` as TranslationKey)}</h3>
-                    <p className="mt-1.5 text-[13px] leading-6 text-muted-foreground">{t(`cat.${c.k}.desc` as TranslationKey)}</p>
-                    <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-xs font-semibold uppercase tracking-wider text-primary">
-                      {t("home.disc.explore")}
-                      <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
                     </span>
-                  </Link>
-                </TiltCard>
-              </Reveal>
-            );
-          })}
+                  </div>
+
+                  <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
+                    {t(`disc2.${s.k}.desc` as TranslationKey)}
+                  </p>
+
+                  {s.story && (
+                    <>
+                      <p className="mt-3 text-[13px] leading-6 text-foreground/80">
+                        {t("disc2.local.secondary")}
+                      </p>
+                      <QmapsFlexsStory className="mt-4" />
+                    </>
+                  )}
+
+                  <div className="mt-auto flex flex-wrap items-center gap-2 pt-6">
+                    <Link
+                      to={s.primary as never}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-[13px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                    >
+                      {t(`disc2.${s.k}.cta1` as TranslationKey)}
+                      <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
+                    <Link
+                      to={s.secondary as never}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/60 px-3.5 py-2 text-[13px] font-semibold text-foreground transition-colors hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                    >
+                      {t(`disc2.${s.k}.cta2` as TranslationKey)}
+                    </Link>
+                  </div>
+                </article>
+              </PerspectiveCard>
+            </Reveal>
+          ))}
         </ul>
 
         <Reveal delay={120}>
