@@ -33,8 +33,8 @@ export function BrandingDiscoveryVisual() {
             {["bg-primary", "bg-primary/70", "bg-foreground/70", "bg-foreground/30", "bg-secondary"].map((c, i) => (
               <span
                 key={c}
-                style={{ animationDelay: `${700 + i * 70}ms` }}
-                className={`tk-step h-7 w-4 rounded-sm ${c} origin-bottom transition-transform duration-300 group-hover:rotate-[${i}deg]`}
+                style={{ animationDelay: `${700 + i * 70}ms`, ["--tk-fan" as string]: `${(i - 2) * 4}deg` }}
+                className={`tk-step tk-fan h-7 w-4 origin-bottom rounded-sm transition-transform duration-300 ${c}`}
               />
             ))}
           </div>
