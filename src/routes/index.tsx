@@ -5,7 +5,7 @@ import { PromoMarquee } from "@/components/promotions/PromoMarquee";
 import { TakatakEcosystemHero } from "@/components/home/TakatakEcosystemHero";
 import { TrendingProjectsRail } from "@/components/home/TrendingProjectsRail";
 import { DiscoverySection } from "@/components/home/DiscoverySection";
-import { PopularUpgradesSection } from "@/components/home/PopularUpgradesSection";
+import { PopularBusinessUpgrades } from "@/components/home/PopularBusinessUpgrades";
 import { DomainHostingSpotlight } from "@/components/home/DomainHostingSpotlight";
 import { PricingGateways } from "@/components/home/PricingGateways";
 import { BusinessTransformationSlider } from "@/components/home/BusinessTransformationSlider";
@@ -35,7 +35,7 @@ function Index() {
       <TrendingProjectsRail />
       <DiscoverySection />
       <BusinessTransformationSlider />
-      <PopularUpgradesSection />
+      <PopularBusinessUpgrades />
       <DomainHostingSpotlight />
       <PricingGateways />
       <ManagedDeliveryJourney />
