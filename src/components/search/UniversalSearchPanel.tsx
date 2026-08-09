@@ -10,6 +10,7 @@ import {
 } from "@/lib/serviceIntent";
 import { useLanguage } from "@/hooks/useLanguage";
 import { speechLocale } from "@/lib/i18n";
+import { useExclusiveOverlay } from "@/lib/overlayManager";
 
 type SpeechRecognitionLike = {
   lang: string;
@@ -66,7 +67,7 @@ export function UniversalSearchPanel({ compact = false }: { compact?: boolean })
   const { t, lang, tx } = useLanguage();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
+  const { open, setOpen } = useExclusiveOverlay("search");
   const [listening, setListening] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
   const [recent, setRecent] = useState<string[]>([]);

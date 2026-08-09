@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { LayoutGrid, Globe2, MapPin, Target, X } from "lucide-react";
 import { DomainSearchOverlay } from "@/components/domain/DomainSearchOverlay";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useExclusiveOverlay } from "@/lib/overlayManager";
 
 /**
  * Compact "TAKATAK tools" launcher for narrow viewports. Groups the three
@@ -10,7 +11,7 @@ import { useLanguage } from "@/hooks/useLanguage";
  */
 export function ProductLauncher() {
   const { t } = useLanguage();
-  const [open, setOpen] = useState(false);
+  const { open, setOpen, toggle } = useExclusiveOverlay("launcher");
   const [domain, setDomain] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -24,7 +25,7 @@ export function ProductLauncher() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, domain]);
+  }, [open, domain, setOpen]);
 
   const close = () => {
     setOpen(false);
@@ -36,7 +37,7 @@ export function ProductLauncher() {
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggle}
         aria-expanded={open}
         aria-label={t("nav.tools")}
         className="grid h-10 w-10 place-items-center rounded-md border border-primary/45 bg-primary/5 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
