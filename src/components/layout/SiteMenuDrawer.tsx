@@ -196,6 +196,7 @@ export function SiteMenuDrawer({ open, onClose }: { open: boolean; onClose: () =
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
