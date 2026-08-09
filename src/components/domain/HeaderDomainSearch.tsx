@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Globe2 } from "lucide-react";
 import { DomainSearchOverlay } from "./DomainSearchOverlay";
 import { HeaderProductButton } from "@/components/layout/HeaderProductAction";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useExclusiveOverlay } from "@/lib/overlayManager";
 
 /**
  * "Find my domain" header action. Opens the TAKATAK domain panel directly
@@ -10,7 +11,7 @@ import { useLanguage } from "@/hooks/useLanguage";
  */
 export function HeaderDomainSearch({ compact = false }: { compact?: boolean }) {
   const { t } = useLanguage();
-  const [open, setOpen] = useState(false);
+  const { open, setOpen, toggle } = useExclusiveOverlay("domain");
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -23,13 +24,13 @@ export function HeaderDomainSearch({ compact = false }: { compact?: boolean }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [open, setOpen]);
 
   return (
     <>
       <HeaderProductButton
         ref={buttonRef}
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggle}
         expanded={open}
         compact={compact}
         label={t("nav.findDomain")}

@@ -120,6 +120,10 @@ export function SiteHeader() {
         </div>
       </nav>
 
+      <div className="border-t border-border/60 px-4 py-2 md:hidden">
+        <UniversalSearchPanel compact />
+      </div>
+
       <MarketplaceCategoryRail />
 
       <div id="tk-site-menu">
