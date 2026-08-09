@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { X, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -70,6 +71,9 @@ export function SiteMenuDrawer({ open, onClose }: { open: boolean; onClose: () =
   const { tx } = useLanguage();
   const { isAuthenticated } = useAuth();
   const panelRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
@@ -98,9 +102,9 @@ export function SiteMenuDrawer({ open, onClose }: { open: boolean; onClose: () =
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[70]">
       <div
         className="absolute inset-0 bg-background/70 backdrop-blur-sm animate-fade-in"
