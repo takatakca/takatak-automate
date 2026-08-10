@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { AnimatedStatus } from "@/components/motion/AnimatedStatus";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -90,7 +90,7 @@ export function ObjectHeader({
   meta,
   active,
 }: {
-  icon: React.ComponentType<{ size?: number; className?: string; "aria-hidden"?: boolean }>;
+  icon: ComponentType<{ size?: number; className?: string; "aria-hidden"?: boolean }>;
   title: string;
   meta?: string;
   active: boolean;
