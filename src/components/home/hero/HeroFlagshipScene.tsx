@@ -46,7 +46,7 @@ const CENTRE: Record<HeroStepKey, { x: number; y: number }> = {
 
 const ORDER: HeroStepKey[] = ["domain", "hosting", "website", "qmaps", "flexs", "voip", "automation", "workspace"];
 
-const PANELS: Record<HeroStepKey, (p: PanelProps) => JSX.Element> = {
+const PANELS: Record<HeroStepKey, (p: PanelProps) => React.ReactElement> = {
   domain: FoundationPanel,
   hosting: HostingPanel,
   website: WebsitePanel,
