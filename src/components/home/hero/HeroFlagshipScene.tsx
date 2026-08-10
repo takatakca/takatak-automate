@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactElement } from "react";
 import { MotionViewport } from "@/components/motion/MotionViewport";
 import { FlowLine } from "@/components/motion/FlowLine";
 import { motion } from "@/lib/motionConfig";
@@ -46,7 +46,7 @@ const CENTRE: Record<HeroStepKey, { x: number; y: number }> = {
 
 const ORDER: HeroStepKey[] = ["domain", "hosting", "website", "qmaps", "flexs", "voip", "automation", "workspace"];
 
-const PANELS: Record<HeroStepKey, (p: PanelProps) => React.ReactElement> = {
+const PANELS: Record<HeroStepKey, (p: PanelProps) => ReactElement> = {
   domain: FoundationPanel,
   hosting: HostingPanel,
   website: WebsitePanel,
@@ -92,7 +92,7 @@ function Scene({ active, explore }: { active: boolean; explore: boolean }) {
   }, [active, paused, step]);
 
   /** One shared pointer calculation drives parallax for the whole scene. */
-  function onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+  function onPointerMove(e: ReactPointerEvent<HTMLDivElement>) {
     const el = sceneRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
