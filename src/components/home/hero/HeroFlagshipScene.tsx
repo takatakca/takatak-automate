@@ -23,10 +23,10 @@ type Placement = { left: number; top: number; width: number; z: number };
 /** Desktop composition, in percentages of the scene box. */
 const PLACEMENT: Record<HeroStepKey, Placement> = {
   domain: { left: 0, top: 0, width: 38, z: 10 },
-  hosting: { left: 0, top: 23, width: 31, z: 10 },
+  hosting: { left: 1, top: 26, width: 32, z: 10 },
   website: { left: 42, top: 0, width: 58, z: 20 },
   qmaps: { left: 66, top: 43, width: 34, z: 20 },
-  workspace: { left: 3, top: 44, width: 59, z: 25 },
+  workspace: { left: 3, top: 47, width: 59, z: 25 },
   flexs: { left: 67, top: 74, width: 33, z: 30 },
   voip: { left: 0, top: 82, width: 37, z: 30 },
   automation: { left: 39, top: 84, width: 30, z: 30 },
@@ -35,13 +35,13 @@ const PLACEMENT: Record<HeroStepKey, Placement> = {
 /** Node centres used by the connection layer (same percentage space). */
 const CENTRE: Record<HeroStepKey, { x: number; y: number }> = {
   domain: { x: 19, y: 10 },
-  hosting: { x: 15, y: 31 },
+  hosting: { x: 16, y: 34 },
   website: { x: 71, y: 21 },
   qmaps: { x: 83, y: 57 },
   flexs: { x: 84, y: 82 },
   voip: { x: 18, y: 90 },
   automation: { x: 54, y: 91 },
-  workspace: { x: 32, y: 60 },
+  workspace: { x: 32, y: 63 },
 };
 
 const ORDER: HeroStepKey[] = ["domain", "hosting", "website", "qmaps", "flexs", "voip", "automation", "workspace"];
