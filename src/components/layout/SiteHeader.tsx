@@ -6,7 +6,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { UniversalSearchPanel } from "@/components/search/UniversalSearchPanel";
 import { HeaderDomainSearch } from "@/components/domain/HeaderDomainSearch";
-import { HeaderProductLink } from "@/components/layout/HeaderProductAction";
+import { HeaderProductExternalLink } from "@/components/layout/HeaderProductAction";
+import { QMAPS, FLEXS } from "@/lib/productDestinations";
 import { ProductLauncher } from "@/components/layout/ProductLauncher";
 import { MarketplaceCategoryRail } from "@/components/marketplace/MarketplaceCategoryRail";
 import { SiteMenuDrawer } from "@/components/layout/SiteMenuDrawer";
@@ -59,12 +60,12 @@ export function SiteHeader() {
           </div>
           <HeaderDomainSearch />
           <span className="hidden xl:contents">
-            <HeaderProductLink to="/services/local-listings" label="QMAPS" tooltip={t("nav.qmapsDesc")} icon={MapPin} />
-            <HeaderProductLink to="/services/lead-generation" label="FLEXS" tooltip={t("nav.flexsDesc")} icon={Target} />
+            <HeaderProductExternalLink href={QMAPS.productUrl} label="QMAPS" tooltip={t("nav.qmapsDesc")} icon={MapPin} />
+            <HeaderProductExternalLink href={FLEXS.productUrl} label="FLEXS" tooltip={t("nav.flexsDesc")} icon={Target} />
           </span>
           <span className="contents xl:hidden">
-            <HeaderProductLink to="/services/local-listings" label="QMAPS" tooltip={t("nav.qmapsDesc")} icon={MapPin} compact />
-            <HeaderProductLink to="/services/lead-generation" label="FLEXS" tooltip={t("nav.flexsDesc")} icon={Target} compact />
+            <HeaderProductExternalLink href={QMAPS.productUrl} label="QMAPS" tooltip={t("nav.qmapsDesc")} icon={MapPin} compact />
+            <HeaderProductExternalLink href={FLEXS.productUrl} label="FLEXS" tooltip={t("nav.flexsDesc")} icon={Target} compact />
           </span>
         </div>
 

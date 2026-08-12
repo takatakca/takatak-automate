@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { LayoutGrid, Globe2, MapPin, Target, X } from "lucide-react";
 import { DomainSearchOverlay } from "@/components/domain/DomainSearchOverlay";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useExclusiveOverlay } from "@/lib/overlayManager";
+import { QMAPS, FLEXS, externalLinkProps } from "@/lib/productDestinations";
 
 /**
  * Compact "TAKATAK tools" launcher for narrow viewports. Groups the three
@@ -76,8 +76,9 @@ export function ProductLauncher() {
                 </span>
               </button>
 
-              <Link
-                to="/services/local-listings"
+              <a
+                href={QMAPS.productUrl}
+                {...externalLinkProps}
                 onClick={close}
                 className="flex items-start gap-3 rounded-xl px-3 py-3 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
               >
@@ -86,10 +87,11 @@ export function ProductLauncher() {
                   <span className="block text-sm font-semibold text-foreground">QMAPS</span>
                   <span className="block text-xs text-muted-foreground">{t("nav.qmapsDesc")}</span>
                 </span>
-              </Link>
+              </a>
 
-              <Link
-                to="/services/lead-generation"
+              <a
+                href={FLEXS.productUrl}
+                {...externalLinkProps}
                 onClick={close}
                 className="flex items-start gap-3 rounded-xl px-3 py-3 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
               >
@@ -98,7 +100,7 @@ export function ProductLauncher() {
                   <span className="block text-sm font-semibold text-foreground">FLEXS</span>
                   <span className="block text-xs text-muted-foreground">{t("nav.flexsDesc")}</span>
                 </span>
-              </Link>
+              </a>
             </div>
           </div>
         </>
