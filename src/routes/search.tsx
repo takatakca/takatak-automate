@@ -57,12 +57,30 @@ function Page() {
           )}
           {intent === "qmaps" && q && (
             <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
-              Local listings? <Link to="/services/local-listings" className="font-medium text-primary hover:underline">Explore QMAPS →</Link>
+              <p className="font-semibold text-foreground">QMAPS — Local Visibility</p>
+              <p className="mt-1 text-muted-foreground">{QMAPS.en.desc}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <a href={QMAPS.productUrl} {...externalLinkProps} className="font-medium text-primary hover:underline">
+                  Open QMAPS →
+                </a>
+                <Link to="/services/local-listings" className="text-muted-foreground hover:underline">
+                  View Local Visibility services
+                </Link>
+              </div>
             </div>
           )}
           {intent === "flexs" && q && (
             <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
-              Need leads? <Link to="/services/lead-generation" className="font-medium text-primary hover:underline">Explore FLEXS →</Link>
+              <p className="font-semibold text-foreground">FLEXS — Lead Generation</p>
+              <p className="mt-1 text-muted-foreground">{FLEXS.en.desc}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <a href={FLEXS.productUrl} {...externalLinkProps} className="font-medium text-primary hover:underline">
+                  Open FLEXS →
+                </a>
+                <Link to="/services/lead-generation" className="text-muted-foreground hover:underline">
+                  View Lead Generation services
+                </Link>
+              </div>
             </div>
           )}
 
