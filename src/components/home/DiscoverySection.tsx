@@ -51,7 +51,7 @@ const RAIL: readonly { icon: LucideIcon; k: string; to: string }[] = [
 ];
 
 export function DiscoverySection() {
-  const { t } = useLanguage();
+  const { t, tx } = useLanguage();
   return (
     <section className="relative border-b border-border bg-secondary/25">
       <div
@@ -121,10 +121,10 @@ export function DiscoverySection() {
                       <QmapsFlexsStory className="mt-4" />
                       <div className="mt-3 flex flex-wrap items-center gap-3 text-[13px] font-semibold">
                         <a href={QMAPS.productUrl} {...externalLinkProps} className="text-primary hover:underline">
-                          {t("lang") === "fr" ? QMAPS.fr.open : QMAPS.en.open} ↗
+                          {tx({ en: QMAPS.en.open, fr: QMAPS.fr.open })} ↗
                         </a>
                         <a href={FLEXS.productUrl} {...externalLinkProps} className="text-primary hover:underline">
-                          {t("lang") === "fr" ? FLEXS.fr.open : FLEXS.en.open} ↗
+                          {tx({ en: FLEXS.en.open, fr: FLEXS.fr.open })} ↗
                         </a>
                       </div>
                     </>
