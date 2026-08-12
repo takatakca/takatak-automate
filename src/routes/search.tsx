@@ -1,3 +1,4 @@
+import { QMAPS, FLEXS, externalLinkProps } from "@/lib/productDestinations";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { SiteShell } from "@/components/layout/SiteShell";
