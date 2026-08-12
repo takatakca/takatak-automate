@@ -16,6 +16,7 @@ import { MarketingDiscoveryVisual } from "./discovery/MarketingDiscoveryVisual";
 import { LocalGrowthDiscoveryVisual } from "./discovery/LocalGrowthDiscoveryVisual";
 import { OperationsDiscoveryVisual } from "./discovery/OperationsDiscoveryVisual";
 import { QmapsFlexsStory } from "./discovery/QmapsFlexsStory";
+import { QMAPS, FLEXS, externalLinkProps } from "@/lib/productDestinations";
 
 interface Solution {
   k: "websites" | "domains" | "branding" | "marketing" | "local" | "ops";
@@ -63,6 +64,12 @@ export function DiscoverySection() {
           maskImage: "radial-gradient(ellipse at 50% 0%, black 20%, transparent 78%)",
         }}
       />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-4 top-6 select-none text-[14vw] font-black leading-none tracking-tighter text-foreground/[0.035] md:text-[9rem]"
+      >
+        SOLUTIONS
+      </span>
       <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
         <Reveal>
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
@@ -112,6 +119,14 @@ export function DiscoverySection() {
                         {t("disc2.local.secondary")}
                       </p>
                       <QmapsFlexsStory className="mt-4" />
+                      <div className="mt-3 flex flex-wrap items-center gap-3 text-[13px] font-semibold">
+                        <a href={QMAPS.productUrl} {...externalLinkProps} className="text-primary hover:underline">
+                          {t("lang") === "fr" ? QMAPS.fr.open : QMAPS.en.open} ↗
+                        </a>
+                        <a href={FLEXS.productUrl} {...externalLinkProps} className="text-primary hover:underline">
+                          {t("lang") === "fr" ? FLEXS.fr.open : FLEXS.en.open} ↗
+                        </a>
+                      </div>
                     </>
                   )}
 
