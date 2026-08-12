@@ -1,6 +1,7 @@
 import { forwardRef, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, type LucideIcon } from "lucide-react";
+import { externalLinkProps } from "@/lib/productDestinations";
 
 const BASE =
   "group inline-flex shrink-0 items-center gap-1.5 rounded-md border border-primary/45 bg-primary/5 px-3 py-2 text-[13px] font-semibold text-foreground transition-all hover:border-primary/70 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 whitespace-nowrap";
@@ -49,6 +50,24 @@ export function HeaderProductLink({ to, ...props }: CommonProps & { to: ProductR
     >
       <Inner {...props} />
     </Link>
+  );
+}
+
+/**
+ * Header shortcut pointing at a canonical external product site
+ * (qmaps.ca / flexs.ca). Opens in a new tab with safe rel attributes.
+ */
+export function HeaderProductExternalLink({ href, ...props }: CommonProps & { href: string }) {
+  return (
+    <a
+      href={href}
+      {...externalLinkProps}
+      aria-label={`${props.label} — ${props.tooltip}`}
+      title={props.tooltip}
+      className={props.compact ? COMPACT : BASE}
+    >
+      <Inner {...props} />
+    </a>
   );
 }
 

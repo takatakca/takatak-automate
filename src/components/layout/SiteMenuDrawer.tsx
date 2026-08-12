@@ -37,8 +37,8 @@ const GROUPS: Group[] = [
     items: [
       { to: "/services/marketing", label: { en: "Marketing", fr: "Marketing" } },
       { to: "/services/social-media", label: { en: "Social media", fr: "Réseaux sociaux" } },
-      { to: "/services/local-listings", label: { en: "QMAPS — local visibility", fr: "QMAPS — visibilité locale" } },
-      { to: "/services/lead-generation", label: { en: "FLEXS — lead generation", fr: "FLEXS — génération de prospects" } },
+      { to: "/services/local-listings", label: { en: "Local visibility", fr: "Visibilité locale" } },
+      { to: "/services/lead-generation", label: { en: "Lead generation", fr: "Génération de prospects" } },
     ],
   },
   {

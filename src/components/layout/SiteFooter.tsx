@@ -36,8 +36,8 @@ const cols = [
     links: [
       { to: "/domain", label: "Domains" },
       { to: "/hosting", label: "Hosting" },
-      { to: "/services/local-listings", label: "QMAPS" },
-      { to: "/services/lead-generation", label: "FLEXS" },
+      { to: "/services/local-listings", label: "Local Visibility" },
+      { to: "/services/lead-generation", label: "Lead Generation" },
       { to: "/services/ai-business-tools", label: "AI Tools" },
     ],
   },
