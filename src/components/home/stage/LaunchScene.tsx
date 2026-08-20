@@ -20,7 +20,7 @@ export function LaunchScene({ beat, animated }: { beat: number; animated: boolea
   return (
     <div className="relative min-h-[420px] md:min-h-[520px]">
       {/* Back plane — domain / DNS architecture */}
-      <Plane depth={0} shown={beat >= 1} className="relative z-10 md:absolute md:left-0 md:top-0 md:w-[58%]">
+      <Plane depth={0} shown={beat >= 1} className="relative z-10 md:absolute md:left-0 md:top-0 md:w-[50%]">
         <Panel title={tx({ en: "Domain & DNS", fr: "Domaine et DNS" })} active={beat >= 2}>
           <div className="flex items-center gap-2 rounded-lg border border-white/12 bg-black/25 px-3 py-2">
             <span className="text-[13px] font-semibold text-foreground/90">yourbusiness</span>
@@ -36,7 +36,7 @@ export function LaunchScene({ beat, animated }: { beat: number; animated: boolea
       </Plane>
 
       {/* Mid plane — hosting environment */}
-      <Plane depth={1} shown={beat >= 3} className="relative z-20 mt-4 md:absolute md:right-0 md:top-[6%] md:mt-0 md:w-[46%]">
+      <Plane depth={1} shown={beat >= 3} className="relative z-20 mt-4 md:absolute md:right-0 md:top-0 md:mt-0 md:w-[44%]">
         <Panel
           title={tx({ en: "TAKATAK hosting", fr: "Hébergement TAKATAK" })}
           active={beat >= 3}
@@ -60,7 +60,7 @@ export function LaunchScene({ beat, animated }: { beat: number; animated: boolea
       </Plane>
 
       {/* Front plane — website mockup */}
-      <Plane depth={2} shown={beat >= 4} className="relative z-30 mt-4 md:absolute md:bottom-0 md:left-[6%] md:mt-0 md:w-[62%]">
+      <Plane depth={2} shown={beat >= 4} className="relative z-30 mt-4 md:absolute md:bottom-0 md:left-0 md:mt-0 md:w-[58%]">
         <BrowserChrome url="https://yourbusiness.ca">
           <div className="relative p-3.5">
             <div className="flex items-center justify-between">
@@ -101,7 +101,7 @@ export function LaunchScene({ beat, animated }: { beat: number; animated: boolea
       </Plane>
 
       {/* Foreground accents */}
-      <Plane depth={2} shown={beat >= 5} className="relative z-40 mt-4 hidden md:absolute md:bottom-[16%] md:right-[2%] md:mt-0 md:block md:w-[26%]">
+      <Plane depth={2} shown={beat >= 5} className="relative z-40 mt-4 hidden md:absolute md:bottom-[4%] md:right-[4%] md:mt-0 md:block md:w-[26%]">
         <div className={`rounded-2xl border border-white/14 bg-[color-mix(in_oklab,var(--brand-dark-2)_92%,transparent)] p-2 ${animated ? "tk-float-slow" : ""}`}>
           <div className="rounded-xl border border-white/10 bg-black/30 p-2">
             <Smartphone size={13} className="text-primary" aria-hidden />
@@ -112,7 +112,7 @@ export function LaunchScene({ beat, animated }: { beat: number; animated: boolea
         </div>
       </Plane>
 
-      <div className="pointer-events-none relative z-50 mt-4 flex flex-wrap gap-2 md:absolute md:right-0 md:top-0 md:mt-0 md:flex-col md:items-end">
+      <div className="pointer-events-none relative z-50 mt-4 flex flex-wrap gap-2 md:absolute md:right-0 md:top-[42%] md:mt-0 md:flex-col md:items-end">
         <StageBadge shown={beat >= 3} tone="done">
           <Lock size={11} aria-hidden /> SSL
         </StageBadge>
