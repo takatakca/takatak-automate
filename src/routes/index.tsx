@@ -8,7 +8,7 @@ import { DiscoverySection } from "@/components/home/DiscoverySection";
 import { PopularBusinessUpgrades } from "@/components/home/PopularBusinessUpgrades";
 import { DomainHostingSpotlight } from "@/components/home/DomainHostingSpotlight";
 import { PricingGateways } from "@/components/home/PricingGateways";
-import { BusinessTransformationSlider } from "@/components/home/BusinessTransformationSlider";
+import { BusinessTransformationStage } from "@/components/home/BusinessTransformationStage";
 import { ManagedDeliveryJourney } from "@/components/home/ManagedDeliveryJourney";
 import { ConciergeSupportSection } from "@/components/home/ConciergeSupportSection";
 import { FinalCtaSection } from "@/components/home/FinalCtaSection";
@@ -34,7 +34,7 @@ function Index() {
       <PromoMarquee />
       <TrendingProjectsRail />
       <DiscoverySection />
-      <BusinessTransformationSlider />
+      <BusinessTransformationStage />
       <PopularBusinessUpgrades />
       <DomainHostingSpotlight />
       <PricingGateways />
