@@ -93,7 +93,7 @@ export function PopularBusinessUpgrades() {
           {/* HERO PRODUCT — premium business website */}
           <Reveal className="lg:col-span-3">
             <OfferSurface>
-              <WebsiteCommerceScene />
+              <div className="mb-5"><WebsiteCommerceScene /></div>
               <Eyebrow>{t("upg.website.eyebrow")}</Eyebrow>
               <h3 className="mt-2 text-2xl font-bold leading-9 text-foreground md:text-[1.8rem]">
                 {t("upg.website.title")}
@@ -149,7 +149,7 @@ export function PopularBusinessUpgrades() {
           <div className="grid gap-5 lg:col-span-2">
             <Reveal delay={80}>
               <OfferSurface>
-                <BrandBoardScene />
+                <div className="mb-4"><BrandBoardScene /></div>
                 <Eyebrow>{t("upg.brand.eyebrow")}</Eyebrow>
                 <h3 className="mt-2 text-xl font-bold leading-8 text-foreground">{t("upg.brand.title")}</h3>
                 <p className="mt-2 text-[13px] leading-6 text-muted-foreground">{t("upg.brand.desc")}</p>
@@ -171,7 +171,7 @@ export function PopularBusinessUpgrades() {
 
             <Reveal delay={140}>
               <OfferSurface>
-                <LocalGrowthScene />
+                <div className="mb-4"><LocalGrowthScene /></div>
                 <Eyebrow>{t("upg.local.eyebrow")}</Eyebrow>
                 <h3 className="mt-2 text-xl font-bold leading-8 text-foreground">{t("upg.local.title")}</h3>
                 <p className="mt-2 text-[13px] leading-6 text-muted-foreground">{t("upg.local.desc")}</p>
