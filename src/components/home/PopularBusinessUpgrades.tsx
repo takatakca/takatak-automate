@@ -1,56 +1,31 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Check, Globe2, MapPin, Server, Smartphone, Sparkles, Workflow } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import { pricing, formatCAD } from "@/lib/pricing";
+import { pricing } from "@/lib/pricing";
+import { QMAPS, FLEXS } from "@/lib/productDestinations";
 import { Reveal } from "./Reveal";
 import { PerspectiveCard } from "@/components/motion/PerspectiveCard";
-import { SceneShell, SceneBar, SceneChip, SceneBrowser } from "./discovery/SceneShell";
-import { BrandingDiscoveryVisual } from "./discovery/BrandingDiscoveryVisual";
-import { LocalGrowthDiscoveryVisual } from "./discovery/LocalGrowthDiscoveryVisual";
-import { OperationsDiscoveryVisual } from "./discovery/OperationsDiscoveryVisual";
+import { WebsiteCommerceScene } from "./upgrades/WebsiteCommerceScene";
+import { BrandBoardScene } from "./upgrades/BrandBoardScene";
+import { LocalGrowthScene } from "./upgrades/LocalGrowthScene";
+import { AutomationFlowScene } from "./upgrades/AutomationFlowScene";
+import {
+  Eyebrow,
+  PriceTag,
+  PrimaryCta,
+  ProductExternalCta,
+  ProductLabel,
+  SecondaryCta,
+  WelcomeOfferPrompt,
+} from "./upgrades/upgradeParts";
 
-function PremiumWebsiteVisual() {
-  const { t } = useLanguage();
+/** Shared offer surface: quiet depth, mockups allowed to breathe. */
+function OfferSurface({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <SceneShell ratio="aspect-[16/9] md:aspect-[16/8]">
-      <div className="absolute inset-0 p-4 md:p-6">
-        <SceneBrowser label="yourbusiness.ca" className="h-full">
-          <div className="p-3">
-            <div className="flex items-center gap-2">
-              <SceneBar delay={140} tone="primary" className="h-2 w-10" />
-              <SceneBar delay={200} className="h-1.5 w-8" />
-              <SceneBar delay={240} className="h-1.5 w-8" />
-              <SceneBar delay={300} tone="primary" className="ml-auto h-4 w-14 rounded" />
-            </div>
-            <div className="mt-3 grid grid-cols-[1.5fr_1fr] gap-3">
-              <div>
-                <SceneBar delay={380} tone="strong" className="h-3 w-[80%]" />
-                <SceneBar delay={430} tone="strong" className="mt-2 h-3 w-[55%]" />
-                <SceneBar delay={500} className="mt-3 h-1.5 w-[92%]" />
-                <SceneBar delay={540} className="mt-1.5 h-1.5 w-[74%]" />
-              </div>
-              <SceneBar delay={600} className="h-full min-h-[52px] w-full rounded-md" />
-            </div>
-          </div>
-        </SceneBrowser>
-      </div>
-      <div className="absolute bottom-4 right-4 flex flex-col items-end gap-1.5">
-        <SceneChip delay={780}><Globe2 size={9} className="text-primary" /> Domain</SceneChip>
-        <SceneChip delay={880}><Server size={9} className="text-primary" /> Hosting</SceneChip>
-        <SceneChip delay={980}><Smartphone size={9} className="text-primary" /> Mobile</SceneChip>
-        <SceneChip delay={1100} className="border-primary/60 text-primary">
-          <Check size={9} /> {t("upg.website.status")}
-        </SceneChip>
-      </div>
-    </SceneShell>
-  );
-}
-
-function CardFrame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <PerspectiveCard max={4}>
+    <PerspectiveCard max={3}>
       <article
-        className={`tk-sheen group flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition-colors duration-300 hover:border-primary/50 hover:shadow-[var(--shadow-glow)] md:p-6 ${className}`}
+        className={`tk-sheen flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card/90 p-5 shadow-[var(--shadow-card)] backdrop-blur transition-colors duration-300 hover:border-primary/45 md:p-7 ${className}`}
       >
         {children}
       </article>
@@ -58,126 +33,197 @@ function CardFrame({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-function Cta({ to, label, primary = true }: { to: string; label: string; primary?: boolean }) {
-  return (
-    <Link
-      to={to as never}
-      className={
-        primary
-          ? "inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-[13px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          : "inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/60 px-3.5 py-2 text-[13px] font-semibold text-foreground transition-colors hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-      }
-    >
-      {label}
-      {primary && <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />}
-    </Link>
-  );
-}
+const websitePackages = [
+  { key: "starter", tier: pricing.websites[0] },
+  { key: "business", tier: pricing.websites[1] },
+  { key: "premium", tier: pricing.websites[2] },
+  { key: "ecommerce", tier: pricing.websites[3] },
+] as const;
 
 /**
- * Popular business upgrades — asymmetric editorial composition:
- * one large website feature, two stacked secondary cards, and a wide
- * cinematic automation card.
+ * Popular business upgrades — TAKATAK's premium digital storefront.
+ *
+ * Editorial composition, not a card grid: the website is the hero product
+ * (left), brand and local growth stack beside it, and automation runs as a
+ * second cinematic feature across the full width.
  */
 export function PopularBusinessUpgrades() {
   const { t } = useLanguage();
+  const [pkg, setPkg] = useState<(typeof websitePackages)[number]["key"]>("starter");
+  const active = websitePackages.find((p) => p.key === pkg) ?? websitePackages[0];
+
   return (
-    <section className="relative border-b border-border bg-background">
+    <section className="relative overflow-hidden border-b border-border bg-[color-mix(in_oklab,var(--foreground)_3%,var(--background))]">
+      {/* section environment */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-70"
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(760px 340px at 82% 8%, color-mix(in oklab, var(--primary) 9%, transparent), transparent 66%), radial-gradient(600px 320px at 8% 90%, color-mix(in oklab, var(--primary) 6%, transparent), transparent 70%)",
+            "radial-gradient(900px 420px at 78% 4%, color-mix(in oklab, var(--primary) 10%, transparent), transparent 68%), radial-gradient(700px 380px at 4% 92%, color-mix(in oklab, var(--primary) 7%, transparent), transparent 72%)",
         }}
       />
-      <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-1/3 select-none text-center text-[19vw] font-black leading-none tracking-tighter text-foreground/[0.035]"
+      >
+        UPGRADE
+      </span>
+
+      <div className="relative mx-auto max-w-[1500px] px-4 py-16 md:py-24">
         <Reveal>
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
-            <h2 className="min-w-0 text-3xl font-bold tracking-tight text-foreground md:text-4xl">{t("upg.title")}</h2>
-            <Link to="/marketplace" className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+          <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+            <div className="min-w-0">
+              <Eyebrow>{t("upg.kicker")}</Eyebrow>
+              <h2 className="mt-2 max-w-2xl text-3xl font-bold tracking-tight text-foreground md:text-[2.6rem] md:leading-[1.1]">
+                {t("upg.title")}
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">{t("upg.sub")}</p>
+            </div>
+            <Link
+              to="/marketplace"
+              className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            >
               {t("upg.browse")} <ArrowRight size={14} />
             </Link>
           </div>
         </Reveal>
 
-        <div className="mt-9 grid grid-cols-1 gap-5 lg:grid-cols-5">
-          {/* Large feature */}
+        <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-5">
+          {/* HERO PRODUCT — premium business website */}
           <Reveal className="lg:col-span-3">
-            <CardFrame>
-              <PremiumWebsiteVisual />
-              <div className="mt-5 flex items-start justify-between gap-3">
-                <h3 className="min-w-0 text-xl font-bold leading-8 text-foreground md:text-2xl">{t("upg.website.title")}</h3>
-                <span className="shrink-0 rounded-full border border-border bg-secondary px-2.5 py-1 text-[11px] font-semibold text-foreground">
-                  {t("price.from")} {formatCAD(pricing.websites[0].amount)}
-                </span>
+            <OfferSurface>
+              <WebsiteCommerceScene />
+              <Eyebrow>{t("upg.website.eyebrow")}</Eyebrow>
+              <h3 className="mt-2 text-2xl font-bold leading-9 text-foreground md:text-[1.8rem]">
+                {t("upg.website.title")}
+              </h3>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{t("upg.website.desc")}</p>
+
+              <div className="mt-5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  {t("upg.website.pkgs")}
+                </p>
+                <div role="group" aria-label={t("upg.website.pkgs")} className="mt-2 flex flex-wrap gap-1.5">
+                  {websitePackages.map((p) => (
+                    <button
+                      key={p.key}
+                      type="button"
+                      aria-pressed={p.key === pkg}
+                      onClick={() => setPkg(p.key)}
+                      className={`rounded-lg border px-3 py-1.5 text-[12px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                        p.key === pkg
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border bg-background/70 text-foreground hover:border-primary/45"
+                      }`}
+                    >
+                      {t(`upg.website.p.${p.key}` as never)}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 text-[13px] text-muted-foreground">{t(`upg.website.b.${pkg}` as never)}</p>
               </div>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{t("upg.website.desc")}</p>
-              <ul className="mt-4 flex flex-wrap gap-1.5">
-                {(["c1", "c2", "c3", "c4"] as const).map((c) => (
-                  <li key={c} className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/70 px-2.5 py-1 text-[11px] font-medium text-foreground">
-                    <Check size={10} className="text-primary" /> {t(`upg.website.${c}` as never)}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto flex flex-wrap gap-2 pt-6">
-                <Cta to="/services/websites" label={t("upg.website.cta")} />
-                <Cta to="/pricing" label={t("upg.website.cta2")} primary={false} />
+
+              <div className="mt-auto pt-6">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                  <PriceTag amount={active.tier.amount} />
+                  <div className="flex flex-wrap gap-2">
+                    <PrimaryCta to="/services/websites" search={{ package: active.tier.key }} label={t("upg.website.cta")} />
+                    <SecondaryCta to="/pricing" label={t("upg.website.cta2")} />
+                  </div>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  <ProductLabel>{t("upg.label.managed")}</ProductLabel>
+                  <ProductLabel>{t("upg.label.ready")}</ProductLabel>
+                </div>
+                <WelcomeOfferPrompt
+                  serviceKey="websites"
+                  next="/services/websites"
+                  extra={{ package: active.tier.key }}
+                />
               </div>
-            </CardFrame>
+            </OfferSurface>
           </Reveal>
 
-          {/* Secondary column */}
+          {/* STACK — brand + local growth */}
           <div className="grid gap-5 lg:col-span-2">
             <Reveal delay={80}>
-              <CardFrame>
-                <BrandingDiscoveryVisual />
-                <h3 className="mt-4 text-lg font-semibold leading-7 text-foreground">{t("upg.brand.title")}</h3>
-                <p className="mt-1.5 text-[13px] leading-6 text-muted-foreground">{t("upg.brand.desc")}</p>
+              <OfferSurface>
+                <BrandBoardScene />
+                <Eyebrow>{t("upg.brand.eyebrow")}</Eyebrow>
+                <h3 className="mt-2 text-xl font-bold leading-8 text-foreground">{t("upg.brand.title")}</h3>
+                <p className="mt-2 text-[13px] leading-6 text-muted-foreground">{t("upg.brand.desc")}</p>
                 <div className="mt-auto pt-5">
-                  <Cta to="/services/logo-branding" label={t("upg.brand.cta")} />
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+                    <PriceTag amount={pricing.branding[0].amount} />
+                    <div className="flex flex-wrap gap-2">
+                      <PrimaryCta to="/services/logo-branding" search={{ package: pricing.branding[0].key }} label={t("upg.brand.cta")} />
+                      <SecondaryCta to="/services/logo-branding" label={t("upg.brand.cta2")} />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    <ProductLabel>{t("upg.label.setup")}</ProductLabel>
+                  </div>
+                  <WelcomeOfferPrompt serviceKey="branding" next="/services/logo-branding" />
                 </div>
-              </CardFrame>
+              </OfferSurface>
             </Reveal>
 
             <Reveal delay={140}>
-              <CardFrame>
-                <LocalGrowthDiscoveryVisual />
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/8 px-2.5 py-1 text-[11px] font-semibold text-foreground">
-                    <MapPin size={10} className="text-primary" /> {t("upg.local.chipQ")}
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/8 px-2.5 py-1 text-[11px] font-semibold text-foreground">
-                    <Sparkles size={10} className="text-primary" /> {t("upg.local.chipF")}
-                  </span>
+              <OfferSurface>
+                <LocalGrowthScene />
+                <Eyebrow>{t("upg.local.eyebrow")}</Eyebrow>
+                <h3 className="mt-2 text-xl font-bold leading-8 text-foreground">{t("upg.local.title")}</h3>
+                <p className="mt-2 text-[13px] leading-6 text-muted-foreground">{t("upg.local.desc")}</p>
+                <div className="mt-auto pt-5">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+                    <PriceTag amount={pricing.local[0].amount} />
+                    <PrimaryCta to="/services/local-listings" label={t("upg.local.cta")} />
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                    <ProductExternalCta href={QMAPS.productUrl} name="QMAPS" accessibleName={t("upg.local.openQ")} />
+                    <ProductExternalCta href={FLEXS.productUrl} name="FLEXS" accessibleName={t("upg.local.openF")} />
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
+                    <Link to="/services/local-listings" className="text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
+                      {t("upg.local.svcQ")}
+                    </Link>
+                    <Link to="/services/lead-generation" className="text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
+                      {t("upg.local.svcF")}
+                    </Link>
+                  </div>
+                  <WelcomeOfferPrompt serviceKey="local" next="/services/local-listings" />
                 </div>
-                <h3 className="mt-3 text-lg font-semibold leading-7 text-foreground">{t("upg.local.title")}</h3>
-                <p className="mt-1.5 text-[13px] leading-6 text-muted-foreground">{t("upg.local.desc")}</p>
-                <div className="mt-auto flex flex-wrap gap-2 pt-5">
-                  <Cta to="/services/local-listings" label={t("upg.local.cta")} />
-                  <Cta to="/services/lead-generation" label={t("upg.local.cta2")} primary={false} />
-                </div>
-              </CardFrame>
+              </OfferSurface>
             </Reveal>
           </div>
 
-          {/* Wide cinematic automation card */}
+          {/* SECOND CINEMATIC FEATURE — automation */}
           <Reveal delay={100} className="lg:col-span-5">
-            <CardFrame>
-              <div className="grid gap-5 md:grid-cols-[1fr_1.1fr] md:items-center">
+            <OfferSurface>
+              <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
                 <div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-2.5 py-1 text-[11px] font-semibold text-foreground">
-                    <Workflow size={11} className="text-primary" /> {t("price.from")} {formatCAD(pricing.ai[0].amount)}
-                  </span>
-                  <h3 className="mt-3 text-xl font-bold leading-8 text-foreground md:text-2xl">{t("upg.auto.title")}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{t("upg.auto.desc")}</p>
-                  <div className="mt-5">
-                    <Cta to="/services/automation" label={t("upg.auto.cta")} />
+                  <Eyebrow>{t("upg.auto.eyebrow")}</Eyebrow>
+                  <h3 className="mt-2 text-2xl font-bold leading-9 text-foreground md:text-[1.8rem]">
+                    {t("upg.auto.title")}
+                  </h3>
+                  <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{t("upg.auto.desc")}</p>
+                  <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+                    <PriceTag amount={pricing.ai[0].amount} />
+                    <div className="flex flex-wrap gap-2">
+                      <PrimaryCta to="/services/automation" search={{ package: pricing.ai[0].key }} label={t("upg.auto.cta")} />
+                      <SecondaryCta to="/services/ai-business-tools" label={t("upg.auto.cta2")} />
+                    </div>
                   </div>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    <ProductLabel>{t("upg.label.connected")}</ProductLabel>
+                    <ProductLabel>{t("upg.label.managed")}</ProductLabel>
+                  </div>
+                  <WelcomeOfferPrompt serviceKey="automation" next="/services/automation" />
                 </div>
-                <OperationsDiscoveryVisual />
+                <AutomationFlowScene />
               </div>
-            </CardFrame>
+            </OfferSurface>
           </Reveal>
         </div>
       </div>
