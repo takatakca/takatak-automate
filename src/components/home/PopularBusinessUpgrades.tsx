@@ -93,7 +93,7 @@ export function PopularBusinessUpgrades() {
           {/* HERO PRODUCT — premium business website */}
           <Reveal className="lg:col-span-3">
             <OfferSurface>
-              <div className="mb-5"><WebsiteCommerceScene /></div>
+              <div className="mb-5 flex-1"><WebsiteCommerceScene /></div>
               <Eyebrow>{t("upg.website.eyebrow")}</Eyebrow>
               <h3 className="mt-2 text-2xl font-bold leading-9 text-foreground md:text-[1.8rem]">
                 {t("upg.website.title")}
