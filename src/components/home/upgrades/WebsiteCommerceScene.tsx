@@ -10,7 +10,10 @@ import { SceneShell, SceneChip } from "@/components/home/discovery/SceneShell";
 export function WebsiteCommerceScene() {
   const { t } = useLanguage();
   return (
-    <SceneShell ratio="aspect-[16/10] md:aspect-[16/9]" className="bg-[color-mix(in_oklab,var(--foreground)_5%,var(--background))]">
+    <SceneShell
+      ratio="aspect-[16/10] md:aspect-auto md:h-full md:min-h-[300px]"
+      className="bg-[color-mix(in_oklab,var(--foreground)_5%,var(--background))]"
+    >
       {/* browser */}
       <div className="tk-step absolute inset-x-4 top-4 bottom-10 overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] md:inset-x-8 md:top-6 md:bottom-12">
         <div className="flex items-center gap-1.5 border-b border-border bg-secondary/70 px-3 py-1.5">
