@@ -6,7 +6,7 @@ import { TakatakEcosystemHero } from "@/components/home/TakatakEcosystemHero";
 import { TrendingProjectsRail } from "@/components/home/TrendingProjectsRail";
 import { DiscoverySection } from "@/components/home/DiscoverySection";
 import { PopularBusinessUpgrades } from "@/components/home/PopularBusinessUpgrades";
-import { DomainHostingSpotlight } from "@/components/home/DomainHostingSpotlight";
+import { FoundationWorkspace } from "@/components/home/foundation/FoundationWorkspace";
 import { PricingGateways } from "@/components/home/PricingGateways";
 import { BusinessTransformationStage } from "@/components/home/BusinessTransformationStage";
 import { ManagedDeliveryJourney } from "@/components/home/ManagedDeliveryJourney";
@@ -36,7 +36,7 @@ function Index() {
       <DiscoverySection />
       <BusinessTransformationStage />
       <PopularBusinessUpgrades />
-      <DomainHostingSpotlight />
+      <FoundationWorkspace />
       <PricingGateways />
       <ManagedDeliveryJourney />
       <ConciergeSupportSection />
