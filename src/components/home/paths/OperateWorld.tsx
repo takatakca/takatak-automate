@@ -112,7 +112,7 @@ export function OperateWorld({ beat, status }: { beat: number; status: string })
       </SceneSurface>
 
       {/* Foreground: incoming call */}
-      <Beat show={beat >= 1} from="left" className="absolute -left-1 top-[16%] w-[52%] max-w-[190px]">
+      <Beat show={beat >= 1} from="left" className="absolute left-1 top-1 w-[49%] max-w-[190px] sm:-left-1 sm:top-[16%] sm:w-[52%]">
         <SceneSurface depth="front" className="px-2.5 py-2">
           <p className="flex items-center gap-2 text-[11px] font-semibold text-foreground">
             <PhoneCall size={12} className="text-primary" aria-hidden />
@@ -125,7 +125,7 @@ export function OperateWorld({ beat, status }: { beat: number; status: string })
       </Beat>
 
       {/* Foreground: team notification */}
-      <Beat show={beat >= 7} from="right" className="absolute right-1 top-[8%] w-[50%] max-w-[190px]">
+      <Beat show={beat >= 7} from="right" className="absolute right-1 top-1 w-[47%] max-w-[190px] sm:top-[8%] sm:w-[50%]">
         <SceneSurface depth="front" className="px-2.5 py-2">
           <p className="flex items-center gap-2 text-[11px] font-semibold text-foreground">
             <Bell size={12} className="text-primary" aria-hidden />
