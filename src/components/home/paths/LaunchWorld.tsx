@@ -76,7 +76,7 @@ export function LaunchWorld({ beat, status }: { beat: number; status: string }) 
       </Beat>
 
       {/* Mobile version */}
-      <Beat show={beat >= 4} from="up" className="absolute bottom-2 right-[16%] w-[74px]">
+      <Beat show={beat >= 4} from="up" className="absolute bottom-2 right-[16%] hidden w-[74px] sm:block">
         <SceneSurface depth="front" className="overflow-hidden p-1.5">
           <div className="h-6 rounded-sm bg-[linear-gradient(120deg,color-mix(in_oklab,var(--primary)_30%,transparent),transparent)]" />
           <div className="mt-1.5 h-1.5 w-3/4 rounded-full bg-white/15" />
@@ -85,7 +85,7 @@ export function LaunchWorld({ beat, status }: { beat: number; status: string }) 
       </Beat>
 
       {/* Brand mark */}
-      <Beat show={beat >= 5} from="scale" className="absolute bottom-[34%] right-[6%]">
+      <Beat show={beat >= 5} from="scale" className="absolute bottom-[6%] left-[2%] sm:bottom-[34%] sm:left-auto sm:right-[6%]">
         <span className="inline-flex items-center gap-2 rounded-xl border border-primary/35 bg-primary/12 px-2.5 py-1.5 text-[11px] font-semibold text-foreground">
           <Sparkles size={12} className="text-primary" aria-hidden />
           {tx({ en: "Brand applied", fr: "Marque appliquée" })}

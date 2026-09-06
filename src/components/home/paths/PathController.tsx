@@ -61,7 +61,7 @@ export function PathController({
               0{i + 1}
             </span>
             <span
-              className={`truncate text-[10px] font-semibold uppercase tracking-[0.16em] sm:text-xs ${
+              className={`truncate text-[10px] font-semibold uppercase tracking-[0.06em] sm:tracking-[0.16em] sm:text-xs ${
                 selected ? "text-foreground" : "text-muted-foreground"
               }`}
             >
