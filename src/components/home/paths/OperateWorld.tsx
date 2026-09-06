@@ -41,6 +41,28 @@ export function OperateWorld({ beat, status }: { beat: number; status: string })
                 );
               })}
             </ul>
+
+            <SceneLabel>{tx({ en: "Service status", fr: "Statut des services" })}</SceneLabel>
+            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+              {[
+                { en: "Phone line", fr: "Ligne téléphonique" },
+                { en: "Automations", fr: "Automatisations" },
+                { en: "AI tools", fr: "Outils IA" },
+              ].map((svc, i) => (
+                <span
+                  key={svc.en}
+                  className={`flex items-center gap-1.5 rounded-md border px-1.5 py-1 text-[9px] transition-colors duration-500 sm:text-[10px] ${
+                    beat >= 8 ? "border-primary/35 bg-primary/10 text-foreground" : "border-white/10 bg-white/[0.03] text-muted-foreground"
+                  }`}
+                >
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-500"
+                    style={{ background: beat >= 8 - i ? "color-mix(in oklab, var(--primary) 80%, transparent)" : "rgba(255,255,255,0.2)" }}
+                  />
+                  <span className="truncate">{tx(svc)}</span>
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Main surface */}
