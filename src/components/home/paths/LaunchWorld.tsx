@@ -11,7 +11,7 @@ export function LaunchWorld({ beat, status }: { beat: number; status: string }) 
   const { tx } = useLanguage();
 
   return (
-    <div className="relative aspect-[4/3] w-full sm:aspect-[16/10]">
+    <div className="relative aspect-[5/6] w-full sm:aspect-[16/10]">
       {/* Infrastructure line */}
       <svg aria-hidden className="absolute inset-0 h-full w-full text-primary" viewBox="0 0 400 250" preserveAspectRatio="none">
         <path
@@ -25,7 +25,7 @@ export function LaunchWorld({ beat, status }: { beat: number; status: string }) 
       </svg>
 
       {/* Domain surface */}
-      <Beat show={beat >= 1} className="absolute left-0 top-2 w-[58%] max-w-[260px]">
+      <Beat show={beat >= 1} className="absolute left-0 top-0 w-[64%] max-w-[260px] sm:top-2 sm:w-[58%]">
         <SceneSurface depth="mid" className="px-3 py-2.5">
           <SceneLabel>{tx({ en: "Domain", fr: "Domaine" })}</SceneLabel>
           <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -36,7 +36,7 @@ export function LaunchWorld({ beat, status }: { beat: number; status: string }) 
       </Beat>
 
       {/* Hosting / infrastructure layer */}
-      <Beat show={beat >= 2} from="left" className="absolute bottom-6 left-0 w-[46%] max-w-[210px]">
+      <Beat show={beat >= 2} from="left" className="absolute bottom-[22%] left-0 w-[58%] max-w-[210px] sm:bottom-6 sm:w-[46%]">
         <SceneSurface depth="back" className="px-3 py-2.5">
           <SceneLabel>{tx({ en: "Hosting", fr: "Hébergement" })}</SceneLabel>
           <p className="mt-1 flex items-center gap-2 text-xs text-foreground/85">
@@ -52,7 +52,7 @@ export function LaunchWorld({ beat, status }: { beat: number; status: string }) 
       </Beat>
 
       {/* Browser */}
-      <Beat show={beat >= 3} from="scale" className="absolute right-0 top-6 w-[62%] max-w-[330px]">
+      <Beat show={beat >= 3} from="scale" className="absolute right-0 top-[20%] w-[76%] max-w-[330px] sm:top-6 sm:w-[62%]">
         <SceneSurface depth="front" className="overflow-hidden">
           <div className="flex items-center gap-1.5 border-b border-white/10 px-3 py-2">
             <span className="h-2 w-2 rounded-full bg-white/25" />
@@ -85,7 +85,7 @@ export function LaunchWorld({ beat, status }: { beat: number; status: string }) 
       </Beat>
 
       {/* Brand mark */}
-      <Beat show={beat >= 5} from="scale" className="absolute bottom-[6%] left-[2%] sm:bottom-[34%] sm:left-auto sm:right-[6%]">
+      <Beat show={beat >= 5} from="scale" className="absolute bottom-[3%] left-0 sm:bottom-[34%] sm:left-auto sm:right-[6%]">
         <span className="inline-flex items-center gap-2 rounded-xl border border-primary/35 bg-primary/12 px-2.5 py-1.5 text-[11px] font-semibold text-foreground">
           <Sparkles size={12} className="text-primary" aria-hidden />
           {tx({ en: "Brand applied", fr: "Marque appliquée" })}

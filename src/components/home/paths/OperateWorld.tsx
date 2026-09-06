@@ -18,7 +18,7 @@ export function OperateWorld({ beat, status }: { beat: number; status: string })
   ];
 
   return (
-    <div className="relative aspect-[4/3] w-full sm:aspect-[16/10]">
+    <div className="relative aspect-[5/6] w-full sm:aspect-[16/10]">
       <SceneSurface depth="mid" className="absolute inset-0 overflow-hidden">
         <div className="grid h-full grid-cols-[86px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)]">
           {/* Sidebar */}
