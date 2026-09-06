@@ -20,9 +20,9 @@ export function OperateWorld({ beat, status }: { beat: number; status: string })
   return (
     <div className="relative aspect-[5/6] w-full sm:aspect-[16/10]">
       <SceneSurface depth="mid" className="absolute inset-0 overflow-hidden">
-        <div className="grid h-full grid-cols-[86px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)]">
+        <div className="grid h-full grid-cols-1 sm:grid-cols-[120px_minmax(0,1fr)]">
           {/* Sidebar */}
-          <div className="border-r border-white/10 bg-white/[0.02] p-2 sm:p-3">
+          <div className="hidden border-r border-white/10 bg-white/[0.02] p-2 sm:block sm:p-3">
             <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-primary">TAKATAK</p>
             <ul className="mt-3 space-y-1.5">
               {nav.map((n, i) => {
@@ -66,7 +66,7 @@ export function OperateWorld({ beat, status }: { beat: number; status: string })
           </div>
 
           {/* Main surface */}
-          <div className="space-y-2 p-2.5 sm:p-4">
+          <div className="space-y-2 p-3 pt-14 sm:p-4 sm:pt-4">
             <SceneLabel>{tx({ en: "Active workflow", fr: "Automatisation active" })}</SceneLabel>
             <div className="flex items-center gap-1.5">
               {[
