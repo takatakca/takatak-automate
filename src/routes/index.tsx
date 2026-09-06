@@ -7,7 +7,7 @@ import { TrendingProjectsRail } from "@/components/home/TrendingProjectsRail";
 import { DiscoverySection } from "@/components/home/DiscoverySection";
 import { PopularBusinessUpgrades } from "@/components/home/PopularBusinessUpgrades";
 import { FoundationWorkspace } from "@/components/home/foundation/FoundationWorkspace";
-import { PricingGateways } from "@/components/home/PricingGateways";
+import { BusinessPathsSection } from "@/components/home/paths/BusinessPathsSection";
 import { BusinessTransformationStage } from "@/components/home/BusinessTransformationStage";
 import { ManagedDeliveryJourney } from "@/components/home/ManagedDeliveryJourney";
 import { ConciergeSupportSection } from "@/components/home/ConciergeSupportSection";
@@ -37,7 +37,7 @@ function Index() {
       <BusinessTransformationStage />
       <PopularBusinessUpgrades />
       <FoundationWorkspace />
-      <PricingGateways />
+      <BusinessPathsSection />
       <ManagedDeliveryJourney />
       <ConciergeSupportSection />
       <FinalCtaSection />
