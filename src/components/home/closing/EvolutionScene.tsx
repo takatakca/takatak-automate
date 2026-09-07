@@ -1,6 +1,6 @@
 import { Lightbulb, Globe, Network, LayoutDashboard, TrendingUp, type LucideIcon } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { Bilingual } from "@/lib/i18n";
+import type { Bilingual } from "@/lib/businessPaths";
 
 interface EvolutionStage {
   key: string;
