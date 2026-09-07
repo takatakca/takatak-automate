@@ -1,90 +1,168 @@
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Check, Headset, MessageSquare, Sparkles } from "lucide-react";
-import { openLiveChat } from "@/lib/chatProvider";
+import { ArrowRight, Mic, MessageSquare } from "lucide-react";
+import { MotionViewport } from "@/components/motion/MotionViewport";
+import { Reveal } from "@/components/motion/Reveal";
 import { useLanguage } from "@/hooks/useLanguage";
-import { Reveal } from "./Reveal";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { openLiveChat } from "@/lib/chatProvider";
+import { openOverlay } from "@/lib/overlayManager";
+import { getPromoState, PROMO_CODE } from "@/lib/promotions";
+import { CONCIERGE_GOALS } from "@/lib/conciergeGoals";
+import { ConciergeBackdrop } from "./concierge/ConciergeBackdrop";
+import { SolutionPathway } from "./concierge/SolutionPathway";
 
+const BEAT_MS = 420;
+const MAX_BEAT = 3;
+
+/**
+ * Pass 9 — Premium concierge sales experience. A guided selector (not a live
+ * AI conversation) that maps a business goal to an illuminated pathway
+ * through existing TAKATAK services.
+ */
 export function ConciergeSupportSection() {
-  const { t } = useLanguage();
-  const scrollToSearch = () => {
-    const hero = document.getElementById("tk-hero");
-    hero?.scrollIntoView({ behavior: "smooth", block: "start" });
-    window.setTimeout(() => hero?.querySelector<HTMLInputElement>("input")?.focus(), 550);
-  };
+  const { tx, lang } = useLanguage();
+  const reduced = useReducedMotion();
+  const [index, setIndex] = useState(0);
+  const [promoSaved, setPromoSaved] = useState(false);
+
+  useEffect(() => {
+    const s = getPromoState();
+    setPromoSaved(s.status === "claimed" || s.status === "pending");
+  }, []);
+
+  const goal = CONCIERGE_GOALS[index]!;
 
   return (
-    <section className="brand-dark relative overflow-hidden border-y border-border">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-50"
-        style={{
-          background:
-            "radial-gradient(680px 280px at 20% 0%, color-mix(in oklab, var(--brand-accent-cyan) 20%, transparent), transparent 65%), radial-gradient(680px 280px at 85% 110%, color-mix(in oklab, var(--brand-accent-violet) 20%, transparent), transparent 65%)",
-        }}
-      />
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-16 md:py-20 lg:grid-cols-[1.05fr_0.95fr]">
-        <Reveal>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-foreground/85">
-            <Headset size={12} className="text-primary" /> {t("home.support.kicker")}
-          </span>
-          <h2 className="mt-5 max-w-xl text-3xl font-bold leading-tight text-foreground md:text-4xl">
-            {t("home.support.title")}
+    <section
+      aria-labelledby="tk-concierge-title"
+      className="relative isolate overflow-hidden border-b border-border bg-background"
+    >
+      <ConciergeBackdrop />
+
+      <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
+        <Reveal className="max-w-2xl">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+            {tx({ en: "TAKATAK CONCIERGE", fr: "CONCIERGERIE TAKATAK" })}
+          </p>
+          <h2 id="tk-concierge-title" className="mt-2 text-3xl font-bold leading-tight text-foreground md:text-4xl">
+            {tx({
+              en: "Not sure where to start? Tell us what your business needs.",
+              fr: "Vous ne savez pas par où commencer? Expliquez-nous vos besoins.",
+            })}
           </h2>
-          <p className="mt-4 max-w-lg text-base leading-7 text-muted-foreground">{t("home.support.subtitle")}</p>
-
-          <div className="mt-7 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => openLiveChat({ page: "/" })}
-              className="tk-glow-cta inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-primary-foreground"
-              style={{ backgroundImage: "var(--gradient-hero)" }}
-            >
-              <MessageSquare size={15} /> {t("home.support.chat")}
-            </button>
-            <button
-              type="button"
-              onClick={scrollToSearch}
-              className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground hover:bg-white/10"
-            >
-              <Sparkles size={15} className="text-primary" /> {t("home.support.search")}
-            </button>
-            <Link
-              to="/marketplace/post-project"
-              className="inline-flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-foreground/85 underline-offset-4 hover:text-foreground hover:underline"
-            >
-              {t("home.support.quote")} <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
-            {[t("home.support.b1"), t("home.support.b2"), t("home.support.b3")].map((b) => (
-              <li key={b} className="inline-flex items-center gap-1.5">
-                <Check size={13} className="text-primary" /> {b}
-              </li>
-            ))}
-          </ul>
+          <p className="mt-3 text-sm text-muted-foreground md:text-base">
+            {tx({
+              en: "TAKATAK helps identify the right digital solutions, services and next steps.",
+              fr: "TAKATAK vous aide à choisir les bonnes solutions numériques.",
+            })}
+          </p>
         </Reveal>
 
-        <Reveal delay={120}>
-          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="tk-blink inline-block h-2 w-2 rounded-full bg-primary" />
+        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+          {/* Guided conversation */}
+          <div className="rounded-2xl border border-border bg-card/70 p-4 backdrop-blur-sm md:p-5">
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-primary" />
               TAKATAK
             </div>
-            <div className="mt-4 space-y-3 text-sm">
-              <p className="w-fit max-w-[85%] rounded-2xl rounded-tl-sm border border-white/10 bg-white/[0.06] px-3.5 py-2.5 text-foreground/90">
-                {t("search.ex1")}
-              </p>
-              <p className="ml-auto w-fit max-w-[88%] rounded-2xl rounded-tr-sm px-3.5 py-2.5 text-primary-foreground" style={{ backgroundImage: "var(--gradient-hero)" }}>
-                {t("home.support.subtitle")}
-              </p>
-              <p className="w-fit max-w-[85%] rounded-2xl rounded-tl-sm border border-white/10 bg-white/[0.06] px-3.5 py-2.5 text-foreground/90">
-                {t("search.ex3")}
-              </p>
+            <p className="mt-3 w-fit max-w-[92%] rounded-2xl rounded-tl-sm border border-border bg-secondary/50 px-3.5 py-2.5 text-sm text-foreground">
+              {tx({ en: "What would you like to improve?", fr: "Que souhaitez-vous améliorer?" })}
+            </p>
+
+            <div
+              role="radiogroup"
+              aria-label={tx({ en: "Business goal", fr: "Objectif d'affaires" })}
+              className="mt-4 grid gap-2 sm:grid-cols-2"
+            >
+              {CONCIERGE_GOALS.map((g, i) => {
+                const active = i === index;
+                const Icon = g.icon;
+                return (
+                  <button
+                    key={g.key}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setIndex(i)}
+                    className={`flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left text-[13px] font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 ${
+                      active
+                        ? "border-primary/50 bg-primary/10 text-foreground"
+                        : "border-border bg-secondary/35 text-muted-foreground hover:border-primary/35 hover:text-foreground"
+                    }`}
+                  >
+                    <Icon size={15} className={active ? "text-primary" : ""} aria-hidden />
+                    {tx(g.option)}
+                  </button>
+                );
+              })}
             </div>
+
+            <p className="mt-4 ml-auto w-fit max-w-[92%] rounded-2xl rounded-tr-sm border border-primary/30 bg-primary/[0.08] px-3.5 py-2.5 text-sm leading-6 text-foreground">
+              {tx(goal.answer)}
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link
+                to="/marketplace/post-project"
+                search={{ intent: goal.intent, lang, source: "concierge" } as never}
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-[13px] font-semibold text-primary-foreground transition-all duration-300 hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              >
+                {tx({ en: "Start my TAKATAK project", fr: "Démarrer mon projet TAKATAK" })}
+                <ArrowRight size={14} aria-hidden />
+              </Link>
+              <button
+                type="button"
+                onClick={() => openLiveChat({ page: "concierge", intent: goal.intent, lang })}
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-[13px] font-semibold text-foreground transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              >
+                <MessageSquare size={14} aria-hidden />
+                {tx({ en: "Talk to TAKATAK", fr: "Parler à TAKATAK" })}
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-2 text-[12px] text-muted-foreground">
+              <span>{tx({ en: "Prefer talking?", fr: "Vous préférez parler?" })}</span>
+              <button
+                type="button"
+                onClick={() => openOverlay("search")}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/50 px-2.5 py-1.5 font-semibold text-foreground transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              >
+                <Mic size={13} className="text-primary" aria-hidden />
+                {tx({ en: "Use voice search", fr: "Utiliser la recherche vocale" })}
+              </button>
+            </div>
+
+            {promoSaved && (
+              <p className="mt-3 text-[12px] text-muted-foreground">
+                {tx({ en: "Welcome offer available", fr: "Offre de bienvenue disponible" })} · {PROMO_CODE}
+              </p>
+            )}
           </div>
-        </Reveal>
+
+          {/* Solution visualization */}
+          <MotionViewport>
+            {(active) => <PathwayStage index={index} animate={active && !reduced} />}
+          </MotionViewport>
+        </div>
       </div>
     </section>
   );
+}
+
+/** Runs the short illumination choreography for the selected pathway. */
+function PathwayStage({ index, animate }: { index: number; animate: boolean }) {
+  const [beat, setBeat] = useState(MAX_BEAT);
+
+  useEffect(() => {
+    if (!animate) {
+      setBeat(MAX_BEAT);
+      return;
+    }
+    setBeat(0);
+    const id = window.setInterval(() => setBeat((b) => (b >= MAX_BEAT ? b : b + 1)), BEAT_MS);
+    return () => window.clearInterval(id);
+  }, [animate, index]);
+
+  return <SolutionPathway goal={CONCIERGE_GOALS[index]!} beat={beat} />;
 }
