@@ -1,103 +1,213 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { ChevronDown, Linkedin, Facebook, Instagram, Youtube, ShieldCheck, Lock, BadgeCheck, LifeBuoy } from "lucide-react";
 import { brand } from "@/lib/brand";
+import { useLanguage } from "@/hooks/useLanguage";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { QMAPS, FLEXS, externalLinkProps } from "@/lib/productDestinations";
+import type { Bilingual } from "@/lib/businessPaths";
 
-const cols = [
+interface FooterLink {
+  label: Bilingual;
+  to?: string;
+  href?: string;
+}
+
+interface FooterColumn {
+  title: Bilingual;
+  links: readonly FooterLink[];
+}
+
+const COLUMNS: readonly FooterColumn[] = [
   {
-    title: "Categories",
+    title: { en: "Discover", fr: "Découvrir" },
     links: [
-      { to: "/marketplace/category/$slug", params: { slug: "logo_design" }, label: "Graphics & Design" },
-      { to: "/marketplace/category/$slug", params: { slug: "website_design" }, label: "Programming & Tech" },
-      { to: "/marketplace/category/$slug", params: { slug: "online_advertising" }, label: "Digital Marketing" },
-      { to: "/marketplace/category/$slug", params: { slug: "content_writing" }, label: "Writing & Translation" },
-      { to: "/marketplace/category/$slug", params: { slug: "ai_tool_setup" }, label: "AI Services" },
-      { to: "/marketplace/category/$slug", params: { slug: "data_entry" }, label: "Data" },
+      { label: { en: "Marketplace", fr: "Marché" }, to: "/marketplace" },
+      { label: { en: "Trending projects", fr: "Projets tendance" }, to: "/marketplace/search" },
+      { label: { en: "Services", fr: "Services" }, to: "/services" },
+      { label: { en: "Pricing", fr: "Tarifs" }, to: "/pricing" },
+      { label: { en: "Deals", fr: "Promotions" }, to: "/deals" },
     ],
   },
   {
-    title: "For Clients",
+    title: { en: "Build", fr: "Construire" },
     links: [
-      { to: "/marketplace", label: "How TAKATAK works" },
-      { to: "/marketplace/post-project", label: "Post a project" },
-      { to: "/dashboard/marketplace", label: "Manage projects" },
-      { to: "/dashboard/support", label: "Support" },
+      { label: { en: "Domains", fr: "Domaines" }, to: "/domain" },
+      { label: { en: "Hosting", fr: "Hébergement" }, to: "/hosting" },
+      { label: { en: "Websites", fr: "Sites web" }, to: "/services/websites" },
+      { label: { en: "Mobile apps", fr: "Applications mobiles" }, to: "/services/mobile-apps" },
+      { label: { en: "Branding", fr: "Image de marque" }, to: "/services/logo-branding" },
     ],
   },
   {
-    title: "For Groupe TAKATAK Freelancers",
+    title: { en: "Grow", fr: "Croître" },
     links: [
-      { to: "/dashboard/freelancer", label: "Become a freelancer" },
-      { to: "/dashboard/freelancer/contracts", label: "Contracts" },
-      { to: "/dashboard/freelancer/deliveries", label: "Deliveries" },
-      { to: "/dashboard/freelancer/payouts", label: "Payouts" },
+      { label: { en: "Marketing", fr: "Marketing" }, to: "/services/marketing" },
+      { label: { en: "QMAPS", fr: "QMAPS" }, href: QMAPS.productUrl },
+      { label: { en: "FLEXS", fr: "FLEXS" }, href: FLEXS.productUrl },
+      { label: { en: "Lead generation", fr: "Génération de prospects" }, to: "/services/lead-generation" },
+      { label: { en: "Social media", fr: "Médias sociaux" }, to: "/services/social-media" },
     ],
   },
   {
-    title: "Business Solutions",
+    title: { en: "Operate", fr: "Opérer" },
     links: [
-      { to: "/domain", label: "Domains" },
-      { to: "/hosting", label: "Hosting" },
-      { to: "/services/local-listings", label: "Local Visibility" },
-      { to: "/services/lead-generation", label: "Lead Generation" },
-      { to: "/services/ai-business-tools", label: "AI Tools" },
+      { label: { en: "Automation", fr: "Automatisation" }, to: "/services/automation" },
+      { label: { en: "AI tools", fr: "Outils IA" }, to: "/services/ai-business-tools" },
+      { label: { en: "VoIP", fr: "Téléphonie VoIP" }, to: "/services/voip" },
+      { label: { en: "Dashboard", fr: "Tableau de bord" }, to: "/dashboard" },
+      { label: { en: "Support", fr: "Assistance" }, to: "/dashboard/support" },
     ],
   },
   {
-    title: "Company",
+    title: { en: "Company", fr: "Entreprise" },
     links: [
-      { to: "/", label: "About TAKATAK" },
-      { to: "/deals", label: "Today's Deals" },
-      { to: "/login", label: "Sign in" },
-      { to: "/signup", label: "Get started" },
-      { to: "/privacy-manager", label: "Privacy manager" },
+      { label: { en: "About TAKATAK", fr: "À propos de TAKATAK" }, to: "/" },
+      { label: { en: "Contact", fr: "Nous joindre" }, to: "/dashboard/support" },
+      { label: { en: "Privacy", fr: "Confidentialité" }, to: "/privacy-manager" },
+      { label: { en: "Sign in", fr: "Connexion" }, to: "/login" },
+      { label: { en: "Get started", fr: "Commencer" }, to: "/signup" },
     ],
   },
 ] as const;
 
+const TRUST = [
+  { icon: ShieldCheck, label: { en: "Secure payments", fr: "Paiements sécurisés" } },
+  { icon: Lock, label: { en: "Protected accounts", fr: "Comptes protégés" } },
+  { icon: BadgeCheck, label: { en: "Professional delivery", fr: "Livraison professionnelle" } },
+  { icon: LifeBuoy, label: { en: "Dedicated support", fr: "Soutien dédié" } },
+] as const;
+
+const SOCIALS = [
+  { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/" },
+  { icon: Facebook, label: "Facebook", href: "https://www.facebook.com/" },
+  { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/" },
+  { icon: Youtube, label: "YouTube", href: "https://www.youtube.com/" },
+] as const;
+
 export function SiteFooter() {
+  const { tx } = useLanguage();
+  const [open, setOpen] = useState<string | null>(null);
+
   return (
-    <footer className="brand-dark border-t border-border mt-24 relative">
+    <footer className="brand-dark relative mt-24 overflow-hidden border-t border-border">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background:
+            "radial-gradient(700px 260px at 12% -30%, color-mix(in oklab, var(--brand-accent-cyan) 12%, transparent), transparent 65%)",
+        }}
+      />
       <div
         aria-hidden
         className="absolute inset-x-0 top-0 h-px"
         style={{ background: "linear-gradient(90deg, transparent, var(--brand-accent-cyan), var(--brand-accent-violet), transparent)" }}
       />
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-10">
-          <div className="col-span-2 md:col-span-1">
+
+      <div className="relative mx-auto max-w-7xl px-4 py-14 md:py-16">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_2.4fr]">
+          {/* Brand */}
+          <div>
             <h3 className="flex items-center gap-1.5">
-              <span className="text-xl font-extrabold tracking-tight text-foreground">{brand.brandName}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5" aria-hidden />
+              <span className="text-xl font-extrabold tracking-tight text-foreground drop-shadow-[0_0_18px_color-mix(in_oklab,var(--brand-accent-cyan)_35%,transparent)]">
+                {brand.brandName}
+              </span>
+              <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
             </h3>
-            <p className="mt-3 text-sm text-muted-foreground max-w-xs">
-              {brand.positioning}
+            <p className="mt-3 max-w-xs text-sm text-muted-foreground">
+              {tx({
+                en: "Your complete digital business ecosystem.",
+                fr: "Votre écosystème d'affaires numérique complet.",
+              })}
             </p>
-            <p className="mt-6 text-xs text-muted-foreground">
-              {brand.supportEmail}
-            </p>
-          </div>
-          {cols.map((col) => (
-            <div key={col.title}>
-              <h4 className="text-sm font-semibold mb-4">{col.title}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                {col.links.map((l) => {
-                  const linkProps = "params" in l && l.params
-                    ? { to: l.to, params: l.params as never }
-                    : { to: l.to };
+            <p className="mt-4 text-xs text-muted-foreground">{brand.supportEmail}</p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <LanguageSwitcher />
+              <div className="flex items-center gap-1.5">
+                {SOCIALS.map((s) => {
+                  const Icon = s.icon;
                   return (
-                    <li key={`${col.title}-${l.label}`}>
-                      <Link {...linkProps} className="hover:text-foreground transition-colors">
-                        {l.label}
-                      </Link>
-                    </li>
+                    <a
+                      key={s.label}
+                      href={s.href}
+                      {...externalLinkProps}
+                      aria-label={s.label}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-card/60 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                    >
+                      <Icon size={14} aria-hidden />
+                    </a>
                   );
                 })}
-              </ul>
+              </div>
             </div>
-          ))}
+          </div>
+
+          {/* Columns — accordion on mobile, grid from md */}
+          <div className="grid grid-cols-1 gap-1 md:grid-cols-3 md:gap-8 lg:grid-cols-5">
+            {COLUMNS.map((col) => {
+              const title = tx(col.title);
+              const expanded = open === title;
+              return (
+                <div key={title} className="border-b border-border/70 md:border-0">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(expanded ? null : title)}
+                    aria-expanded={expanded}
+                    className="flex w-full items-center justify-between py-3 text-left text-sm font-semibold text-foreground md:pointer-events-none md:py-0 md:mb-4"
+                  >
+                    {title}
+                    <ChevronDown
+                      size={15}
+                      aria-hidden
+                      className={`text-muted-foreground transition-transform duration-300 md:hidden ${expanded ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  <ul
+                    className={`space-y-2 pb-3 text-sm text-muted-foreground md:block md:pb-0 ${expanded ? "block" : "hidden"}`}
+                  >
+                    {col.links.map((l) => (
+                      <li key={tx(l.label)}>
+                        {l.href ? (
+                          <a
+                            href={l.href}
+                            {...externalLinkProps}
+                            className="transition-colors hover:text-foreground"
+                          >
+                            {tx(l.label)}
+                          </a>
+                        ) : (
+                          <Link to={l.to!} className="transition-colors hover:text-foreground">
+                            {tx(l.label)}
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
         </div>
-        <div className="border-t border-border mt-12 pt-8 flex flex-col sm:flex-row gap-3 justify-between text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} {brand.legalName}. {brand.domain}</p>
-          <p>Managed online services for growing businesses.</p>
+
+        {/* Trust row */}
+        <ul className="mt-12 grid grid-cols-2 gap-3 border-t border-border pt-8 md:grid-cols-4">
+          {TRUST.map((t) => {
+            const Icon = t.icon;
+            return (
+              <li key={t.label.en} className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+                <Icon size={14} className="text-primary" aria-hidden />
+                {tx(t.label)}
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="mt-8 flex flex-col justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
+          <p>
+            © {new Date().getFullYear()} {brand.legalName}. {brand.domain}
+          </p>
+          <p>{tx({ en: brand.positioning, fr: "Services en ligne gérés pour entreprises en croissance." })}</p>
         </div>
       </div>
     </footer>
