@@ -101,6 +101,11 @@
   --brand-dark-border: oklch(1 0 0 / 0.10);
   --brand-accent-cyan: oklch(0.78 0.13 200);
   --brand-accent-violet: oklch(0.72 0.15 290);
+  --brand-accent-magenta: oklch(0.68 0.22 350);
+  --brand-accent-amber: oklch(0.82 0.16 75);
+  --brand-accent-blue: oklch(0.66 0.17 255);
+  /* Signature multi-colour brand spectrum: green → cyan → violet → magenta */
+  --gradient-spectrum: linear-gradient(100deg, oklch(0.6 0.17 152), oklch(0.72 0.14 200), oklch(0.66 0.19 290), oklch(0.66 0.22 350), oklch(0.6 0.17 152));
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -510,4 +515,99 @@
 @media (prefers-reduced-motion: reduce) {
   .tk-stage-word { animation: none; }
   .tk-stage-plane { transition: none; transform: none !important; filter: none; }
+}
+
+/* ---------- TAKATAK colour & energy layer ---------- */
+
+/* Public site canvas: soft colour mesh instead of flat white. */
+.tk-canvas {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(900px 520px at 100% 0%, color-mix(in oklab, var(--brand-accent-violet) 9%, transparent), transparent 70%),
+    radial-gradient(800px 600px at 0% 35%, color-mix(in oklab, var(--brand-accent-cyan) 9%, transparent), transparent 70%),
+    radial-gradient(900px 600px at 100% 70%, color-mix(in oklab, var(--brand-accent-magenta) 6%, transparent), transparent 70%),
+    radial-gradient(800px 600px at 0% 100%, color-mix(in oklab, var(--primary) 8%, transparent), transparent 70%);
+}
+
+/* Light section surface with a stronger, section-local colour mesh. */
+.tk-mesh-light {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(700px 420px at 92% 6%, color-mix(in oklab, var(--brand-accent-violet) 14%, transparent), transparent 70%),
+    radial-gradient(640px 420px at 4% 96%, color-mix(in oklab, var(--brand-accent-cyan) 14%, transparent), transparent 70%),
+    radial-gradient(520px 360px at 50% 50%, color-mix(in oklab, var(--primary) 5%, transparent), transparent 70%);
+}
+.tk-mesh-light.tk-mesh-alt {
+  background-image:
+    radial-gradient(700px 420px at 6% 8%, color-mix(in oklab, var(--brand-accent-magenta) 10%, transparent), transparent 70%),
+    radial-gradient(680px 440px at 96% 92%, color-mix(in oklab, var(--primary) 13%, transparent), transparent 70%),
+    radial-gradient(520px 360px at 60% 40%, color-mix(in oklab, var(--brand-accent-amber) 7%, transparent), transparent 70%);
+}
+
+/* Animated spectrum text for signature words. */
+@keyframes tk-spectrum-shift {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+.tk-spectrum-text {
+  background-image: var(--gradient-spectrum);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: tk-spectrum-shift 9s linear infinite;
+}
+.tk-spectrum-bar {
+  background-image: var(--gradient-spectrum);
+  background-size: 200% 100%;
+  animation: tk-spectrum-shift 9s linear infinite;
+}
+
+/* Aurora light blobs for dark bands. */
+@keyframes tk-aurora-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(8%, 6%, 0) scale(1.15); }
+}
+@keyframes tk-aurora-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  50%      { transform: translate3d(-10%, -4%, 0) scale(0.95); }
+}
+.tk-aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+.tk-aurora-a { animation: tk-aurora-a 16s ease-in-out infinite; }
+.tk-aurora-b { animation: tk-aurora-b 20s ease-in-out infinite; }
+
+/* Ecosystem product tile: accent colour comes from --tk-accent. */
+.tk-eco-tile {
+  --tk-accent: var(--primary);
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(420px 220px at 0% 0%, color-mix(in oklab, var(--tk-accent) 22%, transparent), transparent 70%),
+    var(--brand-dark-2);
+  border: 1px solid color-mix(in oklab, var(--tk-accent) 28%, transparent);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.35s ease;
+}
+.tk-eco-tile:hover,
+.tk-eco-tile:focus-within {
+  transform: translateY(-4px);
+  border-color: color-mix(in oklab, var(--tk-accent) 65%, transparent);
+  box-shadow: 0 30px 70px -36px color-mix(in oklab, var(--tk-accent) 80%, transparent);
+}
+.tk-eco-icon {
+  background: color-mix(in oklab, var(--tk-accent) 20%, transparent);
+  color: var(--tk-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tk-accent) 40%, transparent);
+}
+.tk-eco-accent { color: var(--tk-accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-spectrum-text, .tk-spectrum-bar, .tk-aurora-a, .tk-aurora-b { animation: none; }
+  .tk-eco-tile:hover, .tk-eco-tile:focus-within { transform: none; }
 }

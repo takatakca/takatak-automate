@@ -89,7 +89,7 @@ const ENTRIES: readonly TrendingEntry[] = [
   },
 ];
 
-function EntryCard({ entry, featured = false }: { entry: TrendingEntry; featured?: boolean }) {
+function EntryCard({ entry, featured = false, wide = false }: { entry: TrendingEntry; featured?: boolean; wide?: boolean }) {
   const { tx } = useLanguage();
   const pkg = getPackage(entry.id);
   if (!pkg) return null;
@@ -101,7 +101,15 @@ function EntryCard({ entry, featured = false }: { entry: TrendingEntry; featured
         featured ? "md:flex-row" : ""
       }`}
     >
-      <div className={featured ? "relative aspect-[16/10] md:aspect-auto md:w-[56%]" : "relative aspect-[16/10]"}>
+      <div
+        className={
+          featured
+            ? "relative aspect-[16/10] md:aspect-auto md:min-h-[300px] md:w-[56%] lg:min-h-[340px]"
+            : wide
+              ? "relative aspect-[16/8]"
+              : "relative aspect-[16/10]"
+        }
+      >
         <div className="absolute inset-0 p-2 transition-transform duration-700 group-hover:scale-[1.02]">
           <Scene />
         </div>
@@ -159,7 +167,7 @@ export function TrendingProjectsRail() {
   const supporting = rest.slice(2);
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background">
+    <section className="tk-mesh-light relative overflow-hidden border-b border-border">
       <span
         aria-hidden
         className="pointer-events-none absolute -left-6 top-4 select-none text-[16vw] font-black leading-none tracking-tighter text-foreground/[0.035] md:text-[11rem]"
@@ -191,13 +199,12 @@ export function TrendingProjectsRail() {
           </Link>
         </Reveal>
 
-        <Reveal className="mt-7 grid gap-4 lg:grid-cols-3">
-          <div className="lg:col-span-2">{featured && <EntryCard entry={featured} featured />}</div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            {signature.map((e) => (
-              <EntryCard key={e.id} entry={e} />
-            ))}
-          </div>
+        <Reveal className="mt-7">{featured && <EntryCard entry={featured} featured />}</Reveal>
+
+        <Reveal className="mt-4 grid gap-4 sm:grid-cols-2">
+          {signature.map((e) => (
+            <EntryCard key={e.id} entry={e} wide />
+          ))}
         </Reveal>
 
         <Reveal className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">

@@ -18,6 +18,12 @@ export function HeroBackdrop() {
         }}
       />
 
+      {/* 2b — slow-moving colour aurora (green, cyan, violet, magenta) */}
+      <div className="tk-aurora tk-aurora-a left-[48%] top-[-18%] h-[520px] w-[620px] bg-[var(--brand-accent-violet)]" />
+      <div className="tk-aurora tk-aurora-b right-[-12%] top-[18%] h-[460px] w-[520px] bg-[var(--brand-accent-magenta)] opacity-35" />
+      <div className="tk-aurora tk-aurora-b left-[-10%] top-[8%] h-[480px] w-[560px] bg-[var(--primary)] opacity-45" />
+      <div className="tk-aurora tk-aurora-a bottom-[-20%] left-[22%] h-[420px] w-[680px] bg-[var(--brand-accent-cyan)] opacity-35" />
+
       {/* 3 — perspective architectural grid */}
       <div className="absolute inset-x-0 bottom-0 top-1/3 [perspective:700px]">
         <div

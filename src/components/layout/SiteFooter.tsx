@@ -85,12 +85,13 @@ const SOCIALS = [
   { icon: Youtube, label: "YouTube", href: "https://www.youtube.com/" },
 ] as const;
 
-export function SiteFooter() {
+/** `flush` drops the top gap when the page already ends on a dark band. */
+export function SiteFooter({ flush = false }: { flush?: boolean } = {}) {
   const { tx } = useLanguage();
   const [open, setOpen] = useState<string | null>(null);
 
   return (
-    <footer className="brand-dark relative mt-24 overflow-hidden border-t border-border">
+    <footer className={`brand-dark relative ${flush ? "" : "mt-24"} overflow-hidden border-t border-border`}>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-60"

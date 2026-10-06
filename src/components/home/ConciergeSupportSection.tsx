@@ -36,7 +36,7 @@ export function ConciergeSupportSection() {
   return (
     <section
       aria-labelledby="tk-concierge-title"
-      className="relative isolate overflow-hidden border-b border-border bg-background"
+      className="tk-mesh-light tk-mesh-alt relative isolate overflow-hidden border-b border-border"
     >
       <ConciergeBackdrop />
 

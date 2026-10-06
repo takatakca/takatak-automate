@@ -44,7 +44,7 @@ export function FinalCtaSection() {
               en: "Your business deserves more than a website.",
               fr: "Votre entreprise mérite plus qu'un simple site web.",
             })}
-            <span className="block text-primary">
+            <span className="tk-spectrum-text block">
               {tx({
                 en: "It deserves a complete digital system.",
                 fr: "Elle mérite un système numérique complet.",

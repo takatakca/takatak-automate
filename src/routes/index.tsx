@@ -4,11 +4,9 @@ import { brand } from "@/lib/brand";
 import { PromoMarquee } from "@/components/promotions/PromoMarquee";
 import { TakatakEcosystemHero } from "@/components/home/TakatakEcosystemHero";
 import { TrendingProjectsRail } from "@/components/home/TrendingProjectsRail";
-import { DiscoverySection } from "@/components/home/DiscoverySection";
-import { PopularBusinessUpgrades } from "@/components/home/PopularBusinessUpgrades";
 import { FoundationWorkspace } from "@/components/home/foundation/FoundationWorkspace";
-import { BusinessPathsSection } from "@/components/home/paths/BusinessPathsSection";
 import { BusinessTransformationStage } from "@/components/home/BusinessTransformationStage";
+import { EcosystemShowcase } from "@/components/home/EcosystemShowcase";
 import { ManagedDeliveryJourney } from "@/components/home/ManagedDeliveryJourney";
 import { ConciergeSupportSection } from "@/components/home/ConciergeSupportSection";
 import { FinalCtaSection } from "@/components/home/FinalCtaSection";
@@ -29,15 +27,19 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <SiteShell>
+    <SiteShell flushFooter>
+      {/* 1. What TAKATAK is + start a request */}
       <TakatakEcosystemHero />
       <PromoMarquee />
+      {/* 2. What businesses buy first (real catalogue packages) */}
       <TrendingProjectsRail />
-      <DiscoverySection />
+      {/* 3. How it fits together: Launch → Grow → Operate */}
       <BusinessTransformationStage />
-      <PopularBusinessUpgrades />
+      {/* 4. Domain + hosting picker */}
       <FoundationWorkspace />
-      <BusinessPathsSection />
+      {/* 5. The products behind the platform */}
+      <EcosystemShowcase />
+      {/* 6. How delivery works, then help choosing */}
       <ManagedDeliveryJourney />
       <ConciergeSupportSection />
       <FinalCtaSection />

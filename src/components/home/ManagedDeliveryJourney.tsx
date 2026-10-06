@@ -35,7 +35,7 @@ export function ManagedDeliveryJourney() {
   return (
     <section
       aria-labelledby="tk-journey-title"
-      className="relative isolate overflow-hidden border-b border-border bg-background"
+      className="tk-mesh-light relative isolate overflow-hidden border-b border-border"
     >
       <JourneyBackdrop />
 

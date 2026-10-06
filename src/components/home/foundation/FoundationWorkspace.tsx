@@ -31,7 +31,7 @@ export function FoundationWorkspace() {
   const reached = websiteInterest ? 5 : planKey ? 4 : selectedDomain ? 2 : 0;
 
   return (
-    <section className="relative overflow-hidden border-y border-border bg-secondary/25">
+    <section className="relative overflow-hidden border-y border-border tk-mesh-light tk-mesh-alt">
       <FoundationBackdrop />
       <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
         <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">{t("fnd.eyebrow")}</p>

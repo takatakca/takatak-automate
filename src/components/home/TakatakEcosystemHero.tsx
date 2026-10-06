@@ -43,7 +43,7 @@ export function TakatakEcosystemHero() {
           {/* Sales zone */}
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/85 backdrop-blur">
-              <Sparkles size={12} className="text-primary" aria-hidden />
+              <Sparkles size={12} className="text-[var(--brand-accent-amber)]" aria-hidden />
               {tx({ en: "The digital system behind your business", fr: "Le système numérique derrière votre entreprise" })}
             </span>
 
@@ -51,12 +51,9 @@ export function TakatakEcosystemHero() {
               <span className="block text-foreground/85">
                 {tx({ en: "Bring your business to the", fr: "Amenez votre entreprise au" })}
               </span>
-              <span className="relative mt-1 block font-black tracking-[-0.035em] text-foreground">
-                {tx({ en: "TAKATAK level.", fr: "niveau TAKATAK." })}
-                <span
-                  aria-hidden
-                  className="absolute -bottom-1 left-0 h-[3px] w-[42%] rounded-full bg-[linear-gradient(90deg,var(--primary),transparent)]"
-                />
+              <span className="relative mt-1 block font-black tracking-[-0.035em]">
+                <span className="tk-spectrum-text">{tx({ en: "TAKATAK level.", fr: "niveau TAKATAK." })}</span>
+                <span aria-hidden className="tk-spectrum-bar absolute -bottom-1 left-0 h-[4px] w-[46%] rounded-full" />
               </span>
             </h1>
 
