@@ -41,7 +41,8 @@ export async function startGracePeriod(projectId: string, actor: string) {
     where: { id: projectId },
     include: { contracts: true },
   });
-  if (!project) return null;
+  if (!project || project.paymentState !== "approved" || !project.contracts.length ||
+      project.contracts.some((c) => c.paymentState !== "approved")) return null;
   const holdUntil = new Date(Date.now() + env.PAYOUT_GRACE_PERIOD_HOURS * 3600_000);
   await prisma.clientProject.update({
     where: { id: projectId },

@@ -193,6 +193,7 @@ adminRouter.post("/admin/projects/:id/request-revision", async (req: AuthedReque
   if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
   const project = await prisma.clientProject.findUnique({ where: { id: req.params.id } });
   if (!project) return res.status(404).json({ error: "not_found" });
+  if (project.paymentState !== "submitted") return res.status(409).json({ error: "revision_not_allowed", state: project.paymentState });
   await prisma.clientProject.update({
     where: { id: project.id },
     data: { paymentState: "revision_requested" },
@@ -208,8 +209,15 @@ adminRouter.post("/admin/projects/:id/request-revision", async (req: AuthedReque
 });
 
 adminRouter.post("/admin/projects/:id/approve-delivery", async (req: AuthedRequest, res) => {
-  const project = await prisma.clientProject.findUnique({ where: { id: req.params.id } });
+  const project = await prisma.clientProject.findUnique({
+    where: { id: req.params.id },
+    include: { contracts: true, deliveries: { take: 1 } },
+  });
   if (!project) return res.status(404).json({ error: "not_found" });
+  if (project.paymentState !== "submitted" || !project.deliveries.length ||
+      !project.contracts.length || project.contracts.some((c) => c.paymentState !== "submitted" || c.status !== "submitted")) {
+    return res.status(409).json({ error: "delivery_not_ready", state: project.paymentState });
+  }
   await prisma.clientProject.update({
     where: { id: project.id },
     data: { paymentState: "approved" },
@@ -225,8 +233,11 @@ adminRouter.post("/admin/projects/:id/approve-delivery", async (req: AuthedReque
 });
 
 adminRouter.post("/admin/projects/:id/start-grace-period", async (req: AuthedRequest, res) => {
+  const project = await prisma.clientProject.findUnique({ where: { id: req.params.id }, select: { paymentState: true } });
+  if (!project) return res.status(404).json({ error: "not_found" });
+  if (project.paymentState !== "approved") return res.status(409).json({ error: "not_approved", state: project.paymentState });
   const r = await startGracePeriod(req.params.id, req.userId!);
-  if (!r) return res.status(404).json({ error: "not_found" });
+  if (!r) return res.status(409).json({ error: "contracts_not_approved" });
   res.json({ ok: true, ...r });
 });
 
@@ -247,6 +258,9 @@ adminRouter.post("/admin/projects/:id/dispute", async (req: AuthedRequest, res) 
     include: { contracts: { take: 1 } },
   });
   if (!project) return res.status(404).json({ error: "not_found" });
+  if (!project.contracts.length || !["assigned", "accepted_by_freelancer", "in_progress", "submitted", "revision_requested", "approved", "grace_period", "release_ready"].includes(project.paymentState)) {
+    return res.status(409).json({ error: "dispute_not_allowed", state: project.paymentState });
+  }
   await prisma.clientProject.update({ where: { id: project.id }, data: { paymentState: "disputed" } });
   if (project.contracts[0]) {
     await prisma.disputeCase.create({

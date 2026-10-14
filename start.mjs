@@ -15,12 +15,19 @@ import { extname, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const CLIENT_DIR = resolve(__dirname, "dist/client");
-const SERVER_ENTRY = resolve(__dirname, "dist/server/index.mjs");
+// Nitro v3 emits .output while older TanStack builds emitted dist.
+// Pick a complete pair, never mix static assets and server from different builds.
+const candidates = [
+  { client: resolve(__dirname, ".output/public"), server: resolve(__dirname, ".output/server/index.mjs") },
+  { client: resolve(__dirname, "dist/client"), server: resolve(__dirname, "dist/server/index.mjs") },
+];
+const output = candidates.find((candidate) => existsSync(candidate.client) && existsSync(candidate.server)) ?? candidates[0];
+const CLIENT_DIR = output.client;
+const SERVER_ENTRY = output.server;
 
 if (!existsSync(SERVER_ENTRY) || !existsSync(CLIENT_DIR)) {
   console.error(
-    "[start] dist/ not found. Run `bun run build` (or `npm run build`) first.",
+    "[start] Nitro output missing (expected .output/ or dist/). Run `npm run build` first.",
   );
   process.exit(1);
 }
@@ -103,7 +110,7 @@ const ctx = { waitUntil() {}, passThroughOnException() {} };
 const mod = await import(pathToFileURL(SERVER_ENTRY).href);
 const handler = mod.default;
 if (!handler || typeof handler.fetch !== "function") {
-  console.error("[start] dist/server/index.mjs does not export a fetch handler.");
+  console.error("[start] SSR bundle does not export a Worker-compatible fetch handler.");
   process.exit(1);
 }
 
