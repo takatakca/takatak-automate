@@ -47,15 +47,20 @@ export function DomainRequestFallback({ diagnosticCode }: { diagnosticCode?: str
       return;
     }
     setStatus("submitting");
-    await createDomainRequest({
+    try {
+      await createDomainRequest({
       domain: fullDomain,
       tld,
       contactName: contactName || [user?.firstName, user?.lastName].filter(Boolean).join(" ") || "TAKATAK customer",
       contactEmail: contactEmail || user?.email,
       contactPhone: contactPhone || user?.phone,
       source: diagnosticCode ? `upmind_fallback:${diagnosticCode}` : "upmind_fallback",
-    });
-    setStatus("done");
+      });
+      setStatus("done");
+    } catch {
+      setStatus("idle");
+      setError("We could not save this domain request. Please retry when the service is available.");
+    }
   };
 
   const continueSignup = () => {

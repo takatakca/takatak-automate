@@ -1,58 +1,56 @@
 /**
- * Resolve a launch URL for an external TAKATAK service portal.
- *
- * Production: backend should issue a signed, single-use URL at
- * POST /integrations/launch. Until that endpoint exists, the server returns
- * a public env fallback (configured per portal in process.env).
+ * Request a signed portal launch from the TAKATAK backend.
+ * An environment-configured public URL is NOT proof of a product entitlement.
+ * Never forward the user's bearer token to the legacy backend or bypass a 403.
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const Input = z.object({
-  serviceKey: z.string().min(1),
+  serviceKey: z.enum([
+    "qmaps", "local_listings", "flexs", "lead_generation", "social_media",
+    "voip_phone", "voip", "marketing", "online_marketing",
+    "marketplace", "freelancer_marketplace",
+  ]),
   token: z.string().nullish(),
 });
-
-const FALLBACK_ENV: Record<string, string> = {
-  social_media: "SOCIAL_PORTAL_URL",
-  voip_phone: "VOIP_PORTAL_URL",
-  lead_generation: "LEADS_PORTAL_URL",
-  local_listings: "LOCAL_LISTINGS_PORTAL_URL",
-  online_marketing: "MARKETING_PORTAL_URL",
-  freelancer_marketplace: "MARKETPLACE_PORTAL_URL",
-  qmaps: "QMAPS_PORTAL_URL",
-  flexs: "FLEXS_PORTAL_URL",
-};
 
 export const launchExternalService = createServerFn({ method: "POST" })
   .inputValidator((i) => Input.parse(i))
   .handler(async ({ data }) => {
-    const base =
-      process.env.RENDER_API_BASE_URL ?? "https://takatak.onrender.com";
+    if (!data.token) return { ok: false as const, message: "Please sign in to launch this service." };
+    const raw = process.env.RENDER_API_BASE_URL?.trim();
+    if (!raw) return { ok: false as const, message: "TAKATAK service access is not configured yet." };
+    let api: URL;
     try {
-      const res = await fetch(`${base}/integrations/launch`, {
+      api = new URL(raw);
+      const localDev = process.env.NODE_ENV !== "production" &&
+        api.protocol === "http:" && ["localhost", "127.0.0.1"].includes(api.hostname);
+      if (api.protocol !== "https:" && !localDev) throw new Error("unsafe_api_origin");
+    } catch {
+      return { ok: false as const, message: "TAKATAK service access is not configured correctly." };
+    }
+
+    try {
+      const res = await fetch(new URL("/integrations/launch", api.origin), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(data.token ? { Authorization: `Bearer ${data.token}` } : {}),
+          Authorization: `Bearer ${data.token}`,
         },
         body: JSON.stringify({ serviceKey: data.serviceKey }),
       });
-      if (res.ok) {
-        const body = (await res.json().catch(() => ({}))) as {
-          launchUrl?: string;
-        };
-        if (body.launchUrl) return { ok: true, launchUrl: body.launchUrl };
-      }
+      if (res.status === 401) return { ok: false as const, message: "Please sign in again." };
+      if (res.status === 403) return { ok: false as const, message: "This service is not activated for your account." };
+      if (!res.ok) return { ok: false as const, message: "This portal is temporarily unavailable." };
+      const body = (await res.json().catch(() => ({}))) as { launchUrl?: string };
+      if (!body.launchUrl) return { ok: false as const, message: "This portal is not configured yet." };
+      // Only backend-issued HTTPS launch URLs; never silently redirect to a
+      // plain base URL without checking the user's entitlement.
+      const target = new URL(body.launchUrl);
+      if (target.protocol !== "https:") return { ok: false as const, message: "The portal URL is invalid." };
+      return { ok: true as const, launchUrl: target.href };
     } catch {
-      /* fall through to env fallback */
+      return { ok: false as const, message: "The TAKATAK service is temporarily unavailable." };
     }
-    const envKey = FALLBACK_ENV[data.serviceKey];
-    const fallback = envKey ? process.env[envKey] : undefined;
-    if (fallback) return { ok: true, launchUrl: fallback };
-    return {
-      ok: false,
-      message:
-        "This TAKATAK service portal is not configured yet. Contact support.",
-    };
   });

@@ -7,8 +7,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 
 /**
  * Shown when Upmind returns 404 / unauthorized for a hosting product.
- * Captures the lead via POST /hosting-requests and falls back to localStorage
- * if the backend is unreachable. Never sends customers to a broken checkout.
+ * Saves the lead only when POST /hosting-requests confirms persistence.
+ * A backend failure must never be displayed as a received request.
  */
 export function HostingRequestFallback({ plan, diagnosticCode }: { plan: UpmindHostingPlan; diagnosticCode?: string }) {
   const { user, isAuthenticated } = useAuth();
@@ -42,14 +42,11 @@ export function HostingRequestFallback({ plan, diagnosticCode }: { plan: UpmindH
         apiPost("/hosting-requests", payload),
         new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 3500)),
       ]);
+      setStatus("done");
     } catch {
-      try {
-        const key = "takatak:hosting-requests";
-        const prev = JSON.parse(window.localStorage.getItem(key) ?? "[]");
-        window.localStorage.setItem(key, JSON.stringify([{ ...payload, createdAt: new Date().toISOString(), localOnly: true }, ...prev].slice(0, 20)));
-      } catch { /* noop */ }
+      setStatus("idle");
+      setError("We could not save this hosting request. Please try again.");
     }
-    setStatus("done");
   };
 
   if (status === "done") {

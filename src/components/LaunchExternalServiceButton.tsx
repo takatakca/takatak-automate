@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ExternalLink, Loader2 } from "lucide-react";
 import { launchExternalService } from "@/lib/launch.functions";
-import { resolvePortalUrl } from "@/lib/upmind";
 import { getAuthToken } from "@/lib/auth-store";
 
 interface Props {
@@ -16,7 +15,6 @@ interface Props {
 export function LaunchExternalServiceButton({
   serviceKey,
   label,
-  envKey,
   disabled,
   className = "",
 }: Props) {
@@ -34,21 +32,10 @@ export function LaunchExternalServiceButton({
       if (res.ok && res.launchUrl) {
         window.open(res.launchUrl, "_blank", "noopener,noreferrer");
       } else {
-        const fallback = resolvePortalUrl(envKey);
-        if (fallback) window.open(fallback, "_blank", "noopener,noreferrer");
-        else
-          setErr(
-            res.message ??
-              "This TAKATAK service portal is not configured yet. Contact support.",
-          );
+        setErr(res.message ?? "This TAKATAK service is not activated for your account.");
       }
     } catch {
-      const fallback = resolvePortalUrl(envKey);
-      if (fallback) window.open(fallback, "_blank", "noopener,noreferrer");
-      else
-        setErr(
-          "This TAKATAK service portal is not configured yet. Contact support.",
-        );
+      setErr("Unable to verify access to this TAKATAK service. Please try again.");
     } finally {
       setBusy(false);
     }
