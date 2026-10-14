@@ -18,7 +18,7 @@ services:
     rootDir: .
     buildCommand: npm install && npm run build
     startCommand: node start.mjs
-    healthCheckPath: /
+    healthCheckPath: /healthz
     envVars:
       - key: NODE_VERSION
         value: "20"

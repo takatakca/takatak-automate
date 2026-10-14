@@ -142,6 +142,11 @@ const base = `http://${host === "0.0.0.0" ? "localhost" : host}:${port}`;
 
 const server = createServer(async (req, res) => {
   try {
+    // Process-only liveness: does not depend on database, SSR or partner APIs.
+    if (req.url?.split("?")[0] === "/healthz") {
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
+      return res.end('{"ok":true}');
+    }
     // Fast path: static client assets.
     const file = tryStaticFile(req.url || "/");
     if (file) return serveStatic(file, res);

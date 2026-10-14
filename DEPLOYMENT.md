@@ -197,3 +197,13 @@ If Render logs show `node index.js` or `querySrv ENOTFOUND ...mongodb...`,
 the service is running the old MongoDB backend. This repo has no `index.js`,
 no Mongo, and no `MONGO_URI`. Fix the service's Build/Start commands (see
 above) or recreate from the Blueprint.
+## Production deployment and safety status (2026-10-14)
+
+- Render Blueprint services explicitly set `branch: main` and `autoDeployTrigger: commit`. This only causes live deployment **if** the Render Blueprint and repository are connected and synced. A GitHub push alone is not proof of a successful production deployment.
+- Frontend liveness is `GET /healthz`; the backend has `GET /health` and a database-backed `GET /ready`. A healthy /healthz does not establish payment or checkout readiness.
+- Populate frontend `RENDER_API_BASE_URL` with the actual backend URL. An outdated fallback URL does not establish a working API connection.
+- Paid Checkout requires both `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`, and verifies the paid amount, currency and Checkout Session against the stored order. If either secret is missing, payments are not offered.
+- For Upmind and automation, configure `UPMIND_WEBHOOK_SECRET` and `AUTOMATION_WEBHOOK_SECRET` respectively before enabling webhook senders; unauthenticated webhook delivery is rejected when secrets are absent.
+- `PORTAL_SIGNING_SECRET` is optional for workers that only need PostgreSQL; portal launches fail closed when it is missing. Production portal integrations still need signed SSO verification on their destination service, entitlement checks, and one-time token redemption before claiming full SSO completion.
+- Verify that the production Render workspace, services, DNS/custom domain, health/readiness, migrations and webhook secrets really match this repository before processing customer payments.
+- The frontend still imports `@lovable.dev/vite-tanstack-config` and the legacy MCP plugin. Remove that dependency only as a separate build-tested migration; the Node deployment entry itself requires no Lovable Publish button.
