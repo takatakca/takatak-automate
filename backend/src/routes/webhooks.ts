@@ -71,6 +71,11 @@ webhooksRouter.post(
     if (!parsed.success) return res.status(400).send("invalid_payload");
     const p = parsed.data;
 
+    // Reserve idempotency before any side effect (including instance creation).
+    if (await alreadyProcessed(p.id, "upmind")) {
+      return res.json({ received: true, duplicate: true, processed: false });
+    }
+    try {
     let instance =
       (p.orderId &&
         (await prisma.serviceInstance.findFirst({ where: { upmindOrderId: p.orderId } }))) ||
@@ -89,11 +94,10 @@ webhooksRouter.post(
     }
     // Unknown orders are not considered processed. A later matching delivery
     // must still be eligible for idempotent processing.
-    if (!instance) return res.status(202).json({ received: true, duplicate: false, processed: false, reason: "no_match" });
-    if (await alreadyProcessed(p.id, "upmind")) {
-      return res.json({ received: true, duplicate: true, processed: false });
+    if (!instance) {
+      await unmarkEvent(p.id, "upmind");
+      return res.status(202).json({ received: true, duplicate: false, processed: false, reason: "no_match" });
     }
-    try {
     if (p.type === "order.paid") {
       await transition({ serviceInstanceId: instance.id, next: "paid", label: "Payment confirmed" });
       await transition({ serviceInstanceId: instance.id, next: "provisioning_queued", label: "Queued" });
@@ -218,8 +222,8 @@ webhooksRouter.post(
 
     // An expired or failed session cannot downgrade an already-settled order.
     // Refunds remain eligible as an explicit processor state change.
-    if (["paid_to_takatak", "refunded"].includes(order.status) &&
-        next !== "paid_to_takatak" && next !== "refunded") {
+    if ((order.status === "paid_to_takatak" && !["paid_to_takatak", "refunded"].includes(next)) ||
+        (order.status === "refunded" && next !== "refunded")) {
       return res.json({ received: true, processed: false, reason: "stale_payment_event" });
     }
     if (await alreadyProcessed(event.id, "payments")) {
