@@ -20,3 +20,5 @@ Backend and workers are not attached to current repo on Render; no Postgres, ver
 
 - TAKATAK is central identity authority; data access across client companies must be tenant-scoped and checked server-side. Vertical app entitlements must be enforced; never merge unrelated app dashboards automatically.
 - Reject unverified webhook requests; never hardcode credentials; never mark a Stripe payment or freelancer payout successful absent processor confirmation.
+
+- Frontend API proxy fails closed when `RENDER_API_BASE_URL` is missing or unsafe, avoiding cross-project token forwarding to the unrelated legacy Render backend.

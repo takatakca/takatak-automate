@@ -36,9 +36,35 @@ export interface ProxyResult {
 export const proxyRender = createServerFn({ method: "POST" })
   .inputValidator((input) => ProxyInput.parse(input))
   .handler(async ({ data }) => {
-    const baseUrl =
-      process.env.RENDER_API_BASE_URL ?? "https://takatak.onrender.com";
-    const url = `${baseUrl.replace(/\/$/, "")}${data.path}`;
+    // Never forward bearer tokens to the legacy takatakbackend service.
+    // Production must explicitly bind to this repository's own backend.
+    const baseUrl = process.env.RENDER_API_BASE_URL?.trim();
+    if (!baseUrl) {
+      const out: ProxyResult = {
+        ok: false, status: 503, data: null,
+        error: "backend_not_configured",
+      };
+      return out;
+    }
+
+    let url: string;
+    try {
+      const backend = new URL(baseUrl);
+      const localDev = process.env.NODE_ENV !== "production" &&
+        backend.protocol === "http:" && ["localhost", "127.0.0.1"].includes(backend.hostname);
+      if (backend.protocol !== "https:" && !localDev) throw new Error("insecure_backend_url");
+      // Using URL and an exact-origin check prevents accidental forwarding
+      // to a different host through a crafted path.
+      const target = new URL(data.path, backend.origin);
+      if (target.origin !== backend.origin) throw new Error("cross_origin_path");
+      url = target.toString();
+    } catch {
+      const out: ProxyResult = {
+        ok: false, status: 503, data: null,
+        error: "backend_url_invalid",
+      };
+      return out;
+    }
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
