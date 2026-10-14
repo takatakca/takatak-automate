@@ -21,3 +21,9 @@ Do not treat `GET /health` alone as a database check: use `GET /ready`. Do not c
 ## Recovery
 
 Read Render build/runtime logs. If npm ERESOLVE mentions Vite 7 and TanStack Start 1.169+, align Vite to 8 as in `package.json`. If Vite config cannot find `@lovable.dev/vite-tanstack-config`, confirm devDependencies installed (`include=dev` via `.npmrc`). Avoid `--force` and `--legacy-peer-deps` as routine fixes. Do not redeploy the legacy `takatakbackend` service for this app.
+
+## Backend build dependency safeguard
+
+Backend and workers compile with Prisma/TypeScript in `devDependencies`. Use `npm ci --include=dev --no-audit --no-fund && npx prisma generate && npm run build` inside `backend/`; the API additionally runs `npx prisma migrate deploy` before startup. Root `.npmrc` does not reliably cover a separate Render `rootDir: backend`, so `backend/.npmrc` also has `include=dev`. GitHub Actions backend job on `6c9c035` passed `npm ci`, Prisma generation and TypeScript validation.
+
+Before provisioning real PostgreSQL, verify the chosen database plan and retention/backups. A disposable free database is not an acceptable long-lived customer production database. All secrets must be set in Render's secret store, not `render.yaml` or commits.
