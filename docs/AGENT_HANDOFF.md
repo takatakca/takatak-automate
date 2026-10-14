@@ -1,16 +1,38 @@
-# TAKATAK — Agent handoff
+# TAKATAK — Relève de développement
 
-As of 2026-10-14. Read `../AGENTS.md`, `../WORKLOG.md`, `PROJECT_STATUS.md` and `TASK_QUEUE.md` first.
+**Date :** 2026-10-14. **Dépôt :** `takatakca/takatak-automate`, branche `main`. Lire d'abord `../AGENTS.md`, `../WORKLOG.md`, `PROJECT_STATUS.md`, `TASK_QUEUE.md` et `DECISIONS.md`.
 
-- **Repository/branch:** `takatakca/takatak-automate` / `main`.
-- **Last task finished:** created correctly linked Render frontend and diagnosed 2 real build failures; updated `package.json` to Vite 8, then added root `.npmrc` to include build plugins under `NODE_ENV=production` and recorded full deployment handoff.
-- **Task in progress:** validate next Render auto-deploy of latest `main` and fix further build or runtime errors; verify `GET /healthz` and homepage response.
-- **Files modified this continuation:** `.github/workflows/ci.yml` now runs a real frontend Node startup/health/homepage smoke test; previously `render.yaml`, `backend/.npmrc`, `docs/DEPLOYMENT.md` align backend and workers install with CI-proven Node 22 build; previously `backend/src/routes/webhooks.ts` reserves Upmind events ahead of instance creation and prevents refunded payment replay; earlier event retry and payment-state safeguards; previously `src/lib/launch.functions.ts`, `src/components/LaunchExternalServiceButton.tsx`, `src/lib/domainRequests.ts`, `src/components/domain/DomainRequestFallback.tsx`, `src/components/upmind/HostingRequestFallback.tsx` remove security bypass and simulated leads; previously `src/lib/render-proxy.functions.ts` fails closed without verified backend URL; previously `start.mjs`, `backend/src/routes/integrations.ts`, `backend/src/routes/admin.ts`, `backend/src/services/payouts.ts`, `.github/workflows/ci.yml`; previously `.npmrc`, `render.yaml`, `WORKLOG.md`, new `docs/PROJECT_STATUS.md`, `docs/TASK_QUEUE.md`, `docs/AGENT_HANDOFF.md`, `docs/DEPLOYMENT.md`, `docs/DECISIONS.md`.
-- **Last verified pushed commit before this handoff transaction:** `72bbd9a3aea9a839c9d7d468345f0a14bf85128a`. Newest SHA is the commit containing these fixes; fetch GitHub `main` for the exact SHA.
-- **Verified commands/actions:** GitHub REST repository/ref/tree/PR/issue/action checks; Render workspace service/deploy/log and database inspections. Render first deploy `dep-db7sktei0phs73agt9b0` failed Vite dependency resolution. Second deploy `dep-db7sm1ss728c73bgusag` failed missing frontend build config package after `npm install` (production devDependency exclusion). No successful frontend build verified yet.
-- **Real deployment:** frontend Render service `srv-db7skt6i0phs73agt8n0` deployed from `main`, autoDeploy enabled, URL `https://takatak-frontend.onrender.com`; state **not yet confirmed healthy**. Old `srv-d3dpn73uibrs73a8afqg` tracks different repo and its latest deploy failed; untouched.
-- **Blockers:** no Render Postgres database, backend/worker services absent, no verified production payment/auth/storage credentials; full application not live. Do not reveal secret values or claim payments enabled.
-- **Required access (without secrets):** Render workspace has been confirmed by user; backend production provisioning and secrets should be supplied in managed Render secret fields when proceeding, not committed. Production domain/DNS changes require verifying the actual hosting target.
-- **Checks as of this revision:** GitHub Actions run `38622808100` on `6c9c035` passed both jobs; `a292ba5` backend check passed but frontend CI was cancelled by a superseding push; last `b76e93` CI queued on observation. Render `85c0c02` build succeeded but service remains `build_in_progress` with no HTTP or instance metrics; no actual live proof. Previously  Both GitHub Actions jobs on `6c9c035` passed (CI run `38622808100`); after this webhook update, verify next CI. Previously  GitHub Actions run `38622314470` on `150064f` completed successfully in both backend and frontend jobs. Latest Render deploy remained pending after successful build; no confirmed runtime health. Previously  GitHub Actions backend Prisma generation and typecheck on `150064f` passed; frontend CI still pending at observation. Render completed a successful *build* on `85c0c02` but service state did not yet confirm healthy/runtime. Newer commits are being auto-deployed.
-- **Exact next action:** inspect latest GitHub Actions frontend smoke job; if it fails, use `fetch_workflow_job_logs` with its job ID, correct `start.mjs` or Nitro SSR entry, and fast-forward commit. Also inspect Render `list_events` for any runtime/deployment availability.
-- **After CI:** call Render `list_deploys` and `list_logs` on `srv-db7skt6i0phs73agt8n0` in workspace `tea-d04kpsali9vc73eskv8g`; inspect newest SHA, correct any failure in repo and push via fast-forward protected GitHub ref; when live, check `https://takatak-frontend.onrender.com/healthz`, homepage and assets. Then add CI, harden tenant boundaries, and safely connect backend/Postgres.
+## Dernier travail terminé
+
+- Dépôt conservé et plusieurs corrections fonctionnelles/sécurité poussées : autorisations des portails par droits actifs, transitions de paiements et webhooks prudents, refus des succès simulés et des URLs de backend héritées.
+- Service Render frontend créé et relié au bon GitHub, `srv-db7skt6i0phs73agt8n0` (`https://takatak-frontend.onrender.com`), workspace confirmé `tea-d04kpsali9vc73eskv8g`.
+- Pipeline CI `.github/workflows/ci.yml` effectue les compilations frontend/backend, la génération Prisma, le contrôle TypeScript et le test Node HTTP.
+- Le test concret du commit `ba62a6a024bb5ac40914b728f7b89142a9a98f2e`, [run 38623787923](https://github.com/takatakca/takatak-automate/actions/runs/38623787923), a validé le backend et le démarrage HTTP `/healthz`, mais a échoué sur `GET /` HTTP 500 : `createServerFn(...).inputValidator is not a function`.
+- Cause confirmée par la [documentation de migration TanStack Start stable v1.169](https://tanstack.com/start/latest/docs/framework/react/migrate-from-release-candidate) : `.inputValidator()` est supprimé au profit de `.validator()`. Ce commit remplace les quatre usages identifiés et supprime les derniers fallbacks directs vers l'ancien backend dans AI intake et advisor.
+
+## Travail actuel et fichiers modifiés
+
+**À vérifier en premier :** exécution complète du nouveau workflow CI après correction des quatre fonctions serveur, y compris réponse HTTP 2xx de la page d'accueil. Corriger le prochain échec avéré et republier sur `main`.
+
+Fichiers de ce commit : `src/lib/launch.functions.ts`, `src/lib/intake.functions.ts`, `src/lib/render-proxy.functions.ts`, `src/lib/advisor.functions.ts`, `docs/AGENT_HANDOFF.md`, `docs/TASK_QUEUE.md`, `WORKLOG.md`.
+
+**Dernier SHA confirmé avant ce commit :** `ba62a6a024bb5ac40914b728f7b89142a9a98f2e`. Lire le SHA de `main` pour identifier le nouveau commit, ne pas deviner.
+
+## Vérifications réelles
+
+- GitHub Actions frontend : `npm install --include=dev`, `npm run build`, vérification de `.output/server/index.mjs` et `.output/public` ont réussi; `node start.mjs` a écouté sur `PORT=3147`, `GET /healthz` a répondu 200; `GET /` a répondu 500 avec erreur `inputValidator`.
+- GitHub Actions backend : `npm ci --include=dev`, `npx prisma generate`, `npm run typecheck` réussis lors du run 38623787923.
+- Render build de `85c0c02` : logs `Build successful` à 19:14 UTC, mais le déploiement reste `build_in_progress` et **aucune instance ni disponibilité HTTP en production n'est prouvée**. Render n'a pas confirmé les commits suivants. Vérifier `list_deploys`, `list_events`, `list_logs`.
+- Ancien Render `takatak` service `srv-d3dpn73uibrs73a8afqg` relié à `takatakca/takatakbackend` : NE PAS MODIFIER sans plan de migration validé.
+
+## Blocages et accès
+
+- Aucune instance PostgreSQL Render dans workspace lors de l'inspection. Backend, workers, migration, envoi OTP, stockage fichiers, Stripe/Upmind et transferts prestataires non validés en production.
+- Ne pas inventer de secrets ni les inclure dans Git; `DATABASE_URL`, clés Auth, origines CORS, signatures webhooks et fournisseurs doivent être configurés via les secrets de l'hébergeur.
+- Les paiements et transferts ne sont **pas** déclarés opérationnels; pas de bascule du domaine `takatak.ca`.
+
+## Prochaine action exacte
+
+1. Interroger GitHub Actions (runs sur `main`) et lire les logs du dernier job frontend. Si échec SSR, corriger l'API incompatible, committer et pousser avec `expected_sha`.
+2. Après CI entièrement verte, vérifier Render `srv-db7skt6i0phs73agt8n0`, commit déployé, `GET /healthz` et `GET /`. Si Render reste bloqué sur `build_in_progress`, diagnostiquer événements, build/runtime et état du service; ne pas appeler cela « live ».
+3. Compléter progressivement les flux métier et les intégrations indépendantes; configurer production backend et base durable seulement avec secrets et plan adéquats, puis tests d'autorisations par tenant.

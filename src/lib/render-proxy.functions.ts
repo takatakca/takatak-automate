@@ -34,7 +34,7 @@ export interface ProxyResult {
 }
 
 export const proxyRender = createServerFn({ method: "POST" })
-  .inputValidator((input) => ProxyInput.parse(input))
+  .validator((input) => ProxyInput.parse(input))
   .handler(async ({ data }) => {
     // Never forward bearer tokens to the legacy takatakbackend service.
     // Production must explicitly bind to this repository's own backend.

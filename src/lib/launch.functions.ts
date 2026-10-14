@@ -16,7 +16,7 @@ const Input = z.object({
 });
 
 export const launchExternalService = createServerFn({ method: "POST" })
-  .inputValidator((i) => Input.parse(i))
+  .validator((i) => Input.parse(i))
   .handler(async ({ data }) => {
     if (!data.token) return { ok: false as const, message: "Please sign in to launch this service." };
     const raw = process.env.RENDER_API_BASE_URL?.trim();

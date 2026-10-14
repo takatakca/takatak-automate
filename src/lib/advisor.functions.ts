@@ -16,11 +16,15 @@ export interface AdvisorResult {
 }
 
 export const aiServiceAdvisor = createServerFn({ method: "POST" })
-  .inputValidator((input) => Input.parse(input))
+  .validator((input) => Input.parse(input))
   .handler(async ({ data }): Promise<AdvisorResult> => {
-    const baseUrl = process.env.RENDER_API_BASE_URL ?? "https://takatak.onrender.com";
+    const baseUrl = process.env.RENDER_API_BASE_URL?.trim();
     try {
-      const res = await fetch(`${baseUrl.replace(/\/$/, "")}/ai/service-advisor`, {
+      if (!baseUrl) throw new Error("backend_not_configured");
+      const base = new URL(baseUrl);
+      const localDev = process.env.NODE_ENV !== "production" && base.protocol === "http:" && ["localhost", "127.0.0.1"].includes(base.hostname);
+      if (base.protocol !== "https:" && !localDev) throw new Error("invalid_api_url");
+      const res = await fetch(new URL("/ai/service-advisor", base.origin), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: data.query }),

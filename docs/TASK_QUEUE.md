@@ -5,7 +5,7 @@ Priority and evidence, as of 2026-10-14. Mark items complete only after checking
 | Priority | Task | Status | Exit condition |
 | --- | --- | --- | --- |
 | P0 | Repair frontend dependency installation on Render | code pushed, verification pending | Render build succeeds, process starts, GET /healthz is 200 |
-| P0 | Resolve any further Vite/TanStack runtime incompatibility | Node SSR smoke test committed; result pending | SSR homepage and static assets load correctly |
+| P0 | Resolve any further Vite/TanStack runtime incompatibility | .inputValidator → .validator migrated; awaiting HTTP smoke recheck | SSR homepage and static assets load correctly |
 | P0 | Provision production Postgres/backend safely | blocked on production provisioning/credentials | migrations, GET /ready 200, CORS and frontend API connection valid |
 | P0 | Secure app identity and product entitlements | partial | tenant- and product-aware integration tests pass |
 | P0 | Confirm payments/webhooks and real payouts | blocked | full provider-confirmed lifecycle and replay tests, secrets and reconciliation |
