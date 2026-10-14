@@ -59,7 +59,8 @@ export type MappedOrderState =
 
 export function getPaymentProvider(): PaymentProvider {
   const wanted = (process.env.PAYMENT_PROVIDER ?? "stripe").toLowerCase();
-  if (wanted === "stripe" && process.env.STRIPE_SECRET_KEY) return "stripe";
+  // Never charge when settlement webhooks cannot be authenticated.
+  if (wanted === "stripe" && process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET) return "stripe";
   return "none";
 }
 
@@ -88,8 +89,12 @@ export async function createCheckoutSession(
 
   const form = new URLSearchParams();
   form.set("mode", "payment");
-  form.set("success_url", `${successUrl}&order_id=${encodeURIComponent(order.orderId)}`);
-  form.set("cancel_url", `${cancelUrl}&order_id=${encodeURIComponent(order.orderId)}`);
+  const successReturn = new URL(successUrl);
+  const cancelReturn = new URL(cancelUrl);
+  successReturn.searchParams.set("order_id", order.orderId);
+  cancelReturn.searchParams.set("order_id", order.orderId);
+  form.set("success_url", successReturn.toString());
+  form.set("cancel_url", cancelReturn.toString());
   form.set("client_reference_id", order.orderId);
   if (order.customerEmail) form.set("customer_email", order.customerEmail);
   form.set("line_items[0][quantity]", "1");
@@ -100,6 +105,7 @@ export async function createCheckoutSession(
     order.description.slice(0, 250),
   );
   form.set("metadata[orderId]", order.orderId);
+  form.set("payment_intent_data[metadata][orderId]", order.orderId);
   for (const [k, v] of Object.entries(order.metadata ?? {})) {
     form.set(`metadata[${k}]`, String(v).slice(0, 500));
   }

@@ -17,6 +17,6 @@ const MAP: Record<string, string | undefined> = {
 
 export function buildLaunchUrl(userId: string, serviceKey: string): string | null {
   const base = MAP[serviceKey];
-  if (!base) return null;
+  if (!base || !env.PORTAL_SIGNING_SECRET) return null;
   return signLaunchUrl(base, userId, serviceKey);
 }

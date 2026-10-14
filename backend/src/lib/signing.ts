@@ -3,6 +3,7 @@ import { env } from "./env.js";
 
 /** HMAC-signed, short-lived launch URL. */
 export function signLaunchUrl(baseUrl: string, userId: string, serviceKey: string): string {
+  if (!env.PORTAL_SIGNING_SECRET) throw new Error("portal_signing_not_configured");
   const exp = Math.floor(Date.now() / 1000) + env.PORTAL_LAUNCH_TTL_SECONDS;
   const payload = `${userId}.${serviceKey}.${exp}`;
   const sig = crypto.createHmac("sha256", env.PORTAL_SIGNING_SECRET).update(payload).digest("hex");

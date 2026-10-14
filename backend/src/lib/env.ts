@@ -11,7 +11,8 @@ const schema = z.object({
   PAYMENT_PROVIDER: z.enum(["stripe", "none"]).default("stripe"),
   PAYMENT_SUCCESS_URL: z.string().url().optional(),
   PAYMENT_CANCEL_URL: z.string().url().optional(),
-  PORTAL_SIGNING_SECRET: z.string().min(16),
+  // Background workers do not need a portal signer to start.
+  PORTAL_SIGNING_SECRET: z.string().min(16).optional(),
   PORTAL_LAUNCH_TTL_SECONDS: z.coerce.number().int().positive().default(120),
   QMAPS_PORTAL_BASE_URL: z.string().url().optional(),
   FLEXS_PORTAL_BASE_URL: z.string().url().optional(),
