@@ -1,0 +1,23 @@
+# TAKATAK — Verified deployment runbook
+
+Current facts as of 2026-10-14. See also `../DEPLOYMENT.md`, `../render.yaml` and `backend/DEPLOYMENT.md`.
+
+## Real Render target
+
+- Confirmed workspace: `My Workspace`, id `tea-d04kpsali9vc73eskv8g`.
+- Frontend web service `takatak-frontend`, id `srv-db7skt6i0phs73agt8n0`, URL `https://takatak-frontend.onrender.com`, source `https://github.com/takatakca/takatak-automate`, branch `main`, auto deploy: yes.
+- Current service build command is `npm install --no-audit --no-fund && npm run build`; repo `.npmrc` must include `include=dev` so build plugins install even with `NODE_ENV=production`. Node: 22. Start: `node start.mjs`.
+- Successful build alone is insufficient: check Render deployment status, `/healthz` JSON 200, then a real SSR page and assets. Verify deploy SHA matches GitHub `main`.
+- The legacy Render `takatak` service tracks another repository and must not be assumed to serve the new frontend.
+
+## Full system — NOT YET LIVE
+
+Blueprint `../render.yaml` describes frontend, backend, three workers, Postgres; it has **not** been instantiated in full. The Render workspace showed no Postgres instances. Do not activate payments, payouts or domain migration before secrets, schema and live readiness are proven.
+
+For backend, working root `backend/`, command `npm install && npx prisma generate && npm run build && npx prisma migrate deploy`, entry `node dist/server.js`. Backend needs PostgreSQL `DATABASE_URL`, `AUTH_ISSUER`, `CORS_ORIGINS`, and RS256 key pair or strong `AUTH_JWT_SECRET`. Keep all these out of Git. Set frontend server-side `RENDER_API_BASE_URL` to *actual* backend URL, not the unrelated legacy service.
+
+Do not treat `GET /health` alone as a database check: use `GET /ready`. Do not call a deployment successful until public health endpoints and the Render deployed commit are verified.
+
+## Recovery
+
+Read Render build/runtime logs. If npm ERESOLVE mentions Vite 7 and TanStack Start 1.169+, align Vite to 8 as in `package.json`. If Vite config cannot find `@lovable.dev/vite-tanstack-config`, confirm devDependencies installed (`include=dev` via `.npmrc`). Avoid `--force` and `--legacy-peer-deps` as routine fixes. Do not redeploy the legacy `takatakbackend` service for this app.
