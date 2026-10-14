@@ -12,6 +12,8 @@ services:
   - type: web
     name: takatak-frontend
     runtime: node
+    branch: main
+    autoDeployTrigger: commit
     plan: starter
     rootDir: .
     buildCommand: npm install && npm run build
@@ -26,6 +28,8 @@ services:
   - type: web
     name: takatak-backend
     runtime: node
+    branch: main
+    autoDeployTrigger: commit
     plan: starter
     rootDir: backend
     buildCommand: npm install && npx prisma generate && npm run build && npx prisma migrate deploy
@@ -56,6 +60,8 @@ services:
   - type: worker
     name: takatak-payout-worker
     runtime: node
+    branch: main
+    autoDeployTrigger: commit
     rootDir: backend
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: node dist/workers/payoutSweepWorker.js
@@ -70,6 +76,8 @@ services:
   - type: worker
     name: takatak-notification-worker
     runtime: node
+    branch: main
+    autoDeployTrigger: commit
     rootDir: backend
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: node dist/workers/notificationWorker.js
@@ -84,6 +92,8 @@ services:
   - type: worker
     name: takatak-ai-intake-worker
     runtime: node
+    branch: main
+    autoDeployTrigger: commit
     rootDir: backend
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: node dist/workers/aiIntakeWorker.js

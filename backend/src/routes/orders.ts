@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
 import { transition } from "../services/stateMachine.js";
+import { MARKETPLACE_PACKAGES } from "../seed/marketplacePackagesCatalog.js";
 import {
   createCheckoutSession,
   getPaymentProvider,
@@ -151,12 +152,68 @@ const PackageCheckout = z.object({
   promoCode: z.string().min(2).max(32).optional(),
 });
 
+// Server catalog is the price authority. Client-provided values are checked,
+// not trusted, for every tier and add-on (including legacy demo packages).
+const CatalogTier = z.object({
+  name: z.string().min(1),
+  priceCents: z.number().int().nonnegative(),
+  deliveryDays: z.number().int().positive().optional(),
+}).passthrough();
+const CatalogAddon = z.object({
+  label: z.string().min(1),
+  priceCents: z.number().int().nonnegative(),
+}).passthrough();
+
 ordersRouter.post("/marketplace/packages/:id/checkout", requireAuth, async (req: AuthedRequest, res) => {
   const parsed = PackageCheckout.safeParse({ ...req.body, packageId: req.params.id });
   if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
-  const d = parsed.data;
-  const addonsTotal = d.addons.reduce((s, a) => s + a.priceCents, 0);
+  const requested = parsed.data;
+  const published = await prisma.marketplacePackage.findFirst({
+    where: { OR: [{ id: requested.packageId }, { slug: requested.packageId }] },
+  });
+  if (published && (!published.active || published.status !== "active")) {
+    return res.status(404).json({ error: "package_not_available" });
+  }
+  // Keep the pre-seed demo catalog available; persisted packages override it.
+  const fallback = published ? undefined : MARKETPLACE_PACKAGES.find(
+    (p) => p.id === requested.packageId || p.slug === requested.packageId,
+  );
+  if (!published && !fallback) return res.status(404).json({ error: "package_not_found" });
+
+  const tiers = z.array(CatalogTier).min(1).safeParse(published?.tiers ?? fallback?.tiers);
+  const addons = z.array(CatalogAddon).safeParse(published?.addOns ?? fallback?.addons ?? []);
+  if (!tiers.success || !addons.success) return res.status(503).json({ error: "package_catalog_invalid" });
+  const selectedTier = tiers.data.find((t) => t.name === requested.tier.name);
+  const currency = (published?.currency ?? "CAD").toUpperCase();
+  if (!selectedTier || requested.tier.priceCents !== selectedTier.priceCents ||
+      (requested.tier.deliveryDays !== undefined && selectedTier.deliveryDays !== requested.tier.deliveryDays) ||
+      requested.currency.toUpperCase() !== currency) {
+    return res.status(409).json({ error: "catalog_price_changed" });
+  }
+  const usedAddons = new Set<string>();
+  const verifiedAddons: Array<{ label: string; priceCents: number }> = [];
+  for (const item of requested.addons) {
+    const addon = addons.data.find((a) => a.label === item.label);
+    if (!addon || usedAddons.has(item.label) || addon.priceCents !== item.priceCents) {
+      return res.status(409).json({ error: "catalog_price_changed" });
+    }
+    usedAddons.add(item.label);
+    verifiedAddons.push({ label: addon.label, priceCents: addon.priceCents });
+  }
+  const d = {
+    ...requested,
+    packageId: published?.id ?? fallback!.id,
+    title: published?.title ?? fallback!.title,
+    category: published?.category ?? fallback!.category,
+    currency,
+    tier: { name: selectedTier.name, priceCents: selectedTier.priceCents, deliveryDays: selectedTier.deliveryDays },
+    addons: verifiedAddons,
+  };
+  const addonsTotal = d.addons.reduce((sum, a) => sum + a.priceCents, 0);
   const subtotal = (d.tier.priceCents + addonsTotal) * d.quantity;
+  if (!Number.isSafeInteger(subtotal) || subtotal <= 0 || subtotal > 100_000_000) {
+    return res.status(400).json({ error: "invalid_checkout_amount" });
+  }
   const promo = await maybeApplyPromo(req.userId!, d.promoCode, subtotal);
   const total = promo.totalCents; // taxes computed by payment processor when configured
 

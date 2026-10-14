@@ -40,8 +40,10 @@ async function alreadyProcessed(id: string, source: string): Promise<boolean> {
   try {
     await prisma.webhookEvent.create({ data: { id, source } });
     return false;
-  } catch {
-    return true; // unique constraint -> duplicate
+  } catch (error) {
+    // Database outages are not duplicate deliveries.
+    if (error && typeof error === "object" && "code" in error && error.code === "P2002") return true;
+    throw error;
   }
 }
 
@@ -51,12 +53,15 @@ webhooksRouter.post(
   async (req, res) => {
     const body = req.body as Buffer;
     const sig = req.header("x-webhook-signature");
-    if (env.UPMIND_WEBHOOK_SECRET) {
-      if (!verifyHmac(env.UPMIND_WEBHOOK_SECRET, body.toString("utf8"), sig ?? null)) {
-        return res.status(401).send("invalid_signature");
-      }
+    if (!env.UPMIND_WEBHOOK_SECRET) return res.status(503).send("webhook_not_configured");
+    if (!Buffer.isBuffer(body)) return res.status(415).send("invalid_content_type");
+    if (!verifyHmac(env.UPMIND_WEBHOOK_SECRET, body.toString("utf8"), sig ?? null)) {
+      return res.status(401).send("invalid_signature");
     }
-    const parsed = UpmindPayload.safeParse(JSON.parse(body.toString("utf8")));
+    let payload: unknown;
+    try { payload = JSON.parse(body.toString("utf8")); }
+    catch { return res.status(400).send("invalid_json"); }
+    const parsed = UpmindPayload.safeParse(payload);
     if (!parsed.success) return res.status(400).send("invalid_payload");
     const p = parsed.data;
 
@@ -117,12 +122,15 @@ webhooksRouter.post(
   async (req, res) => {
     const body = req.body as Buffer;
     const sig = req.header("x-webhook-signature");
-    if (env.AUTOMATION_WEBHOOK_SECRET) {
-      if (!verifyHmac(env.AUTOMATION_WEBHOOK_SECRET, body.toString("utf8"), sig ?? null)) {
-        return res.status(401).send("invalid_signature");
-      }
+    if (!env.AUTOMATION_WEBHOOK_SECRET) return res.status(503).send("webhook_not_configured");
+    if (!Buffer.isBuffer(body)) return res.status(415).send("invalid_content_type");
+    if (!verifyHmac(env.AUTOMATION_WEBHOOK_SECRET, body.toString("utf8"), sig ?? null)) {
+      return res.status(401).send("invalid_signature");
     }
-    const parsed = AutomationPayload.safeParse(JSON.parse(body.toString("utf8")));
+    let payload: unknown;
+    try { payload = JSON.parse(body.toString("utf8")); }
+    catch { return res.status(400).send("invalid_json"); }
+    const parsed = AutomationPayload.safeParse(payload);
     if (!parsed.success) return res.status(400).send("invalid_payload");
     const p = parsed.data;
 
@@ -178,6 +186,20 @@ webhooksRouter.post(
     const order = await prisma.order.findUnique({ where: { id: orderId } });
     if (!order) {
       return res.status(202).json({ received: true, processed: false, reason: "order_not_found" });
+    }
+
+    // Reconcile signed provider data with this order before recording payment.
+    if (next === "paid_to_takatak") {
+      const meta = (order.meta as Record<string, unknown> | null) ?? {};
+      const amountOk = typeof order.amountCents === "number" &&
+        order.amountCents > 0 && event.amountCents === order.amountCents;
+      const currencyOk = event.currency?.toUpperCase() === order.currency.toUpperCase();
+      const sessionOk = !event.type.startsWith("checkout.session.") ||
+        (typeof meta.providerSessionId === "string" && event.providerSessionId === meta.providerSessionId);
+      if (!amountOk || !currencyOk || !sessionOk) {
+        await prisma.webhookEvent.delete({ where: { id: event.id } }).catch(() => undefined);
+        return res.status(409).json({ error: "payment_order_mismatch" });
+      }
     }
 
     const orderStatus =

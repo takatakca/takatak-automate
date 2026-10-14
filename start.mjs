@@ -11,7 +11,7 @@
 //   node start.mjs  # binds to process.env.PORT (default 3000)
 import { createServer } from "node:http";
 import { createReadStream, statSync, existsSync } from "node:fs";
-import { extname, join, normalize, resolve } from "node:path";
+import { extname, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -47,10 +47,13 @@ const MIME = {
 };
 
 function safeJoin(base, urlPath) {
-  const decoded = decodeURIComponent(urlPath.split("?")[0]);
-  const joined = normalize(join(base, decoded));
-  if (!joined.startsWith(base)) return null;
-  return joined;
+  let decoded;
+  try { decoded = decodeURIComponent(urlPath.split("?")[0]); }
+  catch { return null; }
+  if (!decoded.startsWith("/") || decoded.includes("\\") || decoded.includes("\0")) return null;
+  // Enforce a directory boundary, not just a string prefix.
+  const candidate = resolve(base, "." + decoded);
+  return candidate.startsWith(base + sep) ? candidate : null;
 }
 
 function tryStaticFile(urlPath) {

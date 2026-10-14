@@ -24,7 +24,8 @@ const schema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("production"),
   CORS_ORIGINS: z.string().default(""),
   SENTRY_DSN: z.string().url().optional(),
-  RATE_LIMIT_DISABLED: z.coerce.boolean().default(false),
+  // The string "false" is truthy with z.coerce.boolean(); parse flags explicitly.
+  RATE_LIMIT_DISABLED: z.enum(["true", "false"]).default("false").transform((v) => v === "true"),
   WORKER_POLL_MS: z.coerce.number().int().positive().default(5000),
   WORKER_BATCH: z.coerce.number().int().positive().default(5),
   WORKER_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
@@ -35,7 +36,7 @@ const schema = z.object({
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
   SUPPORT_EMAIL: z.string().default("support@takatak.ca"),
-  STRIPE_CONNECT_ENABLED: z.coerce.boolean().default(false),
+  STRIPE_CONNECT_ENABLED: z.enum(["true", "false"]).default("false").transform((v) => v === "true"),
   STRIPE_CONNECT_CLIENT_ID: z.string().optional(),
   STRIPE_CONNECT_WEBHOOK_SECRET: z.string().optional(),
   STRIPE_PLATFORM_FEE_PERCENT: z.coerce.number().nonnegative().default(0),

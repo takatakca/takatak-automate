@@ -168,7 +168,11 @@ export function verifyPaymentWebhook(
 
 export function mapPaymentEventToOrderState(event: VerifiedPaymentEvent): MappedOrderState {
   switch (event.type) {
-    case "checkout.session.completed":
+    case "checkout.session.completed": {
+      // A Checkout Session can be complete while async funds are still pending.
+      const session = (event.raw as { data?: { object?: { payment_status?: string } } })?.data?.object;
+      return session?.payment_status === "paid" ? "paid_to_takatak" : "payment_pending";
+    }
     case "checkout.session.async_payment_succeeded":
     case "payment_intent.succeeded":
       return "paid_to_takatak";
