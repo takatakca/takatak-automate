@@ -6,10 +6,10 @@
  *   client approves the delivery (caller updates it via `startGracePeriod`).
  * - startGracePeriod: marks the contract/project as `grace_period` and sets
  *   the hold expiry from the grace-period env.
- * - releaseIfEligible: writes a PayoutRelease when the grace period has
- *   elapsed AND there's no open dispute. If no payout provider is
- *   configured the contract/project is marked `release_ready` with a
- *   `release_ready` reference rather than dispatching real money.
+ * - releasePayment: advances contracts to release_ready only after the
+ *   grace period and without open disputes. There is no live provider transfer
+ *   implemented yet; NEVER write a PayoutRelease or claim money was sent.
+ *   A separate, provider-confirmed transfer flow must be built to reach released.
  * - sweepReleasable: scans all contracts in `grace_period`, releases the
  *   eligible ones. Invoked by an admin endpoint or scheduled job.
  */
@@ -17,7 +17,7 @@ import { prisma } from "../lib/prisma.js";
 import { env } from "../lib/env.js";
 
 function provider(): "stripe" | "manual" | "none" {
-  return (process.env.PAYOUT_PROVIDER as any) ?? env.PAYOUT_PROVIDER ?? "none";
+  return env.PAYOUT_PROVIDER;
 }
 
 export async function createHoldForContract(contractId: string) {
@@ -73,7 +73,9 @@ export async function releasePayment(projectId: string, actor: string, opts: { f
     include: { contracts: { include: { holds: true, disputes: true } } },
   });
   if (!project) return { ok: false, reason: "not_found" as const };
-  if (!opts.force && project.paymentState !== "grace_period" && project.paymentState !== "approved") {
+  // Even an admin force flag must not make an unpaid or disputed project
+  // eligible. "force" may only bypass the grace timer after approval.
+  if (project.paymentState !== "grace_period" && project.paymentState !== "approved") {
     return { ok: false, reason: "not_eligible" as const, state: project.paymentState };
   }
   const now = Date.now();
@@ -84,29 +86,25 @@ export async function releasePayment(projectId: string, actor: string, opts: { f
       const hold = c.holds[0];
       if (hold && hold.holdUntil.getTime() > now) continue;
     }
-    const isReleaseReadyOnly = provider() === "none";
-    const reference = isReleaseReadyOnly ? `release_ready:${c.id}` : `pending_${provider()}:${c.id}`;
-    if (!isReleaseReadyOnly) {
-      await prisma.payoutRelease.create({
-        data: { contractId: c.id, amountCents: c.amountCents, currency: c.currency, reference },
-      });
-    }
+    // Stripe Connect and manual transfer endpoints have no confirmed provider
+    // handoff yet. Never record a fictional payout, regardless of env flags.
+    const reference = `release_ready:${c.id}`;
     await prisma.freelancerContract.update({
       where: { id: c.id },
-      data: { paymentState: isReleaseReadyOnly ? "release_ready" : "released", status: "completed" },
+      data: { paymentState: "release_ready" },
     });
     released.push({ contractId: c.id, reference });
   }
   if (released.length > 0) {
     await prisma.clientProject.update({
       where: { id: projectId },
-      data: { paymentState: provider() === "none" ? "release_ready" : "released" },
+      data: { paymentState: "release_ready" },
     });
     await prisma.projectAuditLog.create({
-      data: { projectId, actor, action: provider() === "none" ? "payout.release_ready" : "payout.released", data: { released, provider: provider() } },
+      data: { projectId, actor, action: "payout.release_ready", data: { ready: released, provider: provider(), transferConfirmed: false } },
     });
   }
-  return { ok: true, released, provider: provider() };
+  return { ok: true, released: [], ready: released, provider: provider(), transferConfirmed: false };
 }
 
 /** Scan all contracts whose grace period has elapsed and release them. */
@@ -116,10 +114,10 @@ export async function sweepReleasable(actor = "scheduler") {
     select: { id: true },
     take: 200,
   });
-  const out: { projectId: string; released: number }[] = [];
+  const out: { projectId: string; released: number; ready: number }[] = [];
   for (const p of candidates) {
     const r = await releasePayment(p.id, actor);
-    if (r.ok && r.released) out.push({ projectId: p.id, released: r.released.length });
+    if (r.ok && r.ready) out.push({ projectId: p.id, released: 0, ready: r.ready.length });
   }
   return out;
 }
