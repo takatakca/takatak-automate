@@ -21,9 +21,13 @@ intakeRouter.post("/ai/intake/start", requireAuth, async (req: AuthedRequest, re
   if (serviceInstanceId) {
     const owned = await prisma.serviceInstance.findFirst({
       where: { id: serviceInstanceId, userId: req.userId! },
-      select: { id: true },
+      select: { id: true, serviceKey: true, state: true },
     });
     if (!owned) return res.status(404).json({ error: "service_instance_not_found" });
+    if (owned.serviceKey !== serviceKey) return res.status(409).json({ error: "service_key_mismatch" });
+    if (!["intake_required", "waiting_for_client"].includes(owned.state)) {
+      return res.status(409).json({ error: "intake_not_allowed", state: owned.state });
+    }
   }
 
   const intake = await prisma.aIIntake.create({

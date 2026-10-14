@@ -75,8 +75,17 @@ projectsRouter.post("/marketplace/projects/:id/messages", requireAuth, async (re
 });
 
 projectsRouter.post("/marketplace/projects/:id/approve", requireAuth, async (req: AuthedRequest, res) => {
-  const project = await prisma.clientProject.findFirst({ where: { id: req.params.id, userId: req.userId! } });
+  const project = await prisma.clientProject.findFirst({
+    where: { id: req.params.id, userId: req.userId! },
+    include: { contracts: true, deliveries: { take: 1 } },
+  });
   if (!project) return res.status(404).json({ error: "not_found" });
+  // Client approval cannot turn an unpaid, unassigned or undelivered project
+  // into a payable contract. A freelancer must submit a real delivery first.
+  if (project.paymentState !== "submitted" || !project.deliveries.length ||
+      !project.contracts.some((c) => c.paymentState === "submitted" && c.status === "submitted")) {
+    return res.status(409).json({ error: "delivery_not_ready", state: project.paymentState });
+  }
   await prisma.clientProject.update({
     where: { id: project.id },
     data: { paymentState: "approved" },
@@ -99,6 +108,9 @@ projectsRouter.post("/marketplace/projects/:id/request-revision", requireAuth, a
   if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
   const project = await prisma.clientProject.findFirst({ where: { id: req.params.id, userId: req.userId! } });
   if (!project) return res.status(404).json({ error: "not_found" });
+  if (project.paymentState !== "submitted") {
+    return res.status(409).json({ error: "revision_not_allowed", state: project.paymentState });
+  }
   await prisma.clientProject.update({
     where: { id: project.id },
     data: { paymentState: "revision_requested" },
@@ -118,6 +130,10 @@ projectsRouter.post("/marketplace/projects/:id/dispute", requireAuth, async (req
     include: { contracts: { take: 1 } },
   });
   if (!project) return res.status(404).json({ error: "not_found" });
+  if (!["assigned", "accepted_by_freelancer", "in_progress", "submitted", "revision_requested", "approved", "grace_period", "release_ready"].includes(project.paymentState) ||
+      !project.contracts.length) {
+    return res.status(409).json({ error: "dispute_not_allowed", state: project.paymentState });
+  }
   await prisma.clientProject.update({
     where: { id: project.id },
     data: { paymentState: "disputed" },
@@ -133,9 +149,9 @@ projectsRouter.post("/marketplace/projects/:id/dispute", requireAuth, async (req
   res.json({ ok: true });
 });
 
-// ---- File upload contract (signed-URL placeholder) ----
-// Returns metadata the frontend uses to POST to a real storage provider. Until
-// a storage provider is wired, this returns a synthetic URL so the UI flow works.
+// ---- File upload contract ----
+// Fail closed until an actual signed upload/storage integration is connected.
+// Never advertise a synthetic URL as a successful upload destination.
 projectsRouter.post("/marketplace/projects/:id/files/sign", requireAuth, async (req: AuthedRequest, res) => {
   const Body = z.object({
     name: z.string().min(1).max(255),
@@ -147,8 +163,10 @@ projectsRouter.post("/marketplace/projects/:id/files/sign", requireAuth, async (
   const project = await prisma.clientProject.findFirst({ where: { id: req.params.id, userId: req.userId! } });
   if (!project) return res.status(404).json({ error: "not_found" });
   // TODO: replace with real signed URL (Cloudflare R2 / S3 / Supabase Storage).
-  const placeholderUrl = `https://uploads.takatak.local/${project.id}/${encodeURIComponent(parsed.data.name)}`;
-  res.json({ uploadUrl: placeholderUrl, fileUrl: placeholderUrl, provider: "placeholder" });
+  return res.status(503).json({
+    error: "storage_not_configured",
+    message: "File storage is not yet configured. No file was uploaded.",
+  });
 });
 
 // ---- Admin assignment ----
