@@ -12,17 +12,18 @@
 
 ## Travail actuel et fichiers modifiés
 
-**À vérifier en premier :** exécution complète du nouveau workflow CI après correction des quatre fonctions serveur, y compris réponse HTTP 2xx de la page d'accueil. Corriger le prochain échec avéré et republier sur `main`.
+**Dernière vérification effectuée :** le nouveau workflow [GitHub Actions 38624516272](https://github.com/takatakca/takatak-automate/actions/runs/38624516272) sur `098cc176` a terminé **avec succès** ses deux jobs. Le frontend a démarré sous Node 22 et les requêtes HTTP `/healthz` et `/` ont réussi. Le backend a passé Prisma et TypeScript. **Priorité suivante :** Render doit effectivement démarrer et publier le SHA validé.
 
 Fichiers de ce commit : `src/lib/launch.functions.ts`, `src/lib/intake.functions.ts`, `src/lib/render-proxy.functions.ts`, `src/lib/advisor.functions.ts`, `docs/AGENT_HANDOFF.md`, `docs/TASK_QUEUE.md`, `WORKLOG.md`.
 
-**Dernier SHA confirmé avant ce commit :** `ba62a6a024bb5ac40914b728f7b89142a9a98f2e`. Lire le SHA de `main` pour identifier le nouveau commit, ne pas deviner.
+**Dernier SHA fonctionnel confirmé par CI :** `098cc17622b6b1436fbe659dbaf3a23757d5e69e`. Le commit documentaire suivant n'est pas automatiquement une nouvelle validation de production; lire `main` pour obtenir son SHA exact.
 
 ## Vérifications réelles
 
-- GitHub Actions frontend : `npm install --include=dev`, `npm run build`, vérification de `.output/server/index.mjs` et `.output/public` ont réussi; `node start.mjs` a écouté sur `PORT=3147`, `GET /healthz` a répondu 200; `GET /` a répondu 500 avec erreur `inputValidator`.
+- GitHub Actions frontend sur `ba62a6a` : échec observé (`GET /` 500, `.inputValidator`). Corrigé au commit `098cc176` : **run 38624516272 complètement vert**, comprenant `npm install`, `npm run build`, vérification Nitro, `node start.mjs`, `GET /healthz` et `GET /`.
+- GitHub Actions backend sur `098cc176` : `npm ci`, `prisma generate`, `npm run typecheck` réussis.
 - GitHub Actions backend : `npm ci --include=dev`, `npx prisma generate`, `npm run typecheck` réussis lors du run 38623787923.
-- Render build de `85c0c02` : logs `Build successful` à 19:14 UTC, mais le déploiement reste `build_in_progress` et **aucune instance ni disponibilité HTTP en production n'est prouvée**. Render n'a pas confirmé les commits suivants. Vérifier `list_deploys`, `list_events`, `list_logs`.
+- Render build de `85c0c02` : logs `Build successful` à 19:14 UTC, mais le déploiement restait **`build_in_progress` à 19:34 UTC**, plus de 20 minutes après le succès du build; aucun événement `deploy_ended`, log de démarrage, instance ou trafic HTTP confirmé; `/healthz` et `/` publics inaccessibles. **Bloqueur externe Render**, indépendant de la CI désormais verte. Les derniers commits jusqu'à `098cc176` n'apparaissaient pas encore dans `list_deploys` malgré `autoDeploy=yes`. Examiner la file d'attente dans le Dashboard Render, sans changer l'ancien service.
 - Ancien Render `takatak` service `srv-d3dpn73uibrs73a8afqg` relié à `takatakca/takatakbackend` : NE PAS MODIFIER sans plan de migration validé.
 
 ## Blocages et accès
@@ -33,6 +34,6 @@ Fichiers de ce commit : `src/lib/launch.functions.ts`, `src/lib/intake.functions
 
 ## Prochaine action exacte
 
-1. Interroger GitHub Actions (runs sur `main`) et lire les logs du dernier job frontend. Si échec SSR, corriger l'API incompatible, committer et pousser avec `expected_sha`.
-2. Après CI entièrement verte, vérifier Render `srv-db7skt6i0phs73agt8n0`, commit déployé, `GET /healthz` et `GET /`. Si Render reste bloqué sur `build_in_progress`, diagnostiquer événements, build/runtime et état du service; ne pas appeler cela « live ».
+1. Vérifier le statut Render du service `srv-db7skt6i0phs73agt8n0` et la dernière version réellement déployée. Si le deploy `dep-db7t8cdbedkc73eq3smg` reste bloqué, diagnostiquer sa file d'attente/exécuteur et utiliser les contrôles Render Dashboard/support nécessaires; ne pas créer une seconde infrastructure payante sans configuration.
+2. Après la reprise du pipeline Render, confirmer le commit `098cc176` ou un successeur CI vert, `GET /healthz` et `GET /` publics en 200, puis l'existence d'actifs CSS/JS. **Ne pas connecter le domaine ni le backend hérités auparavant.**
 3. Compléter progressivement les flux métier et les intégrations indépendantes; configurer production backend et base durable seulement avec secrets et plan adéquats, puis tests d'autorisations par tenant.

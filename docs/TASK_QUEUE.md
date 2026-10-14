@@ -4,14 +4,14 @@ Priority and evidence, as of 2026-10-14. Mark items complete only after checking
 
 | Priority | Task | Status | Exit condition |
 | --- | --- | --- | --- |
-| P0 | Repair frontend dependency installation on Render | code pushed, verification pending | Render build succeeds, process starts, GET /healthz is 200 |
-| P0 | Resolve any further Vite/TanStack runtime incompatibility | .inputValidator → .validator migrated; awaiting HTTP smoke recheck | SSR homepage and static assets load correctly |
+| P0 | Repair frontend dependency installation on Render | Render build succeeded; deployment remains stuck, CI runtime verified | Render build succeeds, process starts, GET /healthz is 200 |
+| P0 | Resolve any further Vite/TanStack runtime incompatibility | DONE in CI run 38624516272 (098cc176): health and homepage 200 | SSR homepage and static assets load correctly |
 | P0 | Provision production Postgres/backend safely | blocked on production provisioning/credentials | migrations, GET /ready 200, CORS and frontend API connection valid |
 | P0 | Secure app identity and product entitlements | partial | tenant- and product-aware integration tests pass |
 | P0 | Confirm payments/webhooks and real payouts | blocked | full provider-confirmed lifecycle and replay tests, secrets and reconciliation |
 | P1 | Implement actual file object-storage uploads | open | authenticated, permission-checked signed upload and verification |
 | P1 | Finish frontend actions/API contracts without simulated success | open | end-to-end data-backed flows |
-| P1 | Configure GitHub Actions CI | passing run 38622314470 on 150064f; new commits pending | frontend build, backend typecheck and targeted security tests green |
+| P1 | Configure GitHub Actions CI | DONE: run 38624516272 passed full backend and Node SSR smoke | frontend build, backend typecheck and targeted security tests green |
 | P1 | Enable migrations and idempotent seed on backend deploy | open | safe migration + marketplace catalog in database |
 | P1 | Confirm production hosting/DNS and rollback | open | target domain serves verified commit and health checks |
 | P2 | Remove dependence on Lovable plugins | deferred | build-tested migration maintaining SSR semantics |

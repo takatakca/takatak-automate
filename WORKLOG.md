@@ -3,6 +3,8 @@
 Newest first, one line per piece of work. Rule: `AGENTS.md` › Work log rule.
 Format: `YYYY-MM-DD | agent | branch → PR | status | what | next step`
 
+- 2026-10-14 | GPT-6 | main → direct commit | documented | Confirmed successful CI Node SSR and backend for 098cc176 (run 38624516272); identified Render deploy stuck after successful build with no public server | Restore real Render deploy/instance and validate public /healthz + homepage before DNS/backend rollout
+
 - 2026-10-14 | GPT-6 | main → direct commit | done | Fix actual Node SSR HTTP 500 caused by removed TanStack Start .inputValidator API (migrated 4 functions to .validator); remove remaining legacy backend calls | Rerun CI homepage smoke, inspect Render publication, fix any new runtime errors
 
 - 2026-10-14 | GPT-6 | main → direct commit | done | Extend CI from mere build artifacts to live Node /healthz and SSR homepage requests | Fix actual runtime failure if smoke job red; confirm Render has a live deployment

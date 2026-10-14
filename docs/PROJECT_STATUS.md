@@ -22,3 +22,8 @@ Backend and workers are not attached to current repo on Render; no Postgres, ver
 - Reject unverified webhook requests; never hardcode credentials; never mark a Stripe payment or freelancer payout successful absent processor confirmation.
 
 - Frontend API proxy fails closed when `RENDER_API_BASE_URL` is missing or unsafe, avoiding cross-project token forwarding to the unrelated legacy Render backend.
+
+## CI/Render cross-check — 2026-10-14 19:34 UTC
+
+- CI run [38624516272](https://github.com/takatakca/takatak-automate/actions/runs/38624516272) for `098cc176`: backend Prisma/typecheck **pass**, frontend Vite build/Node runtime smoke on `/healthz` and `/` **pass**. Previous TanStack Start `.inputValidator()` removal failure now resolved with `.validator()`.
+- Render service `srv-db7skt6i0phs73agt8n0` still has latest deploy `dep-db7t8cdbedkc73eq3smg` from `85c0c02` in `build_in_progress` >20min after build log says successful; no server-ready proof or deployment events newer than 19:12 UTC, and public HTTP endpoints inaccessible. This is a **release blocker** despite successful CI.
