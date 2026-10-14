@@ -31,6 +31,30 @@ jobs:
         run: |
           test -f .output/server/index.mjs || test -f dist/server/index.mjs
           test -d .output/public || test -d dist/client
+      - name: Smoke test the actual Node server and public homepage
+        env:
+          NODE_ENV: production
+          PORT: '3147'
+        run: |
+          set -euo pipefail
+          node start.mjs > "$RUNNER_TEMP/takatak-server.log" 2>&1 &
+          server_pid=$!
+          trap 'cat "$RUNNER_TEMP/takatak-server.log"; kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:3147/healthz > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "TAKATAK process exited before health check"
+              exit 1
+            fi
+            sleep 1
+          done
+          test "$ready" -eq 1
+          curl --fail --silent --show-error http://127.0.0.1:3147/healthz
+          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3147/
 
   backend:
     name: Backend Prisma and TypeScript
