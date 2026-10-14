@@ -3,6 +3,8 @@
 Newest first, one line per piece of work. Rule: `AGENTS.md` › Work log rule.
 Format: `YYYY-MM-DD | agent | branch → PR | status | what | next step`
 
+- 2026-10-14 | GPT-6 | main → direct commit | done | Make webhook redelivery retryable after processing failure, avoid marking unknown orders handled, reject stale payment downgrades | Add webhook atomic transaction and replay tests before real payment volume
+
 - 2026-10-14 | GPT-6 | main → direct commit | done | Close portal launch URL entitlement bypass and stop falsely reporting unpersisted domain/hosting requests as received | Verify CI, backend readiness and proper translated UX messaging
 
 - 2026-10-14 | GPT-6 | main → direct commit | done | Fail closed when frontend API endpoint is absent; never send TAKATAK bearer credentials to legacy Render backend | Set RENDER_API_BASE_URL only after new backend is deployed and verified

@@ -47,6 +47,12 @@ async function alreadyProcessed(id: string, source: string): Promise<boolean> {
   }
 }
 
+/** An event must be retryable after downstream database work fails. */
+async function unmarkEvent(id: string, source: string): Promise<void> {
+  await prisma.webhookEvent.deleteMany({ where: { id, source } });
+}
+
+
 webhooksRouter.post(
   "/api/public/webhooks/upmind",
   raw({ type: "application/json" }),
@@ -65,10 +71,6 @@ webhooksRouter.post(
     if (!parsed.success) return res.status(400).send("invalid_payload");
     const p = parsed.data;
 
-    if (await alreadyProcessed(p.id, "upmind")) {
-      return res.json({ received: true, duplicate: true, processed: false });
-    }
-
     let instance =
       (p.orderId &&
         (await prisma.serviceInstance.findFirst({ where: { upmindOrderId: p.orderId } }))) ||
@@ -85,8 +87,13 @@ webhooksRouter.post(
         },
       });
     }
+    // Unknown orders are not considered processed. A later matching delivery
+    // must still be eligible for idempotent processing.
     if (!instance) return res.status(202).json({ received: true, duplicate: false, processed: false, reason: "no_match" });
-
+    if (await alreadyProcessed(p.id, "upmind")) {
+      return res.json({ received: true, duplicate: true, processed: false });
+    }
+    try {
     if (p.type === "order.paid") {
       await transition({ serviceInstanceId: instance.id, next: "paid", label: "Payment confirmed" });
       await transition({ serviceInstanceId: instance.id, next: "provisioning_queued", label: "Queued" });
@@ -98,6 +105,11 @@ webhooksRouter.post(
       await transition({ serviceInstanceId: instance.id, next: "cancelled", label: "Cancelled" });
     }
     res.json({ received: true, duplicate: false, processed: true });
+    } catch (error) {
+      await unmarkEvent(p.id, "upmind");
+      console.error("[webhooks] Upmind processing failed", error);
+      return res.status(503).json({ error: "webhook_processing_failed" });
+    }
   },
 );
 
@@ -138,19 +150,25 @@ webhooksRouter.post(
       return res.json({ received: true, duplicate: true, processed: false });
     }
 
-    await transition({
-      serviceInstanceId: p.serviceInstanceId,
-      next: p.state,
-      label: p.label,
-      message: p.message,
-    });
-    if (p.jobId) {
-      await prisma.automationJob.update({
-        where: { id: p.jobId },
-        data: { status: p.jobStatus ?? "succeeded", lastError: p.jobError ?? null },
-      }).catch(() => undefined);
+    try {
+      await transition({
+        serviceInstanceId: p.serviceInstanceId,
+        next: p.state,
+        label: p.label,
+        message: p.message,
+      });
+      if (p.jobId) {
+        await prisma.automationJob.updateMany({
+          where: { id: p.jobId },
+          data: { status: p.jobStatus ?? "succeeded", lastError: p.jobError ?? null },
+        });
+      }
+      return res.json({ received: true, duplicate: false, processed: true });
+    } catch (error) {
+      await unmarkEvent(p.id, "automation");
+      console.error("[webhooks] Automation processing failed", error);
+      return res.status(503).json({ error: "webhook_processing_failed" });
     }
-    res.json({ received: true, duplicate: false, processed: true });
   },
 );
 
@@ -166,13 +184,10 @@ webhooksRouter.post(
   raw({ type: "application/json" }),
   async (req, res) => {
     const body = req.body as Buffer;
+    if (!Buffer.isBuffer(body)) return res.status(415).send("invalid_content_type");
     const sig = req.header("stripe-signature") ?? req.header("x-webhook-signature");
     const event = verifyPaymentWebhook(body.toString("utf8"), sig);
     if (!event) return res.status(401).send("invalid_signature");
-
-    if (await alreadyProcessed(event.id, "payments")) {
-      return res.json({ received: true, duplicate: true, processed: false });
-    }
 
     const next = mapPaymentEventToOrderState(event);
     if (!next) {
@@ -197,11 +212,21 @@ webhooksRouter.post(
       const sessionOk = !event.type.startsWith("checkout.session.") ||
         (typeof meta.providerSessionId === "string" && event.providerSessionId === meta.providerSessionId);
       if (!amountOk || !currencyOk || !sessionOk) {
-        await prisma.webhookEvent.delete({ where: { id: event.id } }).catch(() => undefined);
         return res.status(409).json({ error: "payment_order_mismatch" });
       }
     }
 
+    // An expired or failed session cannot downgrade an already-settled order.
+    // Refunds remain eligible as an explicit processor state change.
+    if (["paid_to_takatak", "refunded"].includes(order.status) &&
+        next !== "paid_to_takatak" && next !== "refunded") {
+      return res.json({ received: true, processed: false, reason: "stale_payment_event" });
+    }
+    if (await alreadyProcessed(event.id, "payments")) {
+      return res.json({ received: true, duplicate: true, processed: false });
+    }
+
+    try {
     const orderStatus =
       next === "paid_to_takatak" ? "paid_to_takatak" :
       next === "cancelled" ? "cancelled" :
@@ -225,9 +250,9 @@ webhooksRouter.post(
 
     // Promotion lifecycle: redeem on paid, release on failure/cancel.
     if (next === "paid_to_takatak") {
-      await redeemPromotionForOrder(order.id).catch(() => undefined);
+      await redeemPromotionForOrder(order.id);
     } else if (next === "failed") {
-      await releasePromotionForOrder(order.id, "claimed").catch(() => undefined);
+      await releasePromotionForOrder(order.id, "claimed");
     } else if (next === "cancelled") {
       await releasePromotionForOrder(order.id, "claimed").catch(() => undefined);
     }
@@ -262,7 +287,7 @@ webhooksRouter.post(
         await prisma.clientProject.update({
           where: { id: meta.projectId },
           data: { paymentState },
-        }).catch(() => undefined);
+        });
         await prisma.projectAuditLog.create({
           data: {
             projectId: meta.projectId,
@@ -270,10 +295,17 @@ webhooksRouter.post(
             action: `payment.${next}`,
             data: { orderId: order.id, eventId: event.id, eventType: event.type },
           },
-        }).catch(() => undefined);
+        });
       }
     }
 
-    res.json({ received: true, duplicate: false, processed: true, mapped: next });
+    return res.json({ received: true, duplicate: false, processed: true, mapped: next });
+    } catch (error) {
+      // A failed downstream database write must not permanently poison the
+      // idempotency key and suppress a valid provider retry.
+      await unmarkEvent(event.id, "payments");
+      console.error("[webhooks] Payment processing failed", error);
+      return res.status(503).json({ error: "webhook_processing_failed" });
+    }
   },
 );

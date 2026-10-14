@@ -17,3 +17,5 @@ Priority and evidence, as of 2026-10-14. Mark items complete only after checking
 | P2 | Remove dependence on Lovable plugins | deferred | build-tested migration maintaining SSR semantics |
 
 Only work on independent tasks when P0 depends on unavailable production secrets, without inventing credentials or paid services.
+
+- Webhook follow-up: add atomic event/database transaction and provider replay integration tests before real payment processing. Marker cleanup after a caught failure is an interim safeguard, not proof of full exactly-once semantics.
