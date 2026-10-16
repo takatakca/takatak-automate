@@ -1,39 +1,43 @@
-# TAKATAK — Relève de développement
+# TAKATAK — AGENT HANDOFF
 
-**Date :** 2026-10-14. **Dépôt :** `takatakca/takatak-automate`, branche `main`. Lire d'abord `../AGENTS.md`, `../WORKLOG.md`, `PROJECT_STATUS.md`, `TASK_QUEUE.md` et `DECISIONS.md`.
+Updated 2026-10-16. Repository `takatakca/takatak-automate`, branch `main`.
+Read `../AGENTS.md`, `../WORKLOG.md`, `PROJECT_STATUS.md`, `TASK_QUEUE.md`, `DEPLOYMENT.md` and `DECISIONS.md` first.
 
-## Dernier travail terminé
+## Last completed work
 
-- Dépôt conservé et plusieurs corrections fonctionnelles/sécurité poussées : autorisations des portails par droits actifs, transitions de paiements et webhooks prudents, refus des succès simulés et des URLs de backend héritées.
-- Service Render frontend créé et relié au bon GitHub, `srv-db7skt6i0phs73agt8n0` (`https://takatak-frontend.onrender.com`), workspace confirmé `tea-d04kpsali9vc73eskv8g`.
-- Pipeline CI `.github/workflows/ci.yml` effectue les compilations frontend/backend, la génération Prisma, le contrôle TypeScript et le test Node HTTP.
-- Le test concret du commit `ba62a6a024bb5ac40914b728f7b89142a9a98f2e`, [run 38623787923](https://github.com/takatakca/takatak-automate/actions/runs/38623787923), a validé le backend et le démarrage HTTP `/healthz`, mais a échoué sur `GET /` HTTP 500 : `createServerFn(...).inputValidator is not a function`.
-- Cause confirmée par la [documentation de migration TanStack Start stable v1.169](https://tanstack.com/start/latest/docs/framework/react/migrate-from-release-candidate) : `.inputValidator()` est supprimé au profit de `.validator()`. Ce commit remplace les quatre usages identifiés et supprime les derniers fallbacks directs vers l'ancien backend dans AI intake et advisor.
+- GitHub source reviewed, docs/worklogs read, no open issues or PRs at inspection.
+- Render service `srv-db7skt6i0phs73agt8n0` in confirmed workspace `tea-d04kpsali9vc73eskv8g` successfully deployed prior commit `5d8a983ef801729d89a0b9848e779470cac0680b` on 2026-10-14, status `live`, Node listening on port 10000. This is not proof of TAKATAK backend/DB operational status, nor proof the site is pointed to this service.
+- Corrected client/freelancer separation: client project API no longer shows freelancer-to-TAKATAK private messages; a freelancer does not receive another contractor's private messages; removed ambiguous demo-ID shortcuts.
+- Removed duplicate unguarded `/admin/projects/:id/assign` route from projects router. Canonical admin route checks TAKATAK admin authentication, funded state and approved freelancer, prevents active duplicate contracts, and now atomically claims project/creates contract, assignment, payout hold and audit.
+- Freelancer accept/decline/deliver routes reject forbidden states; delivery refuses unverifiable external file URLs and empty notes. Pure policy regression tests added to `backend/src/services/contractPolicy.test.ts` and invoked in CI.
+- `POST /services/start` now validates canonical TAKATAK product keys (allowing known aliases) and responds with actual post-transition persisted state rather than always `draft`.
 
-## Travail actuel et fichiers modifiés
+## Work in progress
 
-**Dernière vérification effectuée :** le nouveau workflow [GitHub Actions 38624516272](https://github.com/takatakca/takatak-automate/actions/runs/38624516272) sur `098cc176` a terminé **avec succès** ses deux jobs. Le frontend a démarré sous Node 22 et les requêtes HTTP `/healthz` et `/` ont réussi. Le backend a passé Prisma et TypeScript. **Priorité suivante :** Render doit effectivement démarrer et publier le SHA validé.
+Verify GitHub Actions and Render auto-deploy for all latest commits; fix any TypeScript/test/runtime errors. Code changes were pushed through `main` without force-push. Tests remain pending where runs were queued/cancelled by subsequent commits; do not claim success on the latest SHA before seeing job verdict.
 
-Fichiers de ce commit : `src/lib/launch.functions.ts`, `src/lib/intake.functions.ts`, `src/lib/render-proxy.functions.ts`, `src/lib/advisor.functions.ts`, `docs/AGENT_HANDOFF.md`, `docs/TASK_QUEUE.md`, `WORKLOG.md`.
+## Files changed in current continuation
 
-**Dernier SHA fonctionnel confirmé par CI :** `098cc17622b6b1436fbe659dbaf3a23757d5e69e`. Le commit documentaire suivant n'est pas automatiquement une nouvelle validation de production; lire `main` pour obtenir son SHA exact.
+`backend/src/routes/projects.ts`, `backend/src/routes/freelancers.ts`, `backend/src/routes/admin.ts`, `backend/src/routes/services.ts`, `backend/src/services/contractPolicy.ts`, `backend/src/services/contractPolicy.test.ts`, `backend/package.json`, `.github/workflows/ci.yml`, `WORKLOG.md`, and this documentation.
 
-## Vérifications réelles
+## Git status
 
-- GitHub Actions frontend sur `ba62a6a` : échec observé (`GET /` 500, `.inputValidator`). Corrigé au commit `098cc176` : **run 38624516272 complètement vert**, comprenant `npm install`, `npm run build`, vérification Nitro, `node start.mjs`, `GET /healthz` et `GET /`.
-- GitHub Actions backend sur `098cc176` : `npm ci`, `prisma generate`, `npm run typecheck` réussis.
-- GitHub Actions backend : `npm ci --include=dev`, `npx prisma generate`, `npm run typecheck` réussis lors du run 38623787923.
-- Render build de `85c0c02` : logs `Build successful` à 19:14 UTC, mais le déploiement restait **`build_in_progress` à 19:34 UTC**, plus de 20 minutes après le succès du build; aucun événement `deploy_ended`, log de démarrage, instance ou trafic HTTP confirmé; `/healthz` et `/` publics inaccessibles. **Bloqueur externe Render**, indépendant de la CI désormais verte. Les derniers commits jusqu'à `098cc176` n'apparaissaient pas encore dans `list_deploys` malgré `autoDeploy=yes`. Examiner la file d'attente dans le Dashboard Render, sans changer l'ancien service.
-- Ancien Render `takatak` service `srv-d3dpn73uibrs73a8afqg` relié à `takatakca/takatakbackend` : NE PAS MODIFIER sans plan de migration validé.
+Last feature SHA before documentation update: **`254156fb507911777fc177187ca5bfad710029ea`**. Query GitHub `refs/heads/main` to retrieve current SHA after this handoff commit. Never reuse the documented SHA as an optimistic lease without checking the current branch.
 
-## Blocages et accès
+## Actual verification
 
-- Aucune instance PostgreSQL Render dans workspace lors de l'inspection. Backend, workers, migration, envoi OTP, stockage fichiers, Stripe/Upmind et transferts prestataires non validés en production.
-- Ne pas inventer de secrets ni les inclure dans Git; `DATABASE_URL`, clés Auth, origines CORS, signatures webhooks et fournisseurs doivent être configurés via les secrets de l'hébergeur.
-- Les paiements et transferts ne sont **pas** déclarés opérationnels; pas de bascule du domaine `takatak.ca`.
+- GitHub Actions `38625048871` on `5d8a983`: complete success — frontend build and Node `/healthz` plus `/` smoke, backend Prisma generate/typecheck.
+- At inspection on 2026-10-16, GitHub Actions run `38950231930` on `254156` was queued, while earlier runs were canceled due to superseding pushes. New security tests have not yet been verified in CI.
+- Render `dep-db7tj9lbedkc73eqldog` / SHA `5d8a983`: `live`; logs `Running 'node start.mjs'`, `TAKATAK listening on http://localhost:10000`, `Your service is live`.
+- Render auto deployment for SHA `254156` started `dep-db97383m8hqs73e5c7a0`; latest completion not verified. External public HTTP probe from available tools could not resolve or fetch `takatak-frontend.onrender.com`; do not claim independently confirmed reachability.
+- No local credentials or Node project dependencies were obtained; dynamic tests are through GitHub Actions, not fabricated local runs.
 
-## Prochaine action exacte
+## Known issues / access
 
-1. Vérifier le statut Render du service `srv-db7skt6i0phs73agt8n0` et la dernière version réellement déployée. Si le deploy `dep-db7t8cdbedkc73eq3smg` reste bloqué, diagnostiquer sa file d'attente/exécuteur et utiliser les contrôles Render Dashboard/support nécessaires; ne pas créer une seconde infrastructure payante sans configuration.
-2. Après la reprise du pipeline Render, confirmer le commit `098cc176` ou un successeur CI vert, `GET /healthz` et `GET /` publics en 200, puis l'existence d'actifs CSS/JS. **Ne pas connecter le domaine ni le backend hérités auparavant.**
-3. Compléter progressivement les flux métier et les intégrations indépendantes; configurer production backend et base durable seulement avec secrets et plan adéquats, puis tests d'autorisations par tenant.
+Current repository's backend and workers are not linked to a verified durable production PostgreSQL; Auth, OTP providers, storage, payouts, payment processors and tenant/product end-to-end tests are incomplete. Render workspace has been confirmed by user. Secret values must stay in hosting manager, never Git. Do not create paid resources or switch `takatak.ca` DNS without an established operating plan. The existing `takatak.ca` stack and legacy Render service `srv-d3dpn73uibrs73a8afqg` are separate; do not overwrite.
+
+## Exact next action
+
+1. Fetch the latest GitHub Actions run on `main`; confirm frontend SSR smoke, Prisma typecheck **and** `npm run test:security`. If failed, read the failed job logs and fix.
+2. Check Render `srv-db7skt6i0phs73agt8n0` latest deploy SHA/status, logs, service health and public HTTPS `/healthz` and `/`. Do not equate Render `live` with verified client reachability.
+3. Next engineering priority: transaction/optimistic concurrency for freelancer accept/decline/deliver transitions, webhook atomicity/replay tests, tenant isolation tests and verified backend provisioning. Avoid synthetic payments or customer records.

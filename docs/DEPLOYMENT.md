@@ -31,3 +31,7 @@ Before provisioning real PostgreSQL, verify the chosen database plan and retenti
 ## Release discrepancy (2026-10-14 19:34 UTC)
 
 GitHub Actions `38624516272` for `098cc176` passes frontend SSR HTTP health+homepage and backend typecheck. Render deploy `dep-db7t8cdbedkc73eq3smg` (old SHA `85c0c02`) remains `build_in_progress` long after its successful build upload; no runtime response or newer SHA in Render deploy history. Do not interpret `Build successful` as deployment. Check [Render service dashboard](https://dashboard.render.com/web/srv-db7skt6i0phs73agt8n0) for build queue, resource availability or maintenance notices, and contact provider support if the stale deployment cannot be advanced. Once it progresses, check commit SHA and publicly fetch `/healthz` and `/`. Keep the old service and production domain untouched during recovery.
+
+## Updated provider evidence — 2026-10-16
+
+The previously stalled release was superseded. Render reports `dep-db7tj9lbedkc73eqldog` of `5d8a983` as **live**, server listening on port 10000 on 2026-10-14 19:40 UTC. The newest changes on `main` are triggering auto deploys but must each be verified; the last observed started release was `dep-db97383m8hqs73e5c7a0` for `254156`. Public HTTP from the available verification environment was not accessible because the Render hostname could not be resolved locally; an independent public response is therefore still **unverified**. Never switch TAKATAK production DNS or claim backend operational readiness on the basis of this frontend service alone.

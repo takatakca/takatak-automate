@@ -27,3 +27,7 @@ Backend and workers are not attached to current repo on Render; no Postgres, ver
 
 - CI run [38624516272](https://github.com/takatakca/takatak-automate/actions/runs/38624516272) for `098cc176`: backend Prisma/typecheck **pass**, frontend Vite build/Node runtime smoke on `/healthz` and `/` **pass**. Previous TanStack Start `.inputValidator()` removal failure now resolved with `.validator()`.
 - Render service `srv-db7skt6i0phs73agt8n0` still has latest deploy `dep-db7t8cdbedkc73eq3smg` from `85c0c02` in `build_in_progress` >20min after build log says successful; no server-ready proof or deployment events newer than 19:12 UTC, and public HTTP endpoints inaccessible. This is a **release blocker** despite successful CI.
+
+## Verified state on 2026-10-16
+
+The correct Render frontend service successfully deployed `5d8a983` and served a Node process on port 10000 according to provider logs. No external HTTP result could be independently obtained in this environment, and `takatak.ca` remains under its existing independent production arrangement. GitHub Actions 38625048871 passed; the newest security commits are pending their own CI and Render results. This repo is **not complete**, because the actual backend, DB, OTP, payment and storage dependencies are unverified. Security changes now restrict private mediator messages, remove a duplicate admin assignment route, guard project states and validate service catalog keys.

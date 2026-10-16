@@ -4,7 +4,7 @@ Priority and evidence, as of 2026-10-14. Mark items complete only after checking
 
 | Priority | Task | Status | Exit condition |
 | --- | --- | --- | --- |
-| P0 | Repair frontend dependency installation on Render | Render build succeeded; deployment remains stuck, CI runtime verified | Render build succeeds, process starts, GET /healthz is 200 |
+| P0 | Repair frontend dependency installation on Render | Prior deploy 5d8a983 live according to Render; latest pending | Render build succeeds, process starts, GET /healthz is 200 |
 | P0 | Resolve any further Vite/TanStack runtime incompatibility | DONE in CI run 38624516272 (098cc176): health and homepage 200 | SSR homepage and static assets load correctly |
 | P0 | Provision production Postgres/backend safely | blocked on production provisioning/credentials | migrations, GET /ready 200, CORS and frontend API connection valid |
 | P0 | Secure app identity and product entitlements | partial | tenant- and product-aware integration tests pass |
@@ -19,3 +19,11 @@ Priority and evidence, as of 2026-10-14. Mark items complete only after checking
 Only work on independent tasks when P0 depends on unavailable production secrets, without inventing credentials or paid services.
 
 - Webhook follow-up: add atomic event/database transaction and provider replay integration tests before real payment processing. Marker cleanup after a caught failure is an interim safeguard, not proof of full exactly-once semantics.
+
+## 2026-10-16 handoff priorities
+
+1. Confirm newest GitHub Actions jobs including new contract-state security tests (frontend build, SSR HTTP, Prisma TypeScript and test:security).
+2. Confirm latest Render SHA finishes deploying and independently verify HTTPS requests to /healthz and /.
+3. Complete optimistic-concurrency transactions in freelancer accept/decline/delivery, not just early state checks. Admin assignment now uses a conditional transaction.
+4. Add tenant/message access and webhook replay integration tests before live money or client cross-company activity.
+5. Backend DB/worker/OTP/storage/billing integrations require verified connections; do not fabricate production readiness.
