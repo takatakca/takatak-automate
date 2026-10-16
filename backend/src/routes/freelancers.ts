@@ -98,8 +98,10 @@ freelancersRouter.get("/freelancers/contracts/:id", requireAuth, async (req: Aut
 freelancersRouter.post("/freelancers/contracts/:id/accept", requireAuth, async (req: AuthedRequest, res) => {
   const c = await prisma.freelancerContract.findFirst({
     where: { id: req.params.id, freelancerId: req.userId! },
+    include: { project: { select: { paymentState: true } } },
   });
   if (!c) return res.status(404).json({ error: "not_found" });
+  if (c.status !== "assigned" || c.paymentState !== "assigned" || c.project.paymentState !== "assigned") return res.status(409).json({ error: "contract_not_assignable" });
   await prisma.freelancerContract.update({
     where: { id: c.id },
     data: { status: "in_progress", paymentState: "in_progress" },
@@ -121,6 +123,9 @@ freelancersRouter.post("/freelancers/contracts/:id/decline", requireAuth, async 
     where: { id: req.params.id, freelancerId: req.userId! },
   });
   if (!c) return res.status(404).json({ error: "not_found" });
+  if (c.status !== "assigned" || c.paymentState !== "assigned") return res.status(409).json({ error: "contract_not_declineable" });
+  const project = await prisma.clientProject.findUnique({ where: { id: c.projectId }, select: { paymentState: true } });
+  if (project?.paymentState !== "assigned") return res.status(409).json({ error: "project_not_assignable" });
   await prisma.freelancerContract.update({
     where: { id: c.id },
     data: { status: "declined" },
@@ -153,8 +158,11 @@ freelancersRouter.post("/freelancers/contracts/:id/deliveries", requireAuth, asy
   const Body = z.object({ note: z.string().max(5000).optional(), fileUrls: z.array(z.string().url()).max(20).optional() });
   const parsed = Body.safeParse(req.body ?? {});
   if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
-  const c = await prisma.freelancerContract.findFirst({ where: { id: req.params.id, freelancerId: req.userId! } });
+  const c = await prisma.freelancerContract.findFirst({ where: { id: req.params.id, freelancerId: req.userId! }, include: { project: { select: { paymentState: true } } } });
   if (!c) return res.status(404).json({ error: "not_found" });
+  if (c.status !== "in_progress" || !["in_progress", "revision_requested"].includes(c.paymentState) || !["in_progress", "revision_requested"].includes(c.project.paymentState)) return res.status(409).json({ error: "delivery_not_allowed" });
+  if (!parsed.data.note?.trim()) return res.status(400).json({ error: "delivery_note_required" });
+  if (parsed.data.fileUrls?.length) return res.status(503).json({ error: "storage_not_configured" });
   const delivery = await prisma.projectDelivery.create({
     data: { projectId: c.projectId, note: parsed.data.note ?? null },
   });
