@@ -12,6 +12,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:security": "tsx --test src/services/contractPolicy.test.ts",
     "prisma:seed": "tsx prisma/seed.ts",
     "prisma:seed:demo": "tsx prisma/seed.demo.ts",
     "worker:payout": "node dist/workers/payoutSweepWorker.js",
