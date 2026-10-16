@@ -149,9 +149,15 @@ adminRouter.post("/admin/projects/:id/assign", async (req: AuthedRequest, res) =
   if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
   const project = await prisma.clientProject.findUnique({ where: { id: req.params.id } });
   if (!project) return res.status(404).json({ error: "not_found" });
-  if (project.paymentState !== "paid_to_takatak" && project.paymentState !== "assigned") {
-    return res.status(409).json({ error: "not_paid", state: project.paymentState });
+  if (project.paymentState !== "paid_to_takatak") {
+    return res.status(409).json({ error: "not_awaiting_assignment", state: project.paymentState });
   }
+  const [approvedFreelancer, existingContract] = await Promise.all([
+    prisma.freelancerProfile.findUnique({ where: { userId: parsed.data.freelancerId }, select: { id: true } }),
+    prisma.freelancerContract.findFirst({ where: { projectId: project.id, status: { not: "declined" } }, select: { id: true } }),
+  ]);
+  if (!approvedFreelancer) return res.status(409).json({ error: "freelancer_not_approved" });
+  if (existingContract) return res.status(409).json({ error: "project_already_assigned" });
   const contract = await prisma.freelancerContract.create({
     data: {
       projectId: project.id,
