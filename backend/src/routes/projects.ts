@@ -38,13 +38,11 @@ projectsRouter.get("/marketplace/projects/:id", requireAuth, async (req: AuthedR
   const project = await prisma.clientProject.findFirst({
     where: {
       userId: req.userId!,
-      OR: [
-        { id: req.params.id },
-        ...(req.params.id === "demo" ? [{ title: { startsWith: "Demo:" } }] : []),
-      ],
+      id: req.params.id,
     },
     include: {
-      messages: { orderBy: { at: "asc" } },
+      // Freelancer messages to TAKATAK mediation are not visible to clients.
+      messages: { where: { fromUser: { not: { startsWith: "freelancer:" } } }, orderBy: { at: "asc" } },
       files: { orderBy: { uploadedAt: "asc" } },
       milestones: { orderBy: { position: "asc" } },
       deliveries: { orderBy: { submittedAt: "desc" } },
@@ -83,7 +81,8 @@ projectsRouter.post("/marketplace/projects/:id/approve", requireAuth, async (req
   // Client approval cannot turn an unpaid, unassigned or undelivered project
   // into a payable contract. A freelancer must submit a real delivery first.
   if (project.paymentState !== "submitted" || !project.deliveries.length ||
-      !project.contracts.some((c) => c.paymentState === "submitted" && c.status === "submitted")) {
+      !project.contracts.length ||
+      project.contracts.some((c) => c.paymentState !== "submitted" || c.status !== "submitted")) {
     return res.status(409).json({ error: "delivery_not_ready", state: project.paymentState });
   }
   await prisma.clientProject.update({
@@ -167,38 +166,4 @@ projectsRouter.post("/marketplace/projects/:id/files/sign", requireAuth, async (
     error: "storage_not_configured",
     message: "File storage is not yet configured. No file was uploaded.",
   });
-});
-
-// ---- Admin assignment ----
-projectsRouter.post("/admin/projects/:id/assign", requireAuth, async (req: AuthedRequest, res) => {
-  const roles = (req.claims?.roles as string[] | undefined) ?? [];
-  if (!roles.includes("admin")) return res.status(403).json({ error: "forbidden" });
-  const Body = z.object({
-    freelancerId: z.string().min(1).max(128),
-    amountCents: z.number().int().positive(),
-    currency: z.string().min(3).max(8).default("CAD"),
-    note: z.string().max(2000).optional(),
-  });
-  const parsed = Body.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ error: "invalid_input" });
-  const project = await prisma.clientProject.findUnique({ where: { id: req.params.id } });
-  if (!project) return res.status(404).json({ error: "not_found" });
-  const contract = await prisma.freelancerContract.create({
-    data: {
-      projectId: project.id,
-      freelancerId: parsed.data.freelancerId,
-      amountCents: parsed.data.amountCents,
-      currency: parsed.data.currency,
-      status: "assigned",
-      paymentState: "assigned",
-    },
-  });
-  await prisma.contractAssignment.create({
-    data: { contractId: contract.id, assignedBy: req.userId!, note: parsed.data.note },
-  });
-  await prisma.clientProject.update({
-    where: { id: project.id },
-    data: { paymentState: "assigned" },
-  });
-  res.json({ contract });
 });

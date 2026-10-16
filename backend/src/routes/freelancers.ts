@@ -55,16 +55,14 @@ freelancersRouter.get("/freelancers/contracts/:id", requireAuth, async (req: Aut
   const c = await prisma.freelancerContract.findFirst({
     where: {
       freelancerId: req.userId!,
-      OR: [
-        { id: req.params.id },
-        ...(req.params.id === "demo" ? [{ project: { title: { startsWith: "Demo:" } } }] : []),
-      ],
+      id: req.params.id,
     },
     include: {
       project: {
         include: {
           milestones: { orderBy: { position: "asc" } },
-          messages: { orderBy: { at: "asc" } },
+          // Mediator-only: do not disclose other contractors' or clients' private threads.
+          messages: { where: { fromUser: { in: [`freelancer:${req.userId!}`, "takatak"] } }, orderBy: { at: "asc" } },
           deliveries: { orderBy: { submittedAt: "desc" } },
           files: { orderBy: { uploadedAt: "asc" } },
         },
