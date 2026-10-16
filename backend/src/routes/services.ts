@@ -3,8 +3,16 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
 import { transition } from "../services/stateMachine.js";
+import { SERVICE_DEFINITIONS } from "../seed/serviceDefinitions.js";
 
 export const servicesRouter = Router();
+
+// Accept legacy portal aliases, but persist one canonical TAKATAK product key.
+const ALIASES: Record<string, string> = {
+  qmaps: "local_listings", flexs: "lead_generation", voip: "voip_phone",
+  marketing: "online_marketing", marketplace: "freelancer_marketplace",
+};
+const CANONICAL_KEYS = new Set<string>(SERVICE_DEFINITIONS.map((s) => s.key));
 
 const INTAKE_REQUIRED = new Set([
   "websites",
@@ -39,7 +47,9 @@ const StartBody = z.object({
 servicesRouter.post("/services/start", requireAuth, async (req: AuthedRequest, res) => {
   const parsed = StartBody.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "invalid_input", details: parsed.error.flatten() });
-  const { serviceKey, options } = parsed.data;
+  const { options } = parsed.data;
+  const serviceKey = ALIASES[parsed.data.serviceKey] ?? parsed.data.serviceKey;
+  if (!CANONICAL_KEYS.has(serviceKey)) return res.status(400).json({ error: "unknown_service" });
 
   const instance = await prisma.serviceInstance.create({
     data: { userId: req.userId!, serviceKey, meta: (options ?? {}) as object },
@@ -48,16 +58,17 @@ servicesRouter.post("/services/start", requireAuth, async (req: AuthedRequest, r
     data: { serviceInstanceId: instance.id, state: "draft", label: "Service requested" },
   });
 
+  let currentInstance = instance;
   let nextAction: "checkout" | "intake" | "dashboard" = "dashboard";
   let intakeRequired = false;
   let checkoutUrl: string | undefined;
 
   if (INTAKE_REQUIRED.has(serviceKey)) {
-    await transition({ serviceInstanceId: instance.id, next: "intake_required", label: "Intake required" });
+    currentInstance = await transition({ serviceInstanceId: instance.id, next: "intake_required", label: "Intake required" });
     nextAction = "intake";
     intakeRequired = true;
   } else if (serviceKey === "domains" || serviceKey === "hosting") {
-    await transition({ serviceInstanceId: instance.id, next: "checkout_started", label: "Checkout started" });
+    currentInstance = await transition({ serviceInstanceId: instance.id, next: "checkout_started", label: "Checkout started" });
     nextAction = "checkout";
     // Upmind owns the checkout URL; frontend already drives the Upmind widget.
   } else if (EXTERNAL_PORTAL.has(serviceKey)) {
@@ -66,11 +77,11 @@ servicesRouter.post("/services/start", requireAuth, async (req: AuthedRequest, r
 
   res.json({
     serviceInstanceId: instance.id,
-    status: instance.state,
+    status: currentInstance.state,
     nextAction,
     intakeRequired,
     checkoutUrl,
-    instance,
+    instance: currentInstance,
   });
 });
 
