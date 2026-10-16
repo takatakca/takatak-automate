@@ -3,7 +3,8 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth, requireAdmin, type AuthedRequest } from "../middleware/auth.js";
 import { transition } from "../services/stateMachine.js";
-import { createHoldForContract, releasePayment, startGracePeriod, sweepReleasable } from "../services/payouts.js";
+import { releasePayment, startGracePeriod, sweepReleasable } from "../services/payouts.js";
+import { env } from "../lib/env.js";
 import { notify } from "../services/notifications.js";
 import { isConfigured as payoutProviderConfigured } from "../services/payoutProvider.js";
 
@@ -158,30 +159,44 @@ adminRouter.post("/admin/projects/:id/assign", async (req: AuthedRequest, res) =
   ]);
   if (!approvedFreelancer) return res.status(409).json({ error: "freelancer_not_approved" });
   if (existingContract) return res.status(409).json({ error: "project_already_assigned" });
-  const contract = await prisma.freelancerContract.create({
-    data: {
-      projectId: project.id,
-      freelancerId: parsed.data.freelancerId,
-      amountCents: parsed.data.amountCents,
-      currency: parsed.data.currency,
-      status: "assigned",
-      paymentState: "assigned",
-    },
+  // Lock the funded project through a conditional update. A concurrent admin
+  // request cannot assign a second contract after the first transaction commits.
+  const contract = await prisma.$transaction(async (tx) => {
+    const existing = await tx.freelancerContract.count({
+      where: { projectId: project.id, status: { not: "declined" } },
+    });
+    if (existing) return null;
+    const claimed = await tx.clientProject.updateMany({
+      where: { id: project.id, paymentState: "paid_to_takatak" },
+      data: { paymentState: "assigned", status: "assigned" },
+    });
+    if (claimed.count !== 1) return null;
+    const created = await tx.freelancerContract.create({
+      data: {
+        projectId: project.id, freelancerId: parsed.data.freelancerId,
+        amountCents: parsed.data.amountCents, currency: parsed.data.currency,
+        status: "assigned", paymentState: "assigned",
+      },
+    });
+    await tx.contractAssignment.create({
+      data: { contractId: created.id, assignedBy: req.userId!, note: parsed.data.note },
+    });
+    await tx.payoutHold.create({
+      data: {
+        contractId: created.id, amountCents: created.amountCents, currency: created.currency,
+        holdUntil: new Date(Date.now() + env.PAYOUT_GRACE_PERIOD_HOURS * 3600_000),
+      },
+    });
+    await tx.projectAuditLog.create({
+      data: {
+        projectId: project.id, actor: req.userId!, action: "project.assigned",
+        data: { contractId: created.id, freelancerId: parsed.data.freelancerId, amountCents: parsed.data.amountCents },
+      },
+    });
+    return created;
   });
-  await prisma.contractAssignment.create({
-    data: { contractId: contract.id, assignedBy: req.userId!, note: parsed.data.note },
-  });
-  await createHoldForContract(contract.id);
-  await prisma.clientProject.update({
-    where: { id: project.id },
-    data: { paymentState: "assigned", status: "assigned" },
-  });
-  await prisma.projectAuditLog.create({
-    data: {
-      projectId: project.id, actor: req.userId!, action: "project.assigned",
-      data: { contractId: contract.id, freelancerId: parsed.data.freelancerId, amountCents: parsed.data.amountCents },
-    },
-  });
+  if (!contract) return res.status(409).json({ error: "project_already_assigned" });
+  // Notification delivery is retriable: it must not invalidate a committed contract.
   await notify({
     userId: parsed.data.freelancerId,
     type: "project.assigned",
@@ -189,7 +204,7 @@ adminRouter.post("/admin/projects/:id/assign", async (req: AuthedRequest, res) =
     message: `TAKATAK assigned you to project "${project.title}". Open it to accept or decline.`,
     actionUrl: `/dashboard/freelancer/contracts/${contract.id}`,
     metadata: { contractId: contract.id, projectId: project.id },
-  });
+  }).catch((error) => console.error("[admin] project assignment notification failed", error));
   res.json({ contract });
 });
 
