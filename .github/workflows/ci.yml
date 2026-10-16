@@ -76,3 +76,5 @@ jobs:
         run: npx prisma generate
       - name: Typecheck
         run: npm run typecheck
+      - name: Contract security regression tests
+        run: npm run test:security
